@@ -1,4 +1,4 @@
-# Stefan Blazhev: UX Research portfolio
+# Chefo's UX Research Lab
 
 Source of https://stblazhev.github.io, built with Astro and deployed to GitHub Pages on every push to `main`.
 

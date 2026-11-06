@@ -2,15 +2,46 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+
+const kit = [
+  { label: 'Methods', items: site.methods },
+  { label: 'Tools', items: site.tools },
+  { label: 'iGaming domain', items: site.domain },
+  { label: 'Languages', items: site.languages },
+].filter((k) => k.items.length > 0);
 ---
 
 <Base title="About" description={site.about[0]}>
   <section class="card intro">
-    <span class="badge success"><span class="dot"></span>{site.role}</span>
-    <h1>{site.name}</h1>
+    <div class="badges">
+      <span class="badge success"><span class="dot"></span>{site.role}</span>
+      {site.location && <span class="badge">{site.location}</span>}
+    </div>
+    <h1>{site.displayName}</h1>
     <div class="bio">
       {site.about.map((p) => <p>{p}</p>)}
     </div>
+    {
+      (site.linkedin || site.email) && (
+        <div class="actions">
+          {site.linkedin && (
+            <a class="btn primary" href={site.linkedin} rel="me">
+              <Icon name="linkedin" /> LinkedIn
+            </a>
+          )}
+          {site.email && (
+            <a class="btn" href={`mailto:${site.email}`}>
+              <Icon name="mail" /> Email me
+            </a>
+          )}
+          {site.cv && (
+            <a class="btn" href={site.cv}>
+              <Icon name="file" /> CV
+            </a>
+          )}
+        </div>
+      )
+    }
   </section>
 
   {
@@ -18,18 +49,37 @@ import { site } from '../data/site';
       <section class="card">
         <div class="card-head">
           <h2>Experience</h2>
-          {site.cv && (
-            <a class="btn" href={site.cv}>
-              <Icon name="file" /> Download CV
-            </a>
-          )}
         </div>
         <div class="rows">
           {site.experience.map((e) => (
             <div class="row">
-              <span class="muted">{e.period}</span>
-              <b>{e.role}</b>
-              <span class="muted">{e.company}</span>
+              <span class="period">{e.period}</span>
+              <div class="what">
+                <b>{e.role}</b>
+                <span class="muted">{e.company}</span>
+              </div>
+              <p class="desc">{e.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    site.education.length > 0 && (
+      <section class="card">
+        <div class="card-head">
+          <h2>Education</h2>
+        </div>
+        <div class="rows">
+          {site.education.map((e) => (
+            <div class="row edu">
+              <span class="period">{e.period}</span>
+              <div class="what">
+                <b>{e.title}</b>
+                <span class="muted">{e.place}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -38,38 +88,19 @@ import { site } from '../data/site';
   }
 
   <section class="card">
-    <div class="card-head"><h2>How I work</h2></div>
-    <div class="tiles">
-      {
-        site.approach.map((a, i) => (
-          <div class="tile">
-            <span class="label">0{i + 1}</span>
-            <h3>{a.title}</h3>
-            <p>{a.text}</p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <section class="card">
     <div class="card-head"><h2>Toolkit</h2></div>
     <div class="kit">
-      <div>
-        <p class="label">Methods</p>
-        <div class="badges">{site.methods.map((m) => <span class="badge">{m}</span>)}</div>
-      </div>
       {
-        site.tools.length > 0 && (
+        kit.map((k) => (
           <div>
-            <p class="label">Tools</p>
+            <p class="label">{k.label}</p>
             <div class="badges">
-              {site.tools.map((t) => (
-                <span class="badge">{t}</span>
+              {k.items.map((m) => (
+                <span class="badge">{m}</span>
               ))}
             </div>
           </div>
-        )
+        ))
       }
     </div>
   </section>
@@ -87,10 +118,16 @@ import { site } from '../data/site';
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-width: 64ch;
+    max-width: 66ch;
     font-size: 16px;
     color: var(--fg-2);
   }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .rows {
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -98,11 +135,14 @@ import { site } from '../data/site';
   }
   .row {
     display: grid;
-    grid-template-columns: 160px 1fr 1fr;
+    grid-template-columns: 160px minmax(0, 1fr) minmax(0, 1.4fr);
     gap: 16px;
-    padding: 12px 16px;
+    padding: 14px 16px;
     border-bottom: 1px solid var(--line);
     font-size: 14px;
+  }
+  .row.edu {
+    grid-template-columns: 160px minmax(0, 1fr);
   }
   .row:last-child {
     border-bottom: 0;
@@ -110,9 +150,25 @@ import { site } from '../data/site';
   .row:nth-child(even) {
     background: var(--zebra);
   }
-  .row b {
+  .period {
+    color: var(--fg-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .what {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+  }
+  .what b {
     font-weight: 600;
   }
+  .what .muted {
+    font-size: 13px;
+  }
+  .desc {
+    color: var(--fg-2);
+  }
+
   .kit {
     display: flex;
     flex-direction: column;
@@ -121,10 +177,12 @@ import { site } from '../data/site';
   .kit .label {
     margin-bottom: 8px;
   }
+
   @media (max-width: 760px) {
-    .row {
+    .row,
+    .row.edu {
       grid-template-columns: 1fr;
-      gap: 2px;
+      gap: 4px;
     }
   }
 </style>

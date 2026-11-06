@@ -1,4 +1,4 @@
-# Stefan Blazhev: UX Research portfolio
+# Chefo's UX Research Lab: Stefan Blazhev's portfolio
 
 Personal portfolio site. Static site built with [Astro](https://docs.astro.build), hosted on GitHub Pages at https://stblazhev.github.io. Every push to `main` deploys automatically (`.github/workflows/deploy.yml`).
 
@@ -59,6 +59,21 @@ Formatting conventions:
 ### Writing style
 
 Plain, direct, first person. Lead with the decision the research informed, not the method. Prefer concrete numbers and observed behaviour over adjectives. Keep each case study readable in about 5 to 7 minutes.
+
+## Branding
+
+The brand comes from Stefan's original Framer portfolio (uxrlab-portfolio.framer.website): **Chefo's UX Research Lab**, short **UXR Lab**, with a purple flask logo (`public/brand/flask.png`, also the favicon). "Chefo" is Stefan's nickname. The flask stays purple even though the interface accent is green.
+
+## Planned case studies
+
+Projects listed on the original portfolio, to be written up when Stefan provides the material (do not invent details):
+
+1. **Smooth user registration and login flow**: usability tests, UX research and UI design, Framer prototype with native-keyboard inputs. Result: 40% increase in first-time deposits (FTDs).
+2. **Octopush: a UX strategy that made productivity personal**: visual research, UX strategy and testing, high-fidelity prototyping.
+3. **Bottom bar implementation**: card sorting and question tests, stakeholder interviews, wireframing. Result: 9x faster user flow with a guarded content switch.
+4. **Burger menu restructure**: user needs insights, competitive analysis, high-fidelity prototyping.
+
+From the CV, other candidates: Tournaments UX audit and redesign with a GA4 KPI framework, affiliate funnel UX blockers, sign-up and payment competitor benchmarks, social sign-up for the redesigned registration flow, new brand concept test, and the AI-assisted research process and repository.
 
 ## Commands
 

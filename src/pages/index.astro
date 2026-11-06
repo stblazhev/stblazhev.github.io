@@ -11,12 +11,35 @@ const projects = await getProjects();
   <section class="card hero">
     <span class="badge success"><span class="dot"></span>{site.role}</span>
     <h1>{site.headline}</h1>
+    <p class="by">{site.displayName}</p>
     <p class="intro">{site.intro}</p>
+    {site.motto && <p class="motto">“{site.motto}”</p>}
     <div class="hero-actions">
       <a class="btn primary" href="#work">View case studies</a>
-      <a class="btn" href="/about/">About me</a>
+      {
+        site.email && (
+          <a class="btn" href="#contact">
+            <Icon name="mail" /> Get in touch
+          </a>
+        )
+      }
     </div>
   </section>
+
+  {
+    site.highlights.length > 0 && (
+      <section class="card" aria-label="Highlights">
+        <div class="kpis">
+          {site.highlights.map((h) => (
+            <div class="kpi">
+              <b>{h.value}</b>
+              <span>{h.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <section id="work" class="card">
     <div class="card-head">
@@ -83,6 +106,27 @@ const projects = await getProjects();
       }
     </div>
   </section>
+
+  {
+    site.testimonials.length > 0 && (
+      <section class="card">
+        <div class="card-head">
+          <h2>What colleagues say</h2>
+        </div>
+        <div class="quotes">
+          {site.testimonials.map((t) => (
+            <figure class="quote">
+              <blockquote>“{t.quote}”</blockquote>
+              <figcaption>
+                <b>{t.name}</b>
+                <span>{t.title}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>
@@ -97,10 +141,59 @@ const projects = await getProjects();
     max-width: 22ch;
     font-size: clamp(28px, 4vw, 44px);
   }
+  .by {
+    margin-top: -8px;
+    font-weight: 500;
+    color: var(--fg-2);
+  }
   .intro {
     max-width: 60ch;
     color: var(--fg-3);
     font-size: 16px;
+  }
+  .motto {
+    padding: 8px 14px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-bg);
+    border-radius: 0 8px 8px 0;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--gap);
+  }
+  .quote {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .quote blockquote {
+    margin: 0;
+    font-size: 14px;
+    color: var(--fg-2);
+  }
+  .quote figcaption {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    line-height: 1.4;
+  }
+  .quote figcaption b {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .quote figcaption span {
+    font-size: 12px;
+    color: var(--fg-3);
   }
   .hero-actions {
     display: flex;
