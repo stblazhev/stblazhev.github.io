@@ -1,21 +1,21 @@
 // Everything personal about the site lives here. Edit these values, not the pages.
 // Empty strings and empty lists are hidden on the site.
 export const site = {
-  // Branding (from the original Framer portfolio): flask logo + "UXR Lab"
-  brand: 'UXR Lab',
-  brandFull: 'Chefo’s UX Research Lab',
+  // Branding: flask logo + "UXRD Lab" (UX Research and Design Lab)
+  brand: 'UXRD Lab',
+  brandFull: 'UX Research and Design Lab',
   logo: '/brand/flask.png',
 
   name: 'Stefan Blazhev',
-  displayName: 'Stefan “Chefo” Blazhev',
+  displayName: 'Stefan Blazhev',
   role: 'UX Researcher · iGaming',
 
   // Browser tab and link previews.
   description:
-    'Stefan “Chefo” Blazhev is a UX researcher in iGaming who owns research end to end, from objectives and methods to prioritised recommendations for Product.',
+    'Stefan Blazhev is a UX researcher in iGaming who owns research end to end, from objectives and methods to prioritised recommendations for Product.',
 
   // Home page hero
-  headline: 'Chefo’s UX Research Lab',
+  headline: 'UX Research and Design Lab',
   intro:
     'UX researcher in iGaming, across casino and sports betting. I own research end to end, from the research question and method to prioritised recommendations for Product, and combine usability testing with product analytics.',
   motto: 'Get to know your user first, then think about the rest.',
@@ -143,7 +143,7 @@ export const site = {
   testimonials: [
     {
       quote:
-        'Being a good researcher means having a certain perspective on the world. Chefo already has this as an inner quality, which is why working with him is both valuable and inspiring. Stefan asks questions, explores and challenges perspectives.',
+        'Being a good researcher means having a certain perspective on the world. He already has this as an inner quality, which is why working with him is both valuable and inspiring. Stefan asks questions, explores and challenges perspectives.',
       name: 'Martina Demirova',
       title: 'UX Research Team Lead, ALL IN Platform',
     },

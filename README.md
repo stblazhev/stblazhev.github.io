@@ -1,4 +1,4 @@
-# Chefo's UX Research Lab
+# UXRD Lab: UX Research and Design Lab
 
 Source of https://stblazhev.github.io, built with Astro and deployed to GitHub Pages on every push to `main`.
 

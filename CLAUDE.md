@@ -1,4 +1,4 @@
-# Chefo's UX Research Lab: Stefan Blazhev's portfolio
+# UXRD Lab: Stefan Blazhev's portfolio
 
 Personal portfolio site. Static site built with [Astro](https://docs.astro.build), hosted on GitHub Pages at https://stblazhev.github.io. Every push to `main` deploys automatically (`.github/workflows/deploy.yml`).
 
@@ -62,7 +62,7 @@ Plain, direct, first person. Lead with the decision the research informed, not t
 
 ## Branding
 
-The brand comes from Stefan's original Framer portfolio (uxrlab-portfolio.framer.website): **Chefo's UX Research Lab**, short **UXR Lab**, with a purple flask logo (`public/brand/flask.png`, also the favicon). "Chefo" is Stefan's nickname. The flask stays purple even though the interface accent is green.
+The brand is **UXRD Lab**, short for **UX Research and Design Lab**, with a purple flask logo (`public/brand/flask.png`, also the favicon). It evolved from Stefan's original Framer portfolio (uxrlab-portfolio.framer.website). Do not use any nickname; the site uses only his full name. The flask stays purple even though the interface accent is green.
 
 ## Planned case studies
 
