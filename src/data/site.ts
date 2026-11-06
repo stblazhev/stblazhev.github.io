@@ -177,40 +177,74 @@ export const site = {
   ],
 
   // Education is shown as a "learning map" on the About page: one lane for formal
-  // education, one for side courses. `short` is the label on the map, `year` places it.
+  // education, one for side education. `year` places the stop on the map, `when` is the
+  // date shown in the details, `short` is the label on the map, `detail` is the grey badge
+  // (grade, award level), `focus` lists subjects. Keep each list in date order.
   education: [
     {
       year: 2017,
+      when: '2017',
       short: 'Secondary',
       title: 'Secondary Education',
       place: '“Dimitar Blagoev” Secondary School, Svishtov',
-      grade: 'GPA 5.75 / 6.00',
-      focus: ['Graphic design', 'Art history', 'Informatics', 'Mathematics', 'Foreign languages'],
+      type: 'Secondary school',
+      detail: 'Average grade 5.75 / 6.00',
+      focus: ['Graphic design', 'History of arts', 'Informatics', 'Mathematics', 'Foreign languages'],
     },
     {
       year: 2021,
-      short: 'BSc',
-      title: 'BSc, Business Information Technologies',
+      when: '2021',
+      short: 'Bachelor’s',
+      title: 'Bachelor’s Degree, Business Information Technologies',
       place: 'University of Plovdiv “Paisii Hilendarski”',
-      grade: 'GPA 5.52 / 6.00',
-      focus: [],
+      type: 'Bachelor’s degree',
+      detail: 'Average grade 5.52 / 6.00',
+      focus: ['Programming', 'Mathematics', 'Marketing', 'Graphic design', 'Prepress'],
     },
     {
       year: 2023,
+      when: '2023',
       short: 'UX/UI Design',
       title: 'UX/UI Design, Upskill 22 Program',
       place: 'Telerik Academy, Sofia',
-      grade: 'Final score 83.33%',
+      type: 'Upskill program',
+      detail: 'Final score 83.33%',
       focus: [],
     },
   ],
-  courses: [
-    { year: 2015, short: 'Web basics', title: 'HTML, PHP and MySQL', place: 'Business Academy “D. A. Tsenov”, Svishtov' },
-    { year: 2018, short: 'Design basics', title: 'Design Fundamentals', place: 'Software University' },
-    { year: 2019, short: 'Photoshop', title: 'Graphic Design with Photoshop', place: 'Software University' },
-    { year: 2020, short: 'Marketing', title: 'Marketing Basics', place: 'Software University' },
-    { year: 2021, short: 'UI Design', title: 'UI Design', place: 'Software University' },
-    { year: 2022, short: 'UX Advanced', title: 'UX Design Advanced', place: 'Software University' },
+  sideEducation: [
+    {
+      year: 2015,
+      when: 'March 2015',
+      short: 'Web basics',
+      title: 'HTML, PHP and MySQL',
+      place: 'Business Academy “D. A. Tsenov”, Svishtov',
+      type: 'Course',
+      detail: '',
+    },
+    {
+      year: 2017,
+      when: '2017 – 2020',
+      short: 'Duke of Edinburgh',
+      title: 'The Duke of Edinburgh’s International Award',
+      place: 'Bronze, Silver and Gold certificates and badges',
+      type: 'Award',
+      detail: '',
+    },
+    { year: 2018, when: 'October 2018', short: 'Design basics', title: 'Design Fundamentals', place: 'Software University', type: 'Course', detail: '' },
+    { year: 2019, when: 'January 2019', short: 'Photoshop', title: 'Graphic Design with Photoshop', place: 'Software University', type: 'Course', detail: '' },
+    {
+      year: 2019,
+      when: 'December 2019',
+      short: 'Erasmus+',
+      title: 'Erasmus+ Project “Resistance” (SEYF)',
+      place: 'Italy',
+      type: 'Youth exchange',
+      detail: 'Youthpass',
+    },
+    { year: 2020, when: 'November 2020', short: 'Marketing', title: 'Marketing Basics', place: 'Software University', type: 'Course', detail: '' },
+    { year: 2021, when: 'January 2021', short: 'UI Design', title: 'UI Design', place: 'Software University', type: 'Course', detail: '' },
+    { year: 2022, when: 'June 2022', short: 'UX Advanced', title: 'UX Design Advanced', place: 'Software University', type: 'Course', detail: '' },
   ],
 
   // Colleague references (from the original portfolio)

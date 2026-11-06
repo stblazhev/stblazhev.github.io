@@ -21,7 +21,7 @@ This file is the handover for any Claude session or developer picking up the wor
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
 | Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
 | Highlights flip cards (number count-up, animated picture, story on the back; content from `site.highlights`) | `src/components/Highlights.astro` |
-| About > Education "learning map" (two lanes on a year axis: `site.education` = formal, `site.courses` = side courses; filter, pick a stop for details) | `src/components/LearningMap.astro` |
+| About > Education "learning map" (two lanes on a year axis: `site.education` = formal, `site.sideEducation` = courses, awards, exchanges; filter, pick a stop for details) | `src/components/LearningMap.astro` |
 | "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
 | Icons | `src/components/Icon.astro` |
 
@@ -100,4 +100,4 @@ Node 22.23 or newer is required.
 - Pointer glow: add `data-spot` to a card and `<span class="spot" aria-hidden="true"></span>` as its first child (Home intro, About me).
 - Pages can pass `next` to `Base` for the "Where next?" tiles at the end; `href: 'contact'` opens the contact dialog.
 - About > Experience is a timeline; a role whose period contains "now" is highlighted as the current role.
-- About > Education keeps formal education (`site.education`: school, degree, programs with a grade) apart from side courses (`site.courses`). Each entry needs a `year` and a `short` label for the map. Wide screens run years left to right, below 1100px top to bottom.
+- About > Education keeps formal education (`site.education`: school, Bachelor's, programs) apart from side education (`site.sideEducation`: courses, awards, youth exchanges). Each entry needs `year` (placement), `when` (shown date), `short` (map label) and `type`; `detail` is an optional badge (grade, award level). Stops sharing a lane and year stack in one cell. Wide screens run years left to right, below 1100px top to bottom.
