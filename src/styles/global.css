@@ -94,7 +94,9 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--gap); }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+@media (min-width: 1280px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .tiles { grid-template-columns: 1fr; } }
 .tile { border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .tile p { color: var(--fg-3); font-size: 14px; }
 
