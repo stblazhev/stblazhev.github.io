@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+
+<Base title="About" description={site.about[0]}>
+  <section class="wrap about-head">
+    <p class="eyebrow">About</p>
+    <h1>{site.name}</h1>
+    <div class="prose bio">
+      {site.about.map((p) => <p>{p}</p>)}
+    </div>
+  </section>
+
+  {
+    site.experience.length > 0 && (
+      <section class="section wrap">
+        <div class="section-head">
+          <h2>Experience</h2>
+          {site.cv && (
+            <a class="eyebrow" href={site.cv}>
+              Download CV →
+            </a>
+          )}
+        </div>
+        <ol class="rows">
+          {site.experience.map((e) => (
+            <li>
+              <span class="muted">{e.period}</span>
+              <span>{e.role}</span>
+              <span class="muted">{e.company}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  <section class="section wrap">
+    <div class="section-head"><h2>Toolkit</h2></div>
+    <div class="cols">
+      <div>
+        <p class="eyebrow">Methods</p>
+        <ul class="list">{site.methods.map((m) => <li>{m}</li>)}</ul>
+      </div>
+      {
+        site.tools.length > 0 && (
+          <div>
+            <p class="eyebrow">Tools</p>
+            <ul class="list">
+              {site.tools.map((t) => (
+                <li>{t}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-head {
+    padding-top: clamp(48px, 10vw, 128px);
+  }
+  .about-head h1 {
+    font-size: clamp(44px, 8vw, 104px);
+    line-height: 1;
+    margin: 20px 0 40px;
+  }
+  .bio {
+    font-size: clamp(18px, 2vw, 21px);
+  }
+  .rows {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .rows li {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 48px;
+    padding-top: 32px;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+  }
+  .list li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 760px) {
+    .rows li,
+    .cols {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .cols {
+      gap: 40px;
+    }
+  }
+</style>

@@ -1,0 +1,262 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getProjects } from '../../lib';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { project, next } = Astro.props;
+const { data } = project;
+const { Content, headings } = await render(project);
+const toc = headings.filter((h) => h.depth === 2);
+
+const meta = [
+  { label: 'Role', value: data.role },
+  { label: 'Timeline', value: data.timeline },
+  { label: 'Team', value: data.team },
+  { label: 'Methods', value: data.methods.join(', ') },
+].filter((m) => m.value);
+---
+
+<Base title={data.title} description={data.summary} image={data.cover}>
+  <article>
+    <header class="cs-head wrap">
+      <a class="back eyebrow" href="/#work">← All work</a>
+      <p class="eyebrow">{data.context} · {data.year}</p>
+      <h1>{data.title}</h1>
+      <p class="lead">{data.summary}</p>
+
+      <dl class="meta">
+        {
+          meta.map((m) => (
+            <div>
+              <dt class="eyebrow">{m.label}</dt>
+              <dd>{m.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </header>
+
+    {
+      data.cover && (
+        <div class="wrap">
+          <img class="cover" src={data.cover} alt={data.coverAlt ?? ''} />
+        </div>
+      )
+    }
+
+    {
+      (data.outcomes.length > 0 || data.tldr.length > 0) && (
+        <section class="wrap summary-block" aria-label="Summary">
+          {data.outcomes.length > 0 && (
+            <ul class="outcomes">
+              {data.outcomes.map((o) => (
+                <li>
+                  <span class="value">{o.value}</span>
+                  <span class="label">{o.label}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {data.tldr.length > 0 && (
+            <div class="tldr">
+              <p class="eyebrow">TL;DR</p>
+              <ul>
+                {data.tldr.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )
+    }
+
+    <div class="wrap body">
+      {
+        toc.length > 2 && (
+          <nav class="toc" aria-label="On this page">
+            <p class="eyebrow">On this page</p>
+            <ol>
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    {
+      next && next.id !== project.id && (
+        <div class="wrap">
+          <a class="next" href={`/work/${next.id}/`}>
+            <span class="eyebrow">Next case study</span>
+            <span class="next-title">{next.data.title} →</span>
+          </a>
+        </div>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .cs-head {
+    padding-top: clamp(32px, 6vw, 72px);
+  }
+  .back {
+    display: inline-block;
+    text-decoration: none;
+    margin-bottom: clamp(32px, 6vw, 64px);
+  }
+  .cs-head h1 {
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 1.02;
+    max-width: 16ch;
+    margin: 16px 0 24px;
+  }
+  .lead {
+    font-size: clamp(19px, 2.2vw, 23px);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 34em;
+    margin: 0;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin: clamp(40px, 6vw, 64px) 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .meta dd {
+    margin: 6px 0 0;
+    font-size: 15px;
+  }
+
+  .cover {
+    width: 100%;
+    margin-top: clamp(40px, 6vw, 64px);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+  }
+
+  .summary-block {
+    display: grid;
+    gap: 40px;
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  .outcomes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .outcomes li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 2px solid var(--text);
+  }
+  .value {
+    font-family: var(--font-display);
+    font-size: clamp(44px, 6vw, 64px);
+    line-height: 1;
+  }
+  .label {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .tldr {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: clamp(24px, 4vw, 40px);
+  }
+  .tldr ul {
+    margin: 12px 0 0;
+    padding-left: 1.2em;
+    max-width: var(--prose);
+  }
+  .tldr li + li {
+    margin-top: 8px;
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    margin-top: clamp(48px, 8vw, 96px);
+  }
+  .toc {
+    display: none;
+  }
+  @media (min-width: 1000px) {
+    .body:has(.toc) {
+      grid-template-columns: 220px minmax(0, var(--prose));
+      gap: 80px;
+    }
+    .toc {
+      display: block;
+      position: sticky;
+      top: 32px;
+      align-self: start;
+    }
+  }
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    font-size: 14px;
+  }
+  .toc li + li {
+    margin-top: 8px;
+  }
+  .toc a {
+    text-decoration: none;
+    color: var(--muted);
+  }
+  .toc a:hover {
+    color: var(--text);
+  }
+
+  .next {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: clamp(64px, 10vw, 128px);
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .next-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.1;
+  }
+  .next:hover .next-title {
+    color: var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .meta {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
