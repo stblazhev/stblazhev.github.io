@@ -18,8 +18,13 @@ This file is the handover for any Claude session or developer picking up the wor
 | Case studies (one Markdown file each) | `src/content/projects/*.md` |
 | Case study fields (the frontmatter schema) | `src/content.config.ts` |
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
-| Colours, fonts, text styles | `src/styles/global.css` (tokens on `:root`, dark mode below) |
-| Page layout, header, footer | `src/layouts/Base.astro` |
+| Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
+| Page shell: side nav, "On this page" links, contact card, footer | `src/layouts/Base.astro` |
+| Icons | `src/components/Icon.astro` |
+
+## Design
+
+The look follows Stefan's Backoffice V3 redesign (Figma): Poppins, a cool grey background (`#F5F8FA`), white cards with 16px corners and a light border, a left side nav whose active item is light green (`#F0FFF0` with a `#6BED6A` border), grey badges, and tables with uppercase grey headers and zebra rows. Light mode only. Keep new elements inside cards and reuse the existing classes rather than adding new styles.
 | Home, About, case study, 404 pages | `src/pages/` |
 
 Empty strings and empty lists in `site.ts` are hidden on the site (for example, contact links only appear once filled in).
