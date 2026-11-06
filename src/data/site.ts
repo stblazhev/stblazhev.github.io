@@ -9,7 +9,7 @@ export const site = {
   name: 'Stefan Blazhev',
   displayName: 'Stefan Blazhev',
   // Small round portrait, shown next to the name. Leave empty to hide.
-  photo: '',
+  photo: '/brand/stefan.jpg',
   role: 'UX Researcher · iGaming',
 
   // Browser tab and link previews.
