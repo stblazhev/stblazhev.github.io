@@ -176,18 +176,41 @@ export const site = {
     },
   ],
 
+  // Education is shown as a "learning map" on the About page: one lane for formal
+  // education, one for side courses. `short` is the label on the map, `year` places it.
   education: [
-    { period: '2023', title: 'UX/UI Design, Upskill 22 Program', place: 'Telerik Academy, Sofia' },
     {
-      period: '2021',
+      year: 2017,
+      short: 'Secondary',
+      title: 'Secondary Education',
+      place: '“Dimitar Blagoev” Secondary School, Svishtov',
+      grade: 'GPA 5.75 / 6.00',
+      focus: ['Graphic design', 'Art history', 'Informatics', 'Mathematics', 'Foreign languages'],
+    },
+    {
+      year: 2021,
+      short: 'BSc',
       title: 'BSc, Business Information Technologies',
       place: 'University of Plovdiv “Paisii Hilendarski”',
+      grade: 'GPA 5.52 / 6.00',
+      focus: [],
     },
     {
-      period: '2018 – 2022',
-      title: 'UX Design Advanced, UI Design, Design Fundamentals and more',
-      place: 'Software University',
+      year: 2023,
+      short: 'UX/UI Design',
+      title: 'UX/UI Design, Upskill 22 Program',
+      place: 'Telerik Academy, Sofia',
+      grade: 'Final score 83.33%',
+      focus: [],
     },
+  ],
+  courses: [
+    { year: 2015, short: 'Web basics', title: 'HTML, PHP and MySQL', place: 'Business Academy “D. A. Tsenov”, Svishtov' },
+    { year: 2018, short: 'Design basics', title: 'Design Fundamentals', place: 'Software University' },
+    { year: 2019, short: 'Photoshop', title: 'Graphic Design with Photoshop', place: 'Software University' },
+    { year: 2020, short: 'Marketing', title: 'Marketing Basics', place: 'Software University' },
+    { year: 2021, short: 'UI Design', title: 'UI Design', place: 'Software University' },
+    { year: 2022, short: 'UX Advanced', title: 'UX Design Advanced', place: 'Software University' },
   ],
 
   // Colleague references (from the original portfolio)

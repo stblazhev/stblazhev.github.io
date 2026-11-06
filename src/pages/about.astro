@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+import LearningMap from '../components/LearningMap.astro';
 
 const kit = [
   { label: 'Methods', items: site.methods },
@@ -95,22 +96,13 @@ const next = [
   }
 
   {
-    site.education.length > 0 && (
+    site.education.length + site.courses.length > 0 && (
       <section id="education" class="card">
         <div class="card-head">
           <h2>Education</h2>
+          <span class="muted pick">Pick a stop to see the details</span>
         </div>
-        <div class="rows">
-          {site.education.map((e) => (
-            <div class="row edu">
-              <span class="period">{e.period}</span>
-              <div class="what">
-                <b>{e.title}</b>
-                <span class="muted">{e.place}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <LearningMap />
       </section>
     )
   }
@@ -321,45 +313,16 @@ const next = [
     }
   }
 
-  .rows {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .row {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 16px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
-  }
-  .row.edu {
-    grid-template-columns: 160px minmax(0, 1fr);
-  }
-  .row:last-child {
-    border-bottom: 0;
-  }
-  .row:nth-child(even) {
-    background: var(--zebra);
-  }
   .period {
     color: var(--fg-3);
     font-variant-numeric: tabular-nums;
   }
-  .what {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.4;
-  }
-  .what b {
-    font-weight: 600;
-  }
-  .what .muted {
-    font-size: 13px;
-  }
   .desc {
     color: var(--fg-2);
+  }
+
+  .pick {
+    font-size: 12px;
   }
 
   .kit {
@@ -371,11 +334,4 @@ const next = [
     margin-bottom: 8px;
   }
 
-  @media (max-width: 760px) {
-    .row,
-    .row.edu {
-      grid-template-columns: 1fr;
-      gap: 4px;
-    }
-  }
 </style>

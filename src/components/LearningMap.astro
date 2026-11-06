@@ -1,0 +1,586 @@
+---
+// Education as a "learning map": a time axis with two lanes, formal education
+// and side courses. Pick a stop to see its details in the panel underneath.
+// Wide screens run the years left to right; narrower ones run them top to bottom.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+type Stop = {
+  kind: 'edu' | 'course';
+  year: number;
+  short: string;
+  title: string;
+  place: string;
+  grade?: string;
+  focus?: string[];
+};
+
+const stops: Stop[] = [
+  ...site.education.map((e) => ({ kind: 'edu' as const, ...e })),
+  ...site.courses.map((c) => ({ kind: 'course' as const, ...c })),
+].sort((a, b) => a.year - b.year || (a.kind === 'edu' ? -1 : 1));
+
+const first = Math.min(...stops.map((s) => s.year));
+const last = Math.max(...stops.map((s) => s.year));
+const years = Array.from({ length: last - first + 1 }, (_, i) => first + i);
+// Grid line for a year: line 1 holds the lane labels (wide) or lane headers (narrow)
+const pos = (y: number) => y - first + 2;
+
+const nEdu = site.education.length;
+const nCourse = site.courses.length;
+// Open on the degree by default, otherwise the latest formal step
+const start = Math.max(
+  0,
+  stops.findIndex((s) => s.kind === 'edu' && /^(BSc|BA|MSc|MA)\b/.test(s.title)),
+);
+---
+
+<div class="lm" data-lm data-start={start}>
+  <div class="lm-bar">
+    <div class="lm-filter" role="group" aria-label="Show">
+      <button type="button" data-f="all" aria-pressed="true">All <span class="n">{stops.length}</span></button>
+      <button type="button" data-f="edu" aria-pressed="false">
+        <span class="sw edu" /> Education <span class="n">{nEdu}</span>
+      </button>
+      <button type="button" data-f="course" aria-pressed="false">
+        <span class="sw course" /> Side courses <span class="n">{nCourse}</span>
+      </button>
+    </div>
+    <span class="lm-span">{years.length} years of learning, {first} – {last}</span>
+  </div>
+
+  <div class="lm-grid" style={`--years:${years.length}`}>
+    <span class="lane edu"><Icon name="cap" size={14} /> Education</span>
+    <span class="lane course"><Icon name="book" size={14} /> Side courses</span>
+    <span class="track edu" aria-hidden="true" />
+    <span class="track course" aria-hidden="true" />
+    {
+      years.map((y) => (
+        <span class="yr" data-year={y} style={`--p:${pos(y)}`}>
+          {y}
+        </span>
+      ))
+    }
+    {
+      stops.map((s, i) => (
+        <button
+          type="button"
+          class:list={['node', s.kind]}
+          data-kind={s.kind}
+          data-year={s.year}
+          aria-pressed={i === start ? 'true' : 'false'}
+          aria-label={`${s.title}, ${s.year}`}
+          style={`--p:${pos(s.year)};--o:${i}`}
+        >
+          {s.short}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="lm-panel" data-kind={stops[start]?.kind} aria-live="polite">
+    <div class="lm-cards">
+      {
+        stops.map((s, i) => (
+          <div class="lm-card" data-panel hidden={i !== start}>
+            <div class="lm-top">
+              {s.kind === 'edu' ? (
+                <span class="badge success">
+                  <Icon name="cap" size={14} /> Education
+                </span>
+              ) : (
+                <span class="badge">
+                  <Icon name="book" size={14} /> Side course
+                </span>
+              )}
+              <span class="lm-year">{s.year}</span>
+            </div>
+            <b class="lm-title">{s.title}</b>
+            <span class="lm-place">{s.place}</span>
+            {s.grade && <span class="badge grade">{s.grade}</span>}
+            {s.focus && s.focus.length > 0 && (
+              <div class="lm-focus">
+                <p class="label">Focus</p>
+                <div class="badges">
+                  {s.focus.map((f) => (
+                    <span class="badge">{f}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+    <div class="lm-nav">
+      <button type="button" class="btn" data-step="-1" aria-label="Earlier"><Icon name="left" /></button>
+      <span class="lm-count" aria-hidden="true">{start + 1} / {stops.length}</span>
+      <button type="button" class="btn" data-step="1" aria-label="Later"><Icon name="right" /></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lm]').forEach((root) => {
+    const nodes = [...root.querySelectorAll<HTMLButtonElement>('.node')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+    const years = [...root.querySelectorAll<HTMLElement>('.yr')];
+    const filters = [...root.querySelectorAll<HTMLButtonElement>('[data-f]')];
+    const panel = root.querySelector<HTMLElement>('.lm-panel')!;
+    const count = root.querySelector<HTMLElement>('.lm-count')!;
+    let cur = Number(root.dataset.start ?? 0);
+    let show = 'all';
+
+    const visible = () => nodes.map((_, i) => i).filter((i) => show === 'all' || nodes[i].dataset.kind === show);
+
+    const select = (i: number, focus = false) => {
+      cur = i;
+      nodes.forEach((n, k) => n.setAttribute('aria-pressed', String(k === i)));
+      cards.forEach((c, k) => (c.hidden = k !== i));
+      panel.dataset.kind = nodes[i].dataset.kind;
+      years.forEach((y) => y.classList.toggle('on', y.dataset.year === nodes[i].dataset.year));
+      const v = visible();
+      count.textContent = `${v.indexOf(i) + 1} / ${v.length}`;
+      panel.classList.remove('swap');
+      void panel.offsetWidth; // restart the fade-in
+      panel.classList.add('swap');
+      if (focus) nodes[i].focus();
+    };
+
+    const step = (d: number, focus = false) => {
+      const v = visible();
+      const p = v.indexOf(cur);
+      select(v[(p + d + v.length) % v.length], focus);
+    };
+
+    nodes.forEach((n, i) => {
+      n.addEventListener('click', () => select(i));
+      n.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          step(1, true);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          step(-1, true);
+        }
+      });
+    });
+    root.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => step(Number(b.dataset.step))),
+    );
+
+    filters.forEach((f) =>
+      f.addEventListener('click', () => {
+        show = f.dataset.f ?? 'all';
+        root.dataset.show = show;
+        filters.forEach((x) => x.setAttribute('aria-pressed', String(x === f)));
+        nodes.forEach((n) => (n.disabled = show !== 'all' && n.dataset.kind !== show));
+        const v = visible();
+        select(v.includes(cur) ? cur : v[0]);
+      }),
+    );
+
+    years.forEach((y) => y.classList.toggle('on', y.dataset.year === nodes[cur]?.dataset.year));
+
+    // Draw the lanes and pop the stops in when the map comes into view
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      root.classList.add('armed');
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting) {
+            root.classList.add('drawn');
+            io.disconnect();
+          }
+        },
+        { threshold: 0.2 },
+      );
+      io.observe(root);
+    }
+  });
+</script>
+
+<style>
+  .lm {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* ---------- Filter ---------- */
+  .lm-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .lm-filter {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--zebra);
+  }
+  .lm-filter button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg-3);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+  .lm-filter button:hover {
+    color: var(--fg);
+  }
+  .lm-filter button[aria-pressed='true'] {
+    background: var(--card);
+    border-color: var(--line);
+    color: var(--fg);
+    box-shadow: 0 1px 3px rgba(17, 24, 39, 0.08);
+  }
+  .n {
+    font-size: 11px;
+    color: var(--fg-4);
+    font-variant-numeric: tabular-nums;
+  }
+  .sw {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .sw.edu {
+    background: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-fg) inset;
+  }
+  .sw.course {
+    background: var(--card);
+    box-shadow: 0 0 0 1.5px var(--fg-4) inset;
+  }
+  .lm-span {
+    font-size: 12px;
+    color: var(--fg-4);
+  }
+
+  /* ---------- Map: wide = years left to right, lanes as rows ---------- */
+  .lm-grid {
+    --lane-edu: 2;
+    --lane-course: 3;
+    display: grid;
+    grid-template-columns: 112px repeat(var(--years), minmax(0, 1fr));
+    grid-template-rows: auto 64px 64px;
+    column-gap: 6px;
+    align-items: center;
+    padding: 12px 0 4px;
+  }
+  .edu {
+    --lane: var(--lane-edu);
+  }
+  .course {
+    --lane: var(--lane-course);
+  }
+  .yr {
+    grid-row: 1;
+    grid-column: var(--p);
+    text-align: center;
+    font-size: 12px;
+    color: var(--fg-4);
+    font-variant-numeric: tabular-nums;
+    padding-bottom: 6px;
+    transition: color 0.2s;
+  }
+  .yr.on {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .lane {
+    grid-column: 1;
+    grid-row: var(--lane);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fg-3);
+    white-space: nowrap;
+  }
+  .lane.edu {
+    color: var(--accent-fg);
+  }
+  .track {
+    grid-column: 2 / -1;
+    grid-row: var(--lane);
+    height: 2px;
+    margin-inline: calc(50% / var(--years));
+    border-radius: 2px;
+    transform-origin: left;
+    transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .track.edu {
+    background: var(--accent);
+  }
+  .track.course {
+    background: var(--line-2);
+  }
+
+  .node {
+    grid-column: var(--p);
+    grid-row: var(--lane);
+    justify-self: center;
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    min-height: 34px;
+    padding: 6px 10px;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    background: var(--card);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--fg-2);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.2s,
+      background 0.2s,
+      border-color 0.2s,
+      opacity 0.25s;
+  }
+  .node.edu {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+  .node:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(17, 24, 39, 0.08);
+  }
+  .node[aria-pressed='true'] {
+    font-weight: 600;
+    color: #000;
+  }
+  .node.edu[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent-fg);
+    box-shadow: 0 0 0 4px rgba(107, 237, 106, 0.25);
+  }
+  .node.course[aria-pressed='true'] {
+    background: var(--soft);
+    border-color: var(--fg-3);
+    box-shadow: 0 0 0 4px rgba(156, 163, 175, 0.22);
+  }
+  .node:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+  [data-show='edu'] .track.course,
+  [data-show='course'] .track.edu,
+  [data-show='edu'] .lane.course,
+  [data-show='course'] .lane.edu {
+    opacity: 0.3;
+  }
+  .track,
+  .lane {
+    transition:
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.25s;
+  }
+
+  /* Entrance: lanes draw in, then the stops pop in one by one */
+  .armed:not(.drawn) .track {
+    transform: scaleX(0);
+  }
+  .armed:not(.drawn) .node {
+    opacity: 0;
+  }
+  .drawn .node {
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(var(--o) * 70ms + 0.25s);
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+
+  /* ---------- Details panel ---------- */
+  .lm-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 16px;
+    align-items: start;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--zebra);
+    transition:
+      background 0.3s,
+      border-color 0.3s;
+  }
+  .lm-panel[data-kind='edu'] {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+  }
+  .lm-cards {
+    min-width: 0;
+  }
+  .lm-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+  }
+  .lm-card[hidden] {
+    display: none;
+  }
+  .swap .lm-card:not([hidden]) {
+    animation: rise 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .lm-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lm-year {
+    font-size: 13px;
+    color: var(--fg-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .lm-title {
+    margin-top: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #000;
+  }
+  .lm-place {
+    font-size: 14px;
+    color: var(--fg-3);
+  }
+  .grade {
+    margin-top: 8px;
+    background: var(--card);
+  }
+  .lm-focus {
+    margin-top: 12px;
+  }
+  .lm-focus .label {
+    margin-bottom: 6px;
+  }
+  .lm-focus .badge {
+    background: var(--card);
+  }
+  .lm-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lm-nav .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+  .lm-count {
+    min-width: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--fg-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Narrow: years top to bottom, lanes as columns ---------- */
+  @media (max-width: 1100px) {
+    .lm-grid {
+      grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto repeat(var(--years), minmax(46px, auto));
+      column-gap: 8px;
+      padding-top: 0;
+    }
+    .edu {
+      --lane: 2;
+    }
+    .course {
+      --lane: 3;
+    }
+    .yr {
+      grid-row: var(--p);
+      grid-column: 1;
+      text-align: left;
+      padding: 0;
+    }
+    .lane {
+      grid-row: 1;
+      grid-column: var(--lane);
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+    .track {
+      grid-row: 2 / -1;
+      grid-column: var(--lane);
+      justify-self: center;
+      align-self: stretch;
+      width: 2px;
+      height: auto;
+      margin: 23px 0;
+      transform-origin: top;
+    }
+    .armed:not(.drawn) .track {
+      transform: scaleY(0);
+    }
+    .node {
+      grid-row: var(--p);
+      grid-column: var(--lane);
+      padding: 6px 12px;
+    }
+  }
+  @media (max-width: 560px) {
+    .lm-filter {
+      display: flex;
+      width: 100%;
+    }
+    .lm-filter button {
+      flex: 1;
+      padding: 0 6px;
+      font-size: 12px;
+    }
+    .lm-panel {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 16px;
+    }
+    .lm-nav {
+      grid-row: 1;
+      justify-self: end;
+      margin-bottom: -44px;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  @media (max-width: 420px) {
+    .n {
+      display: none;
+    }
+  }
+</style>
