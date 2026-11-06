@@ -21,9 +21,17 @@ const sections = [
   { id: 'process', text: 'How I work' },
   ...(site.testimonials.length ? [{ id: 'references', text: 'References' }] : []),
 ];
+
+const next = [
+  { label: 'Meet me', title: 'About me', text: 'Experience, education and the tools I use.', href: '/about/' },
+  { label: 'Say hello', title: 'Get in touch', text: 'Email or LinkedIn, whichever suits you.', href: 'contact' },
+];
+
+// Words that type themselves out after the name in the hero
+const focus = site.domain.map((d) => d.toLowerCase());
 ---
 
-<Base sections={sections}>
+<Base sections={sections} next={next}>
   <section id="intro" class="card hero" data-spot>
     <span class="spot" aria-hidden="true"></span>
     <span class="badge success"><span class="dot"></span>{site.role}</span>
@@ -36,7 +44,14 @@ const sections = [
     </h1>
     <p class="by">
       {site.photo && <img class="me" src={site.photo} alt={site.name} width="40" height="40" />}
-      {site.displayName}
+      <span>
+        {site.displayName}
+        {focus.length > 0 && (
+          <span class="focus">
+            {' '}· researching <span class="typed" data-words={JSON.stringify(focus)}>{focus[0]}</span>
+          </span>
+        )}
+      </span>
     </p>
     <p class="intro">{site.intro}</p>
     {site.motto && <p class="motto">“{site.motto}”</p>}
@@ -157,46 +172,43 @@ const sections = [
 </Base>
 
 <script>
-  // Hero: a soft green light and dot grid follow the pointer
-  const hero = document.querySelector<HTMLElement>('[data-spot]');
-  if (hero && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
-    hero.addEventListener('pointermove', (e) => {
-      const r = hero.getBoundingClientRect();
-      hero.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      hero.style.setProperty('--my', `${e.clientY - r.top}px`);
-      hero.classList.add('lit');
-    });
-    hero.addEventListener('pointerleave', () => hero.classList.remove('lit'));
+  // Hero: the research topics type themselves out, one after another
+  const el = document.querySelector<HTMLElement>('.typed');
+  if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const words: string[] = JSON.parse(el.dataset.words ?? '[]');
+    let w = 0;
+    let i = words[0]?.length ?? 0;
+    let deleting = true;
+    const tick = () => {
+      const word = words[w];
+      if (deleting) {
+        i--;
+        if (i <= 0) {
+          deleting = false;
+          w = (w + 1) % words.length;
+        }
+      } else {
+        i++;
+        if (i >= words[w].length) {
+          deleting = true;
+          el.textContent = words[w];
+          return setTimeout(tick, 2200);
+        }
+      }
+      el.textContent = (deleting ? word : words[w]).slice(0, Math.max(0, i));
+      setTimeout(tick, deleting ? 45 : 85);
+    };
+    setTimeout(tick, 2600);
   }
 </script>
 
 <style>
   .hero {
-    position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
     padding: clamp(24px, 5vw, 48px);
-  }
-  .hero > :not(.spot) {
-    position: relative;
-  }
-  .spot {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s;
-    background:
-      radial-gradient(circle 260px at var(--mx, 70%) var(--my, 30%), rgba(107, 237, 106, 0.16), transparent 70%),
-      radial-gradient(circle, #c9d3dc 1px, transparent 1.4px) 0 0 / 18px 18px;
-    -webkit-mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
-    mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
-  }
-  .hero.lit .spot {
-    opacity: 1;
   }
   .hero h1 {
     max-width: 22ch;
@@ -237,6 +249,22 @@ const sections = [
     border: 2px solid var(--accent);
     padding: 2px;
     background: var(--card);
+  }
+  .focus {
+    color: var(--fg-4);
+    font-weight: 400;
+  }
+  .typed {
+    color: var(--pop-deep);
+    font-weight: 500;
+    border-right: 2px solid var(--pop);
+    padding-right: 2px;
+    animation: caret 1s steps(1) infinite;
+  }
+  @keyframes caret {
+    50% {
+      border-color: transparent;
+    }
   }
   .intro {
     max-width: 60ch;

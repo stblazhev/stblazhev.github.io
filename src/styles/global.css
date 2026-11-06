@@ -93,8 +93,9 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .btn:hover { background: var(--soft); }
 .btn.primary { background: var(--accent-bg); border-color: var(--accent); font-weight: 600; }
 .btn.primary:hover { background: var(--accent-press); }
-.btn.pop { background: var(--pop); border-color: var(--pop); color: #fff; font-weight: 600; box-shadow: 0 4px 14px rgba(169, 31, 189, 0.25); }
-.btn.pop:hover { background: var(--pop-deep); border-color: var(--pop-deep); }
+/* Quiet purple: tinted, not filled. The colour is a hint, not a shout. */
+.btn.pop { background: var(--pop-bg); border-color: var(--pop-line); color: var(--pop-deep); font-weight: 600; }
+.btn.pop:hover { background: #f7e6fb; border-color: var(--pop); }
 .btn.ghost { border-color: transparent; background: transparent; color: var(--fg-2); padding: 0 8px; }
 .btn.ghost:hover { background: var(--soft); }
 
@@ -130,6 +131,19 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .empty { padding: 36px 16px; text-align: center; border: 1px dashed var(--line-2); border-radius: 12px; }
 .empty b { display: block; font-weight: 600; }
 .empty span { font-size: 13px; color: var(--fg-3); }
+
+/* ---------- Pointer glow: add data-spot to a card and put <span class="spot"></span> first inside it ---------- */
+[data-spot] { position: relative; overflow: hidden; }
+[data-spot] > :not(.spot) { position: relative; }
+.spot {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s;
+  background:
+    radial-gradient(circle 260px at var(--mx, 70%) var(--my, 30%), rgba(107, 237, 106, 0.16), transparent 70%),
+    radial-gradient(circle, #c9d3dc 1px, transparent 1.4px) 0 0 / 18px 18px;
+  -webkit-mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
+  mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
+}
+[data-spot].lit .spot { opacity: 1; }
 
 /* ---------- Long-form case study text ---------- */
 .prose { max-width: 720px; min-width: 0; color: var(--fg-2); }

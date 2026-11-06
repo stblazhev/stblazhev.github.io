@@ -9,9 +9,11 @@ interface Props {
   image?: string;
   /** Sections of this page, shown in the sticky section bar at the top. */
   sections?: { id: string; text: string }[];
+  /** "Where next?" tiles at the end of the page. href 'contact' opens the contact dialog. */
+  next?: { label: string; title: string; text: string; href: string }[];
 }
 
-const { title, description = site.description, image, sections = [] } = Astro.props;
+const { title, description = site.description, image, sections = [], next = [] } = Astro.props;
 const fullTitle = title ? `${title} · ${site.brand}` : `${site.brandFull} · ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
@@ -47,6 +49,7 @@ const nav = [
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <div class="app">
+      <div class="rail">
       <aside class="side">
         <a class="who" href="/" aria-label={`${site.brandFull}, home`}>
           <img class="logo" src={site.logo} alt="" width="30" height="36" />
@@ -77,6 +80,7 @@ const nav = [
           )
         }
       </aside>
+      </div>
 
       <main id="main" class="main">
         {
@@ -101,6 +105,34 @@ const nav = [
         }
 
         <slot />
+
+        {
+          next.length > 0 && (
+            <section class="card wn" aria-labelledby="wn-title">
+              <h2 id="wn-title">Where next?</h2>
+              <div class="wn-grid">
+                {next.map((n) => {
+                  const contact = n.href === 'contact';
+                  if (contact && !hasContact) return null;
+                  return (
+                    <a
+                      class:list={['wn-tile', { pop: contact }]}
+                      href={contact ? `mailto:${site.email}` : n.href}
+                      data-contact={contact ? '' : undefined}
+                    >
+                      <span class="label">{n.label}</span>
+                      <b>{n.title}</b>
+                      <span class="wn-text">{n.text}</span>
+                      <span class="wn-go" aria-hidden="true">
+                        <Icon name={contact ? 'chat' : 'right'} />
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )
+        }
 
         <footer class="foot">
           {site.brand} © {new Date().getFullYear()} · Portfolio by {site.name}{site.location && ` · ${site.location}`}
@@ -250,6 +282,19 @@ const nav = [
     document.fonts?.ready.then(() => current >= 0 && place(current));
     update();
     requestAnimationFrame(() => bar.classList.add('ready'));
+  }
+
+  /* ---------- Pointer glow on cards marked data-spot ---------- */
+  if (window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
+    document.querySelectorAll<HTMLElement>('[data-spot]').forEach((el) => {
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        el.style.setProperty('--my', `${e.clientY - r.top}px`);
+        el.classList.add('lit');
+      });
+      el.addEventListener('pointerleave', () => el.classList.remove('lit'));
+    });
   }
 
   /* ---------- Cards rise in as they enter the screen ---------- */
@@ -616,6 +661,83 @@ const nav = [
     margin-top: 4px;
   }
 
+  /* ---------- Where next? ---------- */
+  .wn h2 {
+    margin-bottom: 14px;
+  }
+  .wn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--gap);
+  }
+  .wn-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 64px 18px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+  .wn-tile b {
+    font-size: 17px;
+    font-weight: 600;
+    color: #000;
+  }
+  .wn-text {
+    font-size: 13px;
+    color: var(--fg-3);
+  }
+  .wn-go {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    color: var(--fg-2);
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      background 0.2s,
+      border-color 0.2s,
+      color 0.2s;
+  }
+  .wn-tile:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+    transform: translateY(-2px);
+  }
+  .wn-tile:hover .wn-go {
+    transform: translateX(4px);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  .wn-tile.pop {
+    background: var(--pop-bg);
+    border-color: var(--pop-line);
+  }
+  .wn-tile.pop .label {
+    color: var(--pop);
+  }
+  .wn-tile.pop:hover {
+    border-color: var(--pop);
+  }
+  .wn-tile.pop:hover .wn-go {
+    background: var(--pop-bg);
+    border-color: var(--pop);
+    color: var(--pop-deep);
+    transform: rotate(-12deg) scale(1.08);
+  }
+
   .foot {
     font-size: 12px;
     color: var(--fg-4);
@@ -673,6 +795,58 @@ const nav = [
     }
     .who {
       padding: 12px 8px 12px 12px;
+    }
+  }
+
+  /* ---------- Collapsing rail (desktop), like the Backoffice nav ----------
+     72px of icons while you read; opens to full width on hover or keyboard focus,
+     floating over the content so the page does not jump. */
+  @media (min-width: 901px) {
+    .rail {
+      width: 72px;
+      flex: none;
+      position: sticky;
+      top: var(--gap);
+      height: calc(100vh - 2 * var(--gap));
+      z-index: 40;
+    }
+    .side {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 72px;
+      transition:
+        width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.28s;
+    }
+    .side:hover,
+    .side:has(:focus-visible) {
+      width: 248px;
+      box-shadow: 0 18px 48px rgba(17, 24, 39, 0.14);
+      transition-delay: 0.06s;
+    }
+    .who {
+      padding: 16px 20px;
+    }
+    .nav-item {
+      padding: 0 13px;
+    }
+    .talk {
+      justify-content: flex-start;
+      padding: 0 15px;
+    }
+    .who-text,
+    .nav-item span,
+    .talk span {
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.12s;
+    }
+    .side:hover :is(.who-text, .nav-item span, .talk span),
+    .side:has(:focus-visible) :is(.who-text, .nav-item span, .talk span) {
+      opacity: 1;
+      transition: opacity 0.2s 0.12s;
     }
   }
 </style>
