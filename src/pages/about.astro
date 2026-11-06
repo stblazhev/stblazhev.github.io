@@ -9,10 +9,17 @@ const kit = [
   { label: 'iGaming domain', items: site.domain },
   { label: 'Languages', items: site.languages },
 ].filter((k) => k.items.length > 0);
+
+const sections = [
+  { id: 'about-me', text: 'About me' },
+  ...(site.experience.length ? [{ id: 'experience', text: 'Experience' }] : []),
+  ...(site.education.length ? [{ id: 'education', text: 'Education' }] : []),
+  { id: 'toolkit', text: 'Toolkit' },
+];
 ---
 
-<Base title="About" description={site.about[0]}>
-  <section class="card intro">
+<Base title="About" description={site.about[0]} sections={sections}>
+  <section id="about-me" class="card intro">
     <div class="badges">
       <span class="badge success"><span class="dot"></span>{site.role}</span>
       {site.location && <span class="badge">{site.location}</span>}
@@ -49,7 +56,7 @@ const kit = [
 
   {
     site.experience.length > 0 && (
-      <section class="card">
+      <section id="experience" class="card">
         <div class="card-head">
           <h2>Experience</h2>
         </div>
@@ -71,7 +78,7 @@ const kit = [
 
   {
     site.education.length > 0 && (
-      <section class="card">
+      <section id="education" class="card">
         <div class="card-head">
           <h2>Education</h2>
         </div>
@@ -90,7 +97,7 @@ const kit = [
     )
   }
 
-  <section class="card">
+  <section id="toolkit" class="card">
     <div class="card-head"><h2>Toolkit</h2></div>
     <div class="kit">
       {

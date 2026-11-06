@@ -2,13 +2,23 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+import ResearchLoop from '../components/ResearchLoop.astro';
 import { getProjects } from '../lib';
 
 const projects = await getProjects();
+
+const sections = [
+  { id: 'intro', text: 'Intro' },
+  ...(site.highlights.length ? [{ id: 'highlights', text: 'Highlights' }] : []),
+  { id: 'work', text: 'Case studies' },
+  { id: 'process', text: 'How I work' },
+  ...(site.testimonials.length ? [{ id: 'colleagues', text: 'Colleagues' }] : []),
+];
 ---
 
-<Base>
-  <section class="card hero">
+<Base sections={sections}>
+  <section id="intro" class="card hero" data-spot>
+    <span class="spot" aria-hidden="true"></span>
     <span class="badge success"><span class="dot"></span>{site.role}</span>
     <h1>{site.headline}</h1>
     <p class="by">
@@ -21,7 +31,7 @@ const projects = await getProjects();
       <a class="btn primary" href="#work">View case studies</a>
       {
         site.email && (
-          <a class="btn" href="#contact">
+          <a class="btn" href={`mailto:${site.email}`} data-contact>
             <Icon name="mail" /> Get in touch
           </a>
         )
@@ -31,7 +41,7 @@ const projects = await getProjects();
 
   {
     site.highlights.length > 0 && (
-      <section class="card" aria-label="Highlights">
+      <section id="highlights" class="card" aria-label="Highlights">
         <div class="kpis">
           {site.highlights.map((h) => (
             <div class="kpi">
@@ -92,33 +102,26 @@ const projects = await getProjects();
     }
   </section>
 
-  <section class="card">
+  <section id="process" class="card">
     <div class="card-head">
-      <h2>How I work</h2>
+      <div class="t">
+        <h2>How I work</h2>
+        <span class="badge">Research loop</span>
+      </div>
       <a class="btn ghost" href="/about/">More about me <Icon name="right" /></a>
     </div>
-    <div class="tiles">
-      {
-        site.approach.map((a, i) => (
-          <div class="tile">
-            <span class="label">0{i + 1}</span>
-            <h3>{a.title}</h3>
-            <p>{a.text}</p>
-          </div>
-        ))
-      }
-    </div>
+    <ResearchLoop />
   </section>
 
   {
     site.testimonials.length > 0 && (
-      <section class="card">
+      <section id="colleagues" class="card">
         <div class="card-head">
           <h2>What colleagues say</h2>
         </div>
         <div class="quotes">
-          {site.testimonials.map((t) => (
-            <figure class="quote">
+          {site.testimonials.map((t, i) => (
+            <figure class="quote" data-reveal style={`transition-delay:${i * 110}ms`}>
               <blockquote>“{t.quote}”</blockquote>
               <figcaption>
                 {t.avatar && <img class="face" src={t.avatar} alt="" width="44" height="44" loading="lazy" />}
@@ -135,13 +138,47 @@ const projects = await getProjects();
   }
 </Base>
 
+<script>
+  // Hero: a soft green light and dot grid follow the pointer
+  const hero = document.querySelector<HTMLElement>('[data-spot]');
+  if (hero && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      hero.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      hero.style.setProperty('--my', `${e.clientY - r.top}px`);
+      hero.classList.add('lit');
+    });
+    hero.addEventListener('pointerleave', () => hero.classList.remove('lit'));
+  }
+</script>
+
 <style>
   .hero {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
     padding: clamp(24px, 5vw, 48px);
+  }
+  .hero > :not(.spot) {
+    position: relative;
+  }
+  .spot {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+    background:
+      radial-gradient(circle 260px at var(--mx, 70%) var(--my, 30%), rgba(107, 237, 106, 0.16), transparent 70%),
+      radial-gradient(circle, #c9d3dc 1px, transparent 1.4px) 0 0 / 18px 18px;
+    -webkit-mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
+    mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
+  }
+  .hero.lit .spot {
+    opacity: 1;
   }
   .hero h1 {
     max-width: 22ch;
@@ -197,6 +234,24 @@ const projects = await getProjects();
     flex-direction: column;
     justify-content: space-between;
     gap: 16px;
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .quote.in:hover,
+  .quote:not(.reveal):hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+    transform: translateY(-3px);
+    transition-delay: 0s !important;
+  }
+  .face {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .quote:hover .face {
+    transform: rotate(-6deg) scale(1.08);
   }
   .quote blockquote {
     margin: 0;
@@ -307,9 +362,16 @@ const projects = await getProjects();
     background: var(--card);
     color: var(--fg-2);
   }
+  .go :global(svg) {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
   a.tr:hover .go {
     border-color: var(--accent);
-    color: var(--accent-fg);
+    background: var(--accent);
+    color: #000;
+  }
+  a.tr:hover .go :global(svg) {
+    transform: translateX(3px);
   }
 
   @media (max-width: 760px) {

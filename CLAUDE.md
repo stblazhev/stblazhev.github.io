@@ -19,7 +19,8 @@ This file is the handover for any Claude session or developer picking up the wor
 | Case study fields (the frontmatter schema) | `src/content.config.ts` |
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
-| Page shell: side nav, "On this page" links, contact card, footer | `src/layouts/Base.astro` |
+| Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
+| "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
 | Icons | `src/components/Icon.astro` |
 
 ## Design
@@ -40,7 +41,7 @@ Empty strings and empty lists in `site.ts` are hidden on the site (for example, 
 
 ### Case study structure
 
-Use `##` for main sections (they feed the "On this page" menu) and `###` for sub-sections:
+Use `##` for main sections (they become chips in the sticky section bar at the top) and `###` for sub-sections:
 
 1. **Context**: product type, users, business problem.
 2. **The challenge**: the research question and the decision that depended on it, plus constraints.
@@ -84,3 +85,10 @@ npm run build      # production build into dist/ (hides drafts)
 ```
 
 Node 22.23 or newer is required.
+
+## Navigation rules
+
+- The side nav lists pages only (Work, About). Never add an item there that scrolls within a page.
+- Each page passes `sections` ({ id, text }[]) to `Base`; they show as the sticky section bar. Give every section card a matching `id`.
+- "Get in touch" is an action, not a page: any link with `data-contact` opens the contact dialog (it falls back to `mailto:` without JavaScript).
+- All motion respects `prefers-reduced-motion`; the research loop also has a pause button.

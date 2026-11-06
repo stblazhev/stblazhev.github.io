@@ -7,17 +7,18 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
-  /** "On this page" links shown in the side panel (case studies). */
-  toc?: { slug: string; text: string }[];
+  /** Sections of this page, shown in the sticky section bar at the top. */
+  sections?: { id: string; text: string }[];
 }
 
-const { title, description = site.description, image, toc = [] } = Astro.props;
+const { title, description = site.description, image, sections = [] } = Astro.props;
 const fullTitle = title ? `${title} · ${site.brand}` : `${site.brandFull} · ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
 const path = Astro.url.pathname;
 const hasContact = Boolean(site.email || site.linkedin);
 
+// The side nav only lists pages. Contact is an action (a dialog), not a page.
 const nav = [
   { href: '/', label: 'Work', icon: 'work' as const, on: path === '/' || path.startsWith('/work') },
   { href: '/about/', label: 'About', icon: 'user' as const, on: path.startsWith('/about') },
@@ -48,14 +49,14 @@ const nav = [
     <div class="app">
       <aside class="side">
         <a class="who" href="/" aria-label={`${site.brandFull}, home`}>
-          <span class="avatar" aria-hidden="true"><img src={site.logo} alt="" width="22" height="26" /></span>
+          <img class="logo" src={site.logo} alt="" width="30" height="36" />
           <span class="who-text">
             <b>{site.brand}</b>
             <span>{site.displayName}</span>
           </span>
         </a>
 
-        <nav class="nav" aria-label="Main">
+        <nav class="nav" aria-label="Pages">
           {
             nav.map((n) => (
               <a class:list={['nav-item', { on: n.on }]} href={n.href} aria-current={n.on ? 'page' : undefined}>
@@ -64,69 +65,23 @@ const nav = [
               </a>
             ))
           }
-          {
-            hasContact && (
-              <a class="nav-item" href="#contact">
-                <Icon name="mail" />
-                <span>Contact</span>
-              </a>
-            )
-          }
         </nav>
-
-        {
-          toc.length > 2 && (
-            <nav class="toc" aria-label="On this page">
-              <p class="label">On this page</p>
-              {toc.map((h) => (
-                <a href={`#${h.slug}`}>{h.text}</a>
-              ))}
-            </nav>
-          )
-        }
 
         {
           hasContact && (
             <div class="side-foot">
-              {site.linkedin && (
-                <a class="btn" href={site.linkedin} rel="me" aria-label="LinkedIn">
-                  <Icon name="linkedin" />
-                </a>
-              )}
-              {site.email && (
-                <a class="btn" href={`mailto:${site.email}`} aria-label="Email">
-                  <Icon name="mail" />
-                </a>
-              )}
-              {site.cv && (
-                <a class="btn" href={site.cv}>
-                  <Icon name="file" /> CV
-                </a>
-              )}
-            </div>
-          )
-        }
-      </aside>
-
-      <main id="main" class="main">
-        <slot />
-
-        {
-          hasContact && (
-            <section id="contact" class="card contact">
-              <div>
-                <h2>Let’s talk research</h2>
-                <p class="muted">Open to conversations about UX research roles and projects.</p>
-              </div>
-              <div class="contact-actions">
-                {site.email && (
-                  <a class="btn primary" href={`mailto:${site.email}`}>
-                    <Icon name="mail" /> {site.email}
+              <a class="btn primary talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact>
+                <Icon name="chat" /> <span>Get in touch</span>
+              </a>
+              <div class="side-icons">
+                {site.linkedin && (
+                  <a class="btn" href={site.linkedin} rel="me" aria-label="LinkedIn">
+                    <Icon name="linkedin" />
                   </a>
                 )}
-                {site.linkedin && (
-                  <a class="btn" href={site.linkedin} rel="me">
-                    <Icon name="linkedin" /> LinkedIn
+                {site.email && (
+                  <a class="btn" href={`mailto:${site.email}`} aria-label="Email">
+                    <Icon name="mail" />
                   </a>
                 )}
                 {site.cv && (
@@ -135,17 +90,226 @@ const nav = [
                   </a>
                 )}
               </div>
-            </section>
+            </div>
           )
         }
+      </aside>
+
+      <main id="main" class="main">
+        {
+          sections.length > 1 && (
+            <div class="secwrap">
+              <nav class="secbar" aria-label="On this page">
+                <div class="sec-track">
+                  <span class="sec-ind" aria-hidden="true" />
+                  {sections.map((s) => (
+                    <a class="sec" href={`#${s.id}`} data-sec={s.id}>
+                      {s.text}
+                    </a>
+                  ))}
+                </div>
+                <a class="sec-top" href="#main" aria-label="Back to top">
+                  <Icon name="up" />
+                </a>
+                <span class="sec-progress" aria-hidden="true" />
+              </nav>
+            </div>
+          )
+        }
+
+        <slot />
 
         <footer class="foot">
           {site.brand} © {new Date().getFullYear()} · Portfolio by {site.name}{site.location && ` · ${site.location}`}
         </footer>
       </main>
     </div>
+
+    {
+      hasContact && (
+        <dialog class="contact" id="contact" aria-labelledby="contact-title">
+          <div class="contact-head">
+            <div>
+              <h2 id="contact-title">Let’s talk research</h2>
+              <p class="muted">Open to conversations about UX research roles and projects.</p>
+            </div>
+            <button class="btn ghost close" type="button" data-close aria-label="Close">
+              <Icon name="close" />
+            </button>
+          </div>
+          {site.email && (
+            <div class="contact-row">
+              <span class="contact-ico"><Icon name="mail" /></span>
+              <span class="contact-val">
+                <span class="label">Email</span>
+                <a href={`mailto:${site.email}`}>{site.email}</a>
+              </span>
+              <button class="btn copy" type="button" data-copy={site.email}>
+                <Icon name="copy" /> <span>Copy</span>
+              </button>
+            </div>
+          )}
+          {site.linkedin && (
+            <div class="contact-row">
+              <span class="contact-ico"><Icon name="linkedin" /></span>
+              <span class="contact-val">
+                <span class="label">LinkedIn</span>
+                <a href={site.linkedin} rel="me">{site.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+              </span>
+              <a class="btn" href={site.linkedin} rel="me">
+                Open <Icon name="right" />
+              </a>
+            </div>
+          )}
+          {site.email && (
+            <a class="btn primary wide" href={`mailto:${site.email}`}>
+              <Icon name="mail" /> Write an email
+            </a>
+          )}
+        </dialog>
+      )
+    }
   </body>
 </html>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Contact dialog ---------- */
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.contact');
+  if (dialog && typeof dialog.showModal === 'function') {
+    document.querySelectorAll<HTMLElement>('[data-contact]').forEach((el) =>
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        dialog.showModal();
+      }),
+    );
+    dialog.querySelector('[data-close]')?.addEventListener('click', () => dialog.close());
+    // Click on the dimmed backdrop closes it
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const label = b.querySelector('span');
+        try {
+          await navigator.clipboard.writeText(b.dataset.copy ?? '');
+          if (label) label.textContent = 'Copied';
+          b.classList.add('done');
+        } catch {
+          if (label) label.textContent = 'Select and copy';
+        }
+        setTimeout(() => {
+          if (label) label.textContent = 'Copy';
+          b.classList.remove('done');
+        }, 1800);
+      }),
+    );
+  }
+
+  /* ---------- Section bar: scroll spy, sliding indicator, progress ---------- */
+  const bar = document.querySelector<HTMLElement>('.secbar');
+  if (bar) {
+    const track = bar.querySelector<HTMLElement>('.sec-track')!;
+    const ind = bar.querySelector<HTMLElement>('.sec-ind')!;
+    const top = bar.querySelector<HTMLElement>('.sec-top')!;
+    const links = [...bar.querySelectorAll<HTMLAnchorElement>('.sec')];
+    const targets = links.map((a) => document.getElementById(a.dataset.sec!));
+    let current = -1;
+
+    const place = (i: number) => {
+      const a = links[i];
+      ind.style.width = `${a.offsetWidth}px`;
+      ind.style.transform = `translateX(${a.offsetLeft}px)`;
+      // Keep the active chip visible when the bar scrolls sideways (phones)
+      const l = a.offsetLeft - track.clientWidth / 2 + a.offsetWidth / 2;
+      track.scrollTo({ left: l, behavior: reduce ? 'auto' : 'smooth' });
+    };
+
+    const update = () => {
+      // A section counts as "current" once its top passes ~30% of the screen
+      const line = Math.max(bar.getBoundingClientRect().bottom + 32, window.innerHeight * 0.3);
+      let i = 0;
+      targets.forEach((t, k) => {
+        if (t && t.getBoundingClientRect().top <= line) i = k;
+      });
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY >= max - 2) i = targets.length - 1;
+      if (i !== current) {
+        links.forEach((a, k) => (k === i ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+        place(i);
+        current = i;
+      }
+      bar.style.setProperty('--p', String(max > 0 ? Math.min(1, window.scrollY / max) : 0));
+      top.classList.toggle('show', window.scrollY > 400);
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      if (current >= 0) place(current);
+      onScroll();
+    });
+    document.fonts?.ready.then(() => current >= 0 && place(current));
+    update();
+    requestAnimationFrame(() => bar.classList.add('ready'));
+  }
+
+  /* ---------- Cards rise in as they enter the screen ---------- */
+  if (!reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        }),
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    // Only things below the fold animate, so nothing on the first screen flickers.
+    document.querySelectorAll('.main > .card, .main > section, [data-reveal]').forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+
+    /* ---------- Numbers count up the first time they are seen ---------- */
+    const counters = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          counters.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          const m = (el.textContent ?? '').match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+          if (!m) return;
+          const [, pre, num, post] = m;
+          const end = parseFloat(num);
+          const dec = num.includes('.') ? num.split('.')[1].length : 0;
+          const start = performance.now();
+          const dur = 1200;
+          const step = (now: number) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = `${pre}${(end * eased).toFixed(dec)}${post}`;
+            if (t < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }),
+      { threshold: 0.6 },
+    );
+    document.querySelectorAll('.kpi b').forEach((el) => counters.observe(el));
+  }
+</script>
 
 <style>
   .skip {
@@ -159,7 +323,7 @@ const nav = [
     color: #fff;
     padding: 8px 12px;
     border-radius: 8px;
-    z-index: 10;
+    z-index: 30;
   }
 
   .app {
@@ -193,18 +357,14 @@ const nav = [
     padding: 16px;
     border-bottom: 1px solid var(--line);
   }
-  .avatar {
-    width: 44px;
-    height: 40px;
-    flex: none;
-    border-radius: 12px;
-    background: var(--soft);
-    display: grid;
-    place-items: center;
-  }
-  .avatar img {
-    width: 22px;
+  .logo {
+    width: 30px;
     height: auto;
+    flex: none;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .who:hover .logo {
+    transform: rotate(-12deg) scale(1.08);
   }
   .who-text {
     display: flex;
@@ -255,37 +415,20 @@ const nav = [
     font-weight: 600;
   }
 
-  .toc {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 12px 12px 0;
-    border-top: 1px solid var(--line);
-    overflow-y: auto;
-    min-height: 0;
-    scrollbar-width: thin;
-  }
-  .toc .label {
-    padding: 0 6px 6px;
-  }
-  .toc a {
-    font-size: 13px;
-    color: var(--fg-3);
-    padding: 6px;
-    border-radius: 6px;
-    line-height: 1.35;
-  }
-  .toc a:hover {
-    background: var(--zebra);
-    color: var(--fg);
-  }
-
   .side-foot {
     margin-top: auto;
     display: flex;
+    flex-direction: column;
     gap: 8px;
     padding: 12px;
     border-top: 1px solid var(--line);
+  }
+  .side-icons {
+    display: flex;
+    gap: 8px;
+  }
+  .side-icons .btn {
+    flex: 1;
   }
 
   .main {
@@ -296,21 +439,198 @@ const nav = [
     gap: var(--gap);
   }
 
-  .contact {
+  /* ---------- Sticky section bar ---------- */
+  .secwrap {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin-top: calc(-1 * var(--gap));
+    padding-top: var(--gap);
+    background: var(--bg);
+  }
+  .secbar {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
   }
-  .contact .muted {
+  .sec-track {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sec-track::-webkit-scrollbar {
+    display: none;
+  }
+  .sec {
+    position: relative;
+    z-index: 1;
+    flex: none;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg-3);
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .sec:hover {
+    color: var(--fg);
+  }
+  .sec[aria-current] {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .sec-ind {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 34px;
+    width: 0;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent);
+  }
+  .secbar.ready .sec-ind {
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sec-top {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--line-2);
+    color: var(--fg-2);
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+  }
+  .sec-top.show {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .sec-top:hover {
+    border-color: var(--accent);
+    color: var(--accent-fg);
+  }
+  .sec-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+  }
+
+  /* ---------- Contact dialog ---------- */
+  .contact {
+    width: min(460px, calc(100vw - 32px));
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: 0 24px 60px rgba(17, 24, 39, 0.18);
+    color: var(--fg);
+    background: var(--card);
+  }
+  .contact[open] {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: pop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .contact::backdrop {
+    background: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(3px);
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+  }
+  .contact-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .contact-head .muted {
     margin-top: 4px;
     font-size: 14px;
   }
-  .contact-actions {
+  .close {
+    width: 36px;
+    padding: 0;
+    flex: none;
+  }
+  .contact-row {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .contact-ico {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+  }
+  .contact-val {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    line-height: 1.35;
+  }
+  .contact-val a {
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .contact-val a:hover {
+    color: var(--accent-fg);
+  }
+  .copy.done {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+  }
+  .wide {
+    width: 100%;
+    height: 42px;
+    margin-top: 4px;
   }
 
   .foot {
@@ -331,29 +651,48 @@ const nav = [
       height: auto;
       flex-direction: row;
       align-items: center;
-      justify-content: space-between;
       flex-wrap: wrap;
     }
     .who {
       border-bottom: 0;
       padding: 12px;
+      margin-right: auto;
     }
     .nav {
       flex-direction: row;
-      padding: 12px;
+      padding: 12px 0;
     }
     .nav-item {
       padding: 0 12px;
     }
-    .toc,
     .side-foot {
+      margin: 0;
+      border-top: 0;
+      padding: 12px;
+    }
+    .side-icons {
       display: none;
     }
+    .talk {
+      height: 40px;
+    }
+    .secwrap {
+      margin-top: 0;
+      padding-top: 8px;
+    }
   }
-  @media (max-width: 520px) {
+  @media (max-width: 560px) {
     .who-text span,
-    .nav-item:not(.on) span {
+    .nav-item:not(.on) span,
+    .talk span {
       display: none;
+    }
+    .talk {
+      width: 40px;
+      padding: 0;
+    }
+    .who {
+      padding: 12px 8px 12px 12px;
     }
   }
 </style>

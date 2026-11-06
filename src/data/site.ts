@@ -43,23 +43,36 @@ export const site = {
     'Before research, I spent three years in operations at TELUS Digital, ending as a team lead for 50+ people. That taught me hiring, coaching and how to measure what matters, which I now bring to research.',
   ],
 
-  // Research process (from the original portfolio)
+  // Research process (from the original portfolio). Shown as the interactive
+  // "research loop" on the home page: `uses` are the chips, `output` is what the step hands over.
   approach: [
     {
       title: 'Uncover the unknown',
+      short: 'Discover',
       text: 'Through exploration and empathy, identify the user needs, motivations and pain points that shape every project.',
+      uses: ['Stakeholder interviews', 'Competitive analysis', 'GA4 and Clarity data'],
+      output: 'Research questions and hypotheses',
     },
     {
       title: 'Make sense of the mess',
+      short: 'Synthesise',
       text: 'Synthesise findings into clear insights and actionable problem statements that guide design decisions.',
+      uses: ['Funnel analysis', 'Session recordings', 'Thematic synthesis'],
+      output: 'Insights and problem statements',
     },
     {
       title: 'Prototype, test, repeat',
+      short: 'Test',
       text: 'Bring ideas to life through iterative testing, validating assumptions and refining solutions with real user and stakeholder feedback.',
+      uses: ['Figma and Framer prototypes', 'Useberry and UXtweak tests', 'Concept and preference tests'],
+      output: 'Validated flows',
     },
     {
       title: 'Insight into action',
+      short: 'Act',
       text: 'Translate research outcomes into strategic recommendations that drive design and business results.',
+      uses: ['Prioritised recommendations', 'KPI frameworks', 'Stakeholder readouts'],
+      output: 'Decisions Product can act on',
     },
   ],
 

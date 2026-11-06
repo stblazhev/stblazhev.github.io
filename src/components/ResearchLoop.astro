@@ -1,0 +1,475 @@
+---
+// "How I work" as a live research loop: a ring that fills step by step,
+// with tabs and a detail panel. Autoplays while on screen, pauses on hover,
+// focus or the pause button, and stays still for reduced-motion users.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const steps = site.approach;
+const C = 150; // ring centre
+const R = 100; // ring radius
+const pos = (i: number) => {
+  const a = ((-90 + (360 / steps.length) * i) * Math.PI) / 180;
+  return { x: C + R * Math.cos(a), y: C + R * Math.sin(a) };
+};
+// Where each short label sits around its node
+const labelAt = (i: number) => {
+  const p = pos(i);
+  if (p.y < C - 10) return { x: p.x, y: p.y - 32 };
+  if (p.y > C + 10) return { x: p.x, y: p.y + 40 };
+  return { x: p.x, y: p.y + 38 };
+};
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="loop" data-loop>
+  <div class="ring-wrap">
+    <svg class="ring" viewBox="0 0 300 300" role="img" aria-label={`Research loop: ${steps.map((s) => s.short).join(', ')}, then repeat`}>
+      <circle class="track" cx={C} cy={C} r={R} />
+      <circle class="arc" cx={C} cy={C} r={R} pathLength="100" transform={`rotate(-90 ${C} ${C})`} />
+      <circle class="head" r="6" cx={C} cy={C - R} />
+      {
+        steps.map((s, i) => {
+          const p = pos(i);
+          const l = labelAt(i);
+          return (
+            <g class="node" data-node={i} transform={`translate(${p.x} ${p.y})`}>
+              <circle r="20" />
+              <text dy="5">{pad(i + 1)}</text>
+              <text class="nl" x={l.x - p.x} y={l.y - p.y}>
+                {s.short}
+              </text>
+            </g>
+          );
+        })
+      }
+      <text class="big" x={C} y={C + 6} data-big>01</text>
+      <text class="small" x={C} y={C + 30}>of {pad(steps.length)} · repeat</text>
+    </svg>
+  </div>
+
+  <div class="detail">
+    <div class="tabs" role="tablist" aria-label="Research steps">
+      {
+        steps.map((s, i) => (
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            id={`step-tab-${i}`}
+            aria-controls={`step-panel-${i}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={i}
+          >
+            <span class="tn">{pad(i + 1)}</span>
+            {s.short}
+            <span class="fill" aria-hidden="true" />
+          </button>
+        ))
+      }
+      <button class="btn ghost playpause" type="button" aria-label="Pause the animation" data-toggle>
+        <span class="i-pause"><Icon name="pause" /></span>
+        <span class="i-play"><Icon name="play" /></span>
+      </button>
+    </div>
+
+    {
+      steps.map((s, i) => (
+        <div
+          class="panel"
+          role="tabpanel"
+          id={`step-panel-${i}`}
+          aria-labelledby={`step-tab-${i}`}
+          hidden={i !== 0}
+          data-panel={i}
+        >
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+          <div class="cols">
+            <div>
+              <p class="label">What I use</p>
+              <div class="badges">
+                {s.uses.map((u) => (
+                  <span class="badge">{u}</span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p class="label">Hands over</p>
+              <p class="out">
+                <Icon name="right" /> {s.output}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const DUR = 5200; // ms per step
+
+  document.querySelectorAll<HTMLElement>('[data-loop]').forEach((root) => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+    const nodes = [...root.querySelectorAll<SVGGElement>('[data-node]')];
+    const arc = root.querySelector<SVGCircleElement>('.arc')!;
+    const head = root.querySelector<SVGCircleElement>('.head')!;
+    const big = root.querySelector<SVGTextElement>('[data-big]')!;
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const n = tabs.length;
+
+    let step = 0;
+    let t = 0; // progress inside the current step, 0..1
+    let playing = !reduce; // the user's choice (pause button)
+    let held = false; // hover or keyboard focus inside the loop
+    let visible = false;
+    let last = 0;
+
+    const draw = () => {
+      const p = (step + t) / n;
+      arc.style.strokeDasharray = `${p * 100} 100`;
+      const a = (-90 + 360 * p) * (Math.PI / 180);
+      head.setAttribute('cx', String(150 + 100 * Math.cos(a)));
+      head.setAttribute('cy', String(150 + 100 * Math.sin(a)));
+      tabs[step].style.setProperty('--t', String(t));
+    };
+
+    const select = (i: number, focus = false) => {
+      step = (i + n) % n;
+      t = 0;
+      tabs.forEach((b, k) => {
+        const on = k === step;
+        b.setAttribute('aria-selected', String(on));
+        b.tabIndex = on ? 0 : -1;
+        b.style.setProperty('--t', '0');
+      });
+      panels.forEach((p, k) => (p.hidden = k !== step));
+      nodes.forEach((g, k) => {
+        g.classList.toggle('on', k === step);
+        g.classList.toggle('done', k < step);
+      });
+      big.textContent = String(step + 1).padStart(2, '0');
+      big.classList.remove('bump');
+      void big.getBBox();
+      big.classList.add('bump');
+      if (focus) tabs[step].focus();
+      draw();
+    };
+
+    const frame = (now: number) => {
+      const dt = last ? now - last : 0;
+      last = now;
+      if (playing && !held && visible) {
+        t += dt / DUR;
+        if (t >= 1) select(step + 1);
+        else draw();
+      }
+      requestAnimationFrame(frame);
+    };
+
+    const setPlaying = (on: boolean) => {
+      playing = on;
+      root.classList.toggle('paused', !on);
+      toggle.setAttribute('aria-label', on ? 'Pause the animation' : 'Play the animation');
+    };
+
+    tabs.forEach((b, i) => {
+      b.addEventListener('click', () => select(i));
+      b.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') select(step + 1, true);
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') select(step - 1, true);
+        else if (e.key === 'Home') select(0, true);
+        else if (e.key === 'End') select(n - 1, true);
+        else return;
+        e.preventDefault();
+      });
+    });
+    nodes.forEach((g, i) => g.addEventListener('click', () => select(i)));
+    toggle.addEventListener('click', () => setPlaying(!playing));
+
+    // Hold while the pointer is over the loop, or while a keyboard user is inside it
+    let hover = false;
+    let kbd = false;
+    const sync = () => (held = hover || kbd);
+    root.addEventListener('pointerenter', () => ((hover = true), sync()));
+    root.addEventListener('pointerleave', () => ((hover = false), sync()));
+    root.addEventListener('focusin', (e) => {
+      kbd = (e.target as Element).matches(':focus-visible');
+      sync();
+    });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node)) kbd = false;
+      sync();
+    });
+
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.35 }).observe(root);
+
+    setPlaying(playing);
+    select(0);
+    requestAnimationFrame(frame);
+  });
+</script>
+
+<style>
+  .loop {
+    display: grid;
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+    gap: clamp(16px, 3vw, 36px);
+    align-items: center;
+  }
+
+  /* ---------- Ring ---------- */
+  .ring {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .track {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 6;
+    stroke-dasharray: 2 6;
+    stroke-linecap: round;
+  }
+  .arc {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 0 100;
+  }
+  .head {
+    fill: var(--accent-fg);
+    stroke: #fff;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 6px rgba(107, 237, 106, 0.9));
+  }
+  .node {
+    cursor: pointer;
+  }
+  .node circle {
+    fill: #fff;
+    stroke: var(--line-2);
+    stroke-width: 1.5;
+    transition:
+      fill 0.3s,
+      stroke 0.3s,
+      r 0.3s;
+  }
+  .node text {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--fg-3);
+    text-anchor: middle;
+    transition: fill 0.3s;
+  }
+  .node .nl {
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--fg-4);
+  }
+  .node:hover circle {
+    stroke: var(--accent);
+  }
+  .node.done circle {
+    fill: var(--accent-bg);
+    stroke: var(--accent);
+  }
+  .node.done text:not(.nl) {
+    fill: var(--accent-fg);
+  }
+  .node.on circle {
+    fill: var(--accent);
+    stroke: var(--accent-fg);
+    r: 24;
+  }
+  .node.on text {
+    fill: #000;
+  }
+  .node.on .nl {
+    fill: var(--fg);
+    font-weight: 600;
+  }
+  .big {
+    font-family: var(--font);
+    font-size: 44px;
+    font-weight: 600;
+    fill: #000;
+    text-anchor: middle;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .big.bump {
+    animation: bump 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes bump {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.85);
+    }
+  }
+  .small {
+    font-family: var(--font);
+    font-size: 12px;
+    fill: var(--fg-4);
+    text-anchor: middle;
+  }
+
+  /* ---------- Tabs ---------- */
+  .detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg-2);
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .tab:hover {
+    background: var(--zebra);
+  }
+  .tn {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-4);
+  }
+  .tab[aria-selected='true'] {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: #000;
+    font-weight: 600;
+  }
+  .tab[aria-selected='true'] .tn {
+    color: var(--accent-fg);
+  }
+  .fill {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(var(--t, 0));
+  }
+  .tab[aria-selected='false'] .fill {
+    display: none;
+  }
+  .playpause {
+    margin-left: auto;
+    width: 36px;
+    padding: 0;
+  }
+  .i-play,
+  .loop.paused .i-pause {
+    display: none;
+  }
+  .loop.paused .i-play {
+    display: inline-flex;
+  }
+  .i-pause {
+    display: inline-flex;
+  }
+
+  /* ---------- Panel ---------- */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    animation: in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .panel[hidden] {
+    display: none;
+  }
+  @keyframes in {
+    from {
+      opacity: 0;
+      transform: translateX(14px);
+    }
+  }
+  .panel h3 {
+    font-size: 20px;
+  }
+  .panel > p {
+    color: var(--fg-2);
+    max-width: 58ch;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .cols .label {
+    margin-bottom: 8px;
+  }
+  .out {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-fg);
+  }
+
+  @media (max-width: 1100px) {
+    .loop {
+      grid-template-columns: 1fr;
+    }
+    .ring-wrap {
+      max-width: 280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+  @media (max-width: 600px) {
+    .loop {
+      position: relative;
+    }
+    /* Pause sits in the ring's corner so the four tabs keep one row */
+    .playpause {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .cols {
+      grid-template-columns: 1fr;
+    }
+    .tab {
+      padding: 0 10px;
+    }
+    .tn {
+      display: none;
+    }
+  }
+</style>

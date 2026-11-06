@@ -15,7 +15,10 @@ export async function getStaticPaths() {
 const { project, next } = Astro.props;
 const { data } = project;
 const { Content, headings } = await render(project);
-const toc = headings.filter((h) => h.depth === 2);
+const sections = [
+  { id: 'overview', text: 'Overview' },
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ id: h.slug, text: h.text })),
+];
 
 const meta = [
   { label: 'Role', value: data.role },
@@ -25,13 +28,13 @@ const meta = [
 ].filter((m) => m.value);
 ---
 
-<Base title={data.title} description={data.summary} image={data.cover} toc={toc}>
+<Base title={data.title} description={data.summary} image={data.cover} sections={sections}>
   <div class="page-head">
     <a class="btn" href="/#work"><Icon name="back" /> All case studies</a>
     {data.draft && <span class="badge warn">Draft: only visible locally</span>}
   </div>
 
-  <header class="card head">
+  <header id="overview" class="card head">
     <span class="ctx">{data.context}</span>
     <h1>{data.title}</h1>
     <p class="lead">{data.summary}</p>
