@@ -95,7 +95,7 @@ Node 22.23 or newer is required.
 - All motion respects `prefers-reduced-motion`; the research loop also has a pause button.
 - Colour: green (`--accent`) is the system colour. The logo purple (`--pop*` tokens, `.btn.pop`, `.badge.pop`) is an attention colour, kept to a few places: the Get in touch / Write an email buttons (tinted, never filled), the hero typing word, the headline highlighter (`site.headlineMark`) and the back of the highlight cards. Do not spread it further.
 - The side panel has one contact action (Get in touch). Email, LinkedIn and CV live inside the contact dialog only.
-- Desktop side nav is a 72px icon rail that opens to 248px on hover or keyboard focus, floating over the content (Base.astro, "Collapsing rail"). Below 900px it is a top bar.
+- Desktop side nav is a 72px icon rail that widens to 248px on hover or keyboard focus and pushes the content aside, never covering it; it is only as tall as its items (Base.astro, "Collapsing rail"). Below 900px it is a top bar.
 - Pointer glow: add `data-spot` to a card and `<span class="spot" aria-hidden="true"></span>` as its first child (Home intro, About me).
 - Pages can pass `next` to `Base` for the "Where next?" tiles at the end; `href: 'contact'` opens the contact dialog.
 - About > Experience is a timeline; a role whose period contains "now" is highlighted as the current role.

@@ -799,32 +799,30 @@ const nav = [
   }
 
   /* ---------- Collapsing rail (desktop), like the Backoffice nav ----------
-     72px of icons while you read; opens to full width on hover or keyboard focus,
-     floating over the content so the page does not jump. */
+     72px of icons while you read; widens to 248px on hover or keyboard focus and
+     pushes the content aside (it never covers it). Only as tall as its items. */
   @media (min-width: 901px) {
     .rail {
       width: 72px;
       flex: none;
       position: sticky;
       top: var(--gap);
-      height: calc(100vh - 2 * var(--gap));
+      align-self: flex-start;
       z-index: 40;
+      transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .rail:hover,
+    .rail:has(:focus-visible) {
+      width: 248px;
+      transition-delay: 0.06s;
     }
     .side {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 72px;
-      transition:
-        width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.28s;
+      position: static;
+      width: 100%;
+      height: auto;
     }
-    .side:hover,
-    .side:has(:focus-visible) {
-      width: 248px;
-      box-shadow: 0 18px 48px rgba(17, 24, 39, 0.14);
-      transition-delay: 0.06s;
+    .side-foot {
+      margin-top: 0;
     }
     .who {
       padding: 16px 20px;
@@ -843,8 +841,8 @@ const nav = [
       opacity: 0;
       transition: opacity 0.12s;
     }
-    .side:hover :is(.who-text, .nav-item span, .talk span),
-    .side:has(:focus-visible) :is(.who-text, .nav-item span, .talk span) {
+    .rail:hover :is(.who-text, .nav-item span, .talk span),
+    .rail:has(:focus-visible) :is(.who-text, .nav-item span, .talk span) {
       opacity: 1;
       transition: opacity 0.2s 0.12s;
     }
