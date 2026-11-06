@@ -8,6 +8,8 @@ export const site = {
 
   name: 'Stefan Blazhev',
   displayName: 'Stefan Blazhev',
+  // Small round portrait, shown next to the name. Leave empty to hide.
+  photo: '',
   role: 'UX Researcher · iGaming',
 
   // Browser tab and link previews.
@@ -146,18 +148,21 @@ export const site = {
         'Being a good researcher means having a certain perspective on the world. He already has this as an inner quality, which is why working with him is both valuable and inspiring. Stefan asks questions, explores and challenges perspectives.',
       name: 'Martina Demirova',
       title: 'UX Research Team Lead, ALL IN Platform',
+      avatar: '/people/martina.png',
     },
     {
       quote:
         'Always seeking to understand the context, rather than merely meeting the minimum requirements. Becoming increasingly quick and confident in his work. Should be proud of taking on real complex tasks boldly, while completing them to a high standard.',
       name: 'Hilda Miteva',
       title: 'UX Researcher, ALL IN Platform',
+      avatar: '/people/hilda.png',
     },
     {
       quote:
         'A young and highly driven professional with great potential and a sharp eye for detail. His focus on UX research is impressive, complemented by a precise sense of UI and visual culture. Bold, well-reasoned, and always ready with thoughtful alternative solutions.',
       name: 'Aleksandar Parashkevov',
       title: 'Product Design Team Lead, ALL IN Platform',
+      avatar: '/people/aleksandar.png',
     },
   ],
 };

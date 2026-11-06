@@ -17,7 +17,10 @@ const kit = [
       <span class="badge success"><span class="dot"></span>{site.role}</span>
       {site.location && <span class="badge">{site.location}</span>}
     </div>
-    <h1>{site.displayName}</h1>
+    <div class="name">
+      {site.photo && <img class="me" src={site.photo} alt={site.name} width="72" height="72" />}
+      <h1>{site.displayName}</h1>
+    </div>
     <div class="bio">
       {site.about.map((p) => <p>{p}</p>)}
     </div>
@@ -113,6 +116,20 @@ const kit = [
     align-items: flex-start;
     gap: 16px;
     padding: clamp(24px, 5vw, 48px);
+  }
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .me {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    padding: 3px;
+    background: var(--card);
   }
   .bio {
     display: flex;
