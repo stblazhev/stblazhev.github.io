@@ -3,16 +3,23 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import ResearchLoop from '../components/ResearchLoop.astro';
+import Highlights from '../components/Highlights.astro';
 import { getProjects } from '../lib';
 
 const projects = await getProjects();
+
+// Part of the headline gets the purple highlighter stroke (site.headlineMark)
+const [hBefore, hAfter] = site.headlineMark && site.headline.includes(site.headlineMark)
+  ? site.headline.split(site.headlineMark)
+  : [site.headline, ''];
+const hasMark = hBefore !== site.headline || hAfter !== '';
 
 const sections = [
   { id: 'intro', text: 'Intro' },
   ...(site.highlights.length ? [{ id: 'highlights', text: 'Highlights' }] : []),
   { id: 'work', text: 'Case studies' },
   { id: 'process', text: 'How I work' },
-  ...(site.testimonials.length ? [{ id: 'colleagues', text: 'Colleagues' }] : []),
+  ...(site.testimonials.length ? [{ id: 'references', text: 'References' }] : []),
 ];
 ---
 
@@ -20,7 +27,13 @@ const sections = [
   <section id="intro" class="card hero" data-spot>
     <span class="spot" aria-hidden="true"></span>
     <span class="badge success"><span class="dot"></span>{site.role}</span>
-    <h1>{site.headline}</h1>
+    <h1>
+      {hasMark ? (
+        <>{hBefore}<span class="mark">{site.headlineMark}</span>{hAfter}</>
+      ) : (
+        site.headline
+      )}
+    </h1>
     <p class="by">
       {site.photo && <img class="me" src={site.photo} alt={site.name} width="40" height="40" />}
       {site.displayName}
@@ -41,15 +54,17 @@ const sections = [
 
   {
     site.highlights.length > 0 && (
-      <section id="highlights" class="card" aria-label="Highlights">
-        <div class="kpis">
-          {site.highlights.map((h) => (
-            <div class="kpi">
-              <b>{h.value}</b>
-              <span>{h.label}</span>
-            </div>
-          ))}
+      <section id="highlights" class="card">
+        <div class="card-head">
+          <div class="t">
+            <h2>Highlights</h2>
+            <span class="badge">{site.highlights.length}</span>
+          </div>
+          <span class="hl-hint">
+            <Icon name="flip" size={14} /> Tap a card for the story behind the number
+          </span>
         </div>
+        <Highlights />
       </section>
     )
   }
@@ -115,9 +130,12 @@ const sections = [
 
   {
     site.testimonials.length > 0 && (
-      <section id="colleagues" class="card">
+      <section id="references" class="card">
         <div class="card-head">
-          <h2>What colleagues say</h2>
+          <div class="t">
+            <h2>References</h2>
+            <span class="badge">What colleagues say</span>
+          </div>
         </div>
         <div class="quotes">
           {site.testimonials.map((t, i) => (
@@ -183,6 +201,25 @@ const sections = [
   .hero h1 {
     max-width: 22ch;
     font-size: clamp(28px, 4vw, 44px);
+  }
+  /* Purple highlighter stroke that draws in under part of the headline */
+  .mark {
+    background: linear-gradient(transparent 62%, rgba(169, 31, 189, 0.2) 62%, rgba(169, 31, 189, 0.2) 92%, transparent 92%) no-repeat 0 0 / 100% 100%;
+    animation: mark 1.1s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  @keyframes mark {
+    from {
+      background-size: 0% 100%;
+    }
+  }
+  .hl-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fg-4);
   }
   .by {
     display: flex;

@@ -20,6 +20,12 @@
   --accent-press: #e3fbe3;
   --accent-fg: #298c33;
 
+  /* Logo purple: an attention colour, used sparingly (contact CTA, headline mark, highlight stories) */
+  --pop: #a91fbd;
+  --pop-deep: #7e1aa8;
+  --pop-bg: #fcf3fe;
+  --pop-line: #ecc8f3;
+
   --font: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --r-card: 16px;
@@ -87,6 +93,8 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .btn:hover { background: var(--soft); }
 .btn.primary { background: var(--accent-bg); border-color: var(--accent); font-weight: 600; }
 .btn.primary:hover { background: var(--accent-press); }
+.btn.pop { background: var(--pop); border-color: var(--pop); color: #fff; font-weight: 600; box-shadow: 0 4px 14px rgba(169, 31, 189, 0.25); }
+.btn.pop:hover { background: var(--pop-deep); border-color: var(--pop-deep); }
 .btn.ghost { border-color: transparent; background: transparent; color: var(--fg-2); padding: 0 8px; }
 .btn.ghost:hover { background: var(--soft); }
 
@@ -97,6 +105,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
   color: var(--fg-2); font-size: 12px; font-weight: 500; white-space: nowrap;
 }
 .badge.success { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-fg); }
+.badge.pop { background: var(--pop-bg); border-color: var(--pop-line); color: var(--pop-deep); }
 .badge.warn { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

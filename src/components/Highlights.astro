@@ -1,0 +1,417 @@
+---
+// Highlights as flip cards. Front: the number (counts up), a label and a small
+// animated picture that replays on hover. Click / tap flips to the story behind it.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const people = Array.from({ length: 50 }, (_, i) => ({ x: 6 + (i % 10) * 12, y: 8 + Math.floor(i / 10) * 11, i }));
+const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4 + Math.floor(i / 20) * 11, i }));
+---
+
+<div class="hls">
+  {
+    site.highlights.map((h, k) => (
+      <button class="hl" type="button" aria-expanded="false" data-hl>
+        <span class="hl-in">
+          <span class="side front">
+            <span class="top">
+              <b class="num" data-count>{h.value}</b>
+              <span class="hint" aria-hidden="true">
+                <Icon name="flip" size={14} />
+              </span>
+            </span>
+            <span class="lbl">{h.label}</span>
+
+            {h.viz === 'bars' && (
+              <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
+                <line x1="8" y1="50" x2="112" y2="50" class="base" />
+                <rect class="bar b1" x="24" y="22" width="28" height="28" rx="4" />
+                <rect class="bar b2" x="68" y="11" width="28" height="39" rx="4" />
+                <text class="tag" x="82" y="6">+40%</text>
+                <text x="38" y="62">Before</text>
+                <text x="82" y="62">After</text>
+              </svg>
+            )}
+
+            {h.viz === 'race' && (
+              <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
+                <text x="0" y="21" class="l">Before</text>
+                <line x1="36" y1="18" x2="114" y2="18" class="base" />
+                <line x1="36" y1="18" x2="114" y2="18" class="run slow" />
+                <circle cx="36" cy="18" r="4" class="dot slow" />
+                <text x="0" y="47" class="l">Now</text>
+                <line x1="36" y1="44" x2="114" y2="44" class="base" />
+                <line x1="36" y1="44" x2="114" y2="44" class="run fast" />
+                <circle cx="36" cy="44" r="4" class="dot fast" />
+                <text x="114" y="60" class="tag r">9x faster</text>
+              </svg>
+            )}
+
+            {h.viz === 'people' && (
+              <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
+                {people.map((p) => (
+                  <circle class="pop" cx={p.x} cy={p.y} r="3.4" style={`--i:${p.i}`} />
+                ))}
+              </svg>
+            )}
+
+            {h.viz === 'tally' && (
+              <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
+                {ticks.map((t) => (
+                  <rect class="tick" x={t.x} y={t.y} width="2.6" height="8" rx="1.3" style={`--i:${t.i}`} />
+                ))}
+              </svg>
+            )}
+          </span>
+
+          <span class="side back" aria-hidden="true">
+            <span class="label">Where it comes from</span>
+            <span class="where">{h.where}</span>
+            <span class="org">{h.org}</span>
+            <span class="story">{h.story}</span>
+            {h.tag && <span class="badge pop">{h.tag}</span>}
+          </span>
+        </span>
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-hl]').forEach((card) => {
+    const front = card.querySelector('.front')!;
+    const back = card.querySelector('.back')!;
+
+    const play = () => {
+      card.classList.remove('play');
+      void card.offsetWidth; // restart the CSS animations
+      card.classList.add('play');
+    };
+
+    card.addEventListener('click', () => {
+      const open = card.getAttribute('aria-expanded') !== 'true';
+      card.setAttribute('aria-expanded', String(open));
+      front.setAttribute('aria-hidden', String(open));
+      back.setAttribute('aria-hidden', String(!open));
+      if (!open) play();
+    });
+    card.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'mouse' && card.getAttribute('aria-expanded') !== 'true') play();
+    });
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting) {
+            play();
+            io.disconnect();
+          }
+        },
+        { threshold: 0.5 },
+      );
+      io.observe(card);
+    }
+  });
+</script>
+
+<style>
+  .hls {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  @media (max-width: 1100px) {
+    .hls {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  /* ---------- Flip card ---------- */
+  .hl {
+    perspective: 900px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 12px;
+    min-width: 0;
+  }
+  .hl-in {
+    display: grid;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hl[aria-expanded='true'] .hl-in {
+    transform: rotateY(180deg);
+  }
+  .side {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    min-width: 0;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .hl:hover .front {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+  }
+  .back {
+    transform: rotateY(180deg);
+    background: var(--pop-bg);
+    border-color: var(--pop-line);
+  }
+
+  /* ---------- Front ---------- */
+  .top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .num {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: #000;
+    font-variant-numeric: tabular-nums;
+  }
+  .hint {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    color: var(--fg-4);
+    transition:
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .hl:hover .hint {
+    transform: rotate(180deg);
+    color: var(--pop);
+    border-color: var(--pop-line);
+  }
+  .lbl {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--fg-3);
+    min-height: 3.6em;
+  }
+  .viz {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    margin-top: auto;
+    padding-top: 8px;
+    overflow: visible;
+  }
+  .viz text {
+    font-family: var(--font);
+    font-size: 9px;
+    fill: var(--fg-4);
+    text-anchor: middle;
+  }
+  .viz text.l {
+    text-anchor: start;
+  }
+  .viz text.r {
+    text-anchor: end;
+  }
+  .viz .tag {
+    font-weight: 600;
+    fill: var(--accent-fg);
+  }
+  .base {
+    stroke: var(--line);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  /* bars */
+  .bar {
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+  .b1 {
+    fill: var(--line-2);
+  }
+  .b2 {
+    fill: var(--accent);
+  }
+  .play .bar {
+    animation: grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .play .b2 {
+    animation-delay: 0.35s;
+  }
+  .play .bars-tag,
+  .play .b2 ~ .tag {
+    animation: fade 0.4s 1s backwards;
+  }
+  @keyframes grow {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* race */
+  .run {
+    stroke-width: 2;
+    stroke-linecap: round;
+    transform-box: fill-box;
+    transform-origin: left;
+  }
+  .run.slow {
+    stroke: var(--line-2);
+  }
+  .run.fast {
+    stroke: var(--accent);
+  }
+  .dot {
+    transform: translateX(78px);
+  }
+  .dot.slow {
+    fill: var(--fg-4);
+  }
+  .dot.fast {
+    fill: var(--accent-fg);
+  }
+  .play .slow {
+    animation-duration: 2.7s;
+  }
+  .play .fast {
+    animation-duration: 0.3s;
+  }
+  .play .run {
+    animation-name: line;
+    animation-timing-function: linear;
+    animation-fill-mode: backwards;
+    animation-delay: 0.2s;
+  }
+  .play .dot {
+    animation-name: move;
+    animation-timing-function: linear;
+    animation-fill-mode: backwards;
+    animation-delay: 0.2s;
+  }
+  .play .viz .tag.r {
+    animation: fade 0.4s 0.5s backwards;
+  }
+  @keyframes line {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes move {
+    from {
+      transform: translateX(0);
+    }
+  }
+
+  /* people and tally */
+  .pop {
+    fill: var(--accent);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .pop:nth-child(10n + 1),
+  .pop:nth-child(7n) {
+    fill: var(--accent-fg);
+  }
+  .tick {
+    fill: var(--line-2);
+  }
+  .tick:nth-child(5n) {
+    fill: var(--accent-fg);
+  }
+  .play .pop {
+    animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(var(--i) * 18ms);
+  }
+  .play .tick {
+    animation: fade 0.2s backwards;
+    animation-delay: calc(var(--i) * 9ms);
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0);
+    }
+  }
+
+  /* ---------- Back ---------- */
+  .back .label {
+    color: var(--pop);
+  }
+  .where {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+  .org {
+    font-size: 12px;
+    color: var(--fg-3);
+  }
+  .story {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--fg-2);
+    margin-top: 4px;
+  }
+  .back .badge {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  @media (max-width: 420px) {
+    .hls {
+      grid-template-columns: 1fr;
+    }
+    /* One column: number and label on the left, picture on the right */
+    .front {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px;
+      column-gap: 14px;
+      align-items: center;
+      align-content: center;
+      position: relative;
+    }
+    .hint {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .front .viz {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin: 0;
+      padding: 0;
+    }
+    .front .top,
+    .front .lbl {
+      grid-column: 1;
+    }
+    .lbl {
+      min-height: 0;
+    }
+  }
+</style>

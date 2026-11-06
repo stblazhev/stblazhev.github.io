@@ -20,6 +20,7 @@ This file is the handover for any Claude session or developer picking up the wor
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
 | Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
+| Highlights flip cards (number count-up, animated picture, story on the back; content from `site.highlights`) | `src/components/Highlights.astro` |
 | "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
 | Icons | `src/components/Icon.astro` |
 
@@ -92,3 +93,5 @@ Node 22.23 or newer is required.
 - Each page passes `sections` ({ id, text }[]) to `Base`; they show as the sticky section bar. Give every section card a matching `id`.
 - "Get in touch" is an action, not a page: any link with `data-contact` opens the contact dialog (it falls back to `mailto:` without JavaScript).
 - All motion respects `prefers-reduced-motion`; the research loop also has a pause button.
+- Colour: green (`--accent`) is the system colour. The logo purple (`--pop*` tokens, `.btn.pop`, `.badge.pop`) is an attention colour, kept to a few places: the Get in touch / Write an email buttons, the headline highlighter (`site.headlineMark`) and the back of the highlight cards. Do not spread it further.
+- The side panel has one contact action (Get in touch). Email, LinkedIn and CV live inside the contact dialog only.

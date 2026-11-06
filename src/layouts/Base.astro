@@ -21,7 +21,7 @@ const hasContact = Boolean(site.email || site.linkedin);
 // The side nav only lists pages. Contact is an action (a dialog), not a page.
 const nav = [
   { href: '/', label: 'Work', icon: 'work' as const, on: path === '/' || path.startsWith('/work') },
-  { href: '/about/', label: 'About', icon: 'user' as const, on: path.startsWith('/about') },
+  { href: '/about/', label: 'About', icon: 'idcard' as const, on: path.startsWith('/about') },
 ];
 ---
 
@@ -70,26 +70,9 @@ const nav = [
         {
           hasContact && (
             <div class="side-foot">
-              <a class="btn primary talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact>
+              <a class="btn pop talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact>
                 <Icon name="chat" /> <span>Get in touch</span>
               </a>
-              <div class="side-icons">
-                {site.linkedin && (
-                  <a class="btn" href={site.linkedin} rel="me" aria-label="LinkedIn">
-                    <Icon name="linkedin" />
-                  </a>
-                )}
-                {site.email && (
-                  <a class="btn" href={`mailto:${site.email}`} aria-label="Email">
-                    <Icon name="mail" />
-                  </a>
-                )}
-                {site.cv && (
-                  <a class="btn" href={site.cv}>
-                    <Icon name="file" /> CV
-                  </a>
-                )}
-              </div>
             </div>
           )
         }
@@ -161,8 +144,13 @@ const nav = [
               </a>
             </div>
           )}
+          {site.cv && (
+            <a class="btn wide" href={site.cv}>
+              <Icon name="file" /> Download CV
+            </a>
+          )}
           {site.email && (
-            <a class="btn primary wide" href={`mailto:${site.email}`}>
+            <a class="btn pop wide" href={`mailto:${site.email}`}>
               <Icon name="mail" /> Write an email
             </a>
           )}
@@ -307,7 +295,7 @@ const nav = [
         }),
       { threshold: 0.6 },
     );
-    document.querySelectorAll('.kpi b').forEach((el) => counters.observe(el));
+    document.querySelectorAll('.kpi b, [data-count]').forEach((el) => counters.observe(el));
   }
 </script>
 
@@ -419,16 +407,11 @@ const nav = [
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
     padding: 12px;
     border-top: 1px solid var(--line);
   }
-  .side-icons {
-    display: flex;
-    gap: 8px;
-  }
-  .side-icons .btn {
-    flex: 1;
+  .talk {
+    height: 40px;
   }
 
   .main {
@@ -669,9 +652,6 @@ const nav = [
       margin: 0;
       border-top: 0;
       padding: 12px;
-    }
-    .side-icons {
-      display: none;
     }
     .talk {
       height: 40px;
