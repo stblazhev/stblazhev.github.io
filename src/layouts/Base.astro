@@ -1,19 +1,32 @@
 ---
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  /** "On this page" links shown in the side panel (case studies). */
+  toc?: { slug: string; text: string }[];
 }
 
-const { title, description = site.description, image } = Astro.props;
+const { title, description = site.description, image, toc = [] } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
 const path = Astro.url.pathname;
 const hasContact = Boolean(site.email || site.linkedin);
+const initials = site.name
+  .split(' ')
+  .map((w) => w[0])
+  .join('')
+  .slice(0, 2);
+
+const nav = [
+  { href: '/', label: 'Work', icon: 'work' as const, on: path === '/' || path.startsWith('/work') },
+  { href: '/about/', label: 'About', icon: 'user' as const, on: path.startsWith('/about') },
+];
 ---
 
 <!doctype html>
@@ -33,111 +46,316 @@ const hasContact = Boolean(site.email || site.linkedin);
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <header class="site-header wrap">
-      <a class="brand" href="/">{site.name}</a>
-      <nav aria-label="Main">
-        <a href="/#work" aria-current={path.startsWith('/work') ? 'page' : undefined}>Work</a>
-        <a href="/about/" aria-current={path.startsWith('/about') ? 'page' : undefined}>About</a>
-        {hasContact && <a href="#contact">Contact</a>}
-      </nav>
-    </header>
+    <div class="app">
+      <aside class="side">
+        <a class="who" href="/">
+          <span class="avatar" aria-hidden="true">{initials}</span>
+          <span class="who-text">
+            <b>{site.name}</b>
+            <span>{site.role}</span>
+          </span>
+        </a>
 
-    <main id="main">
-      <slot />
-    </main>
+        <nav class="nav" aria-label="Main">
+          {
+            nav.map((n) => (
+              <a class:list={['nav-item', { on: n.on }]} href={n.href} aria-current={n.on ? 'page' : undefined}>
+                <Icon name={n.icon} />
+                <span>{n.label}</span>
+              </a>
+            ))
+          }
+          {
+            hasContact && (
+              <a class="nav-item" href="#contact">
+                <Icon name="mail" />
+                <span>Contact</span>
+              </a>
+            )
+          }
+        </nav>
 
-    <footer id="contact" class="site-footer">
-      <div class="wrap">
+        {
+          toc.length > 2 && (
+            <nav class="toc" aria-label="On this page">
+              <p class="label">On this page</p>
+              {toc.map((h) => (
+                <a href={`#${h.slug}`}>{h.text}</a>
+              ))}
+            </nav>
+          )
+        }
+
         {
           hasContact && (
-            <div class="contact">
-              <p class="eyebrow">Contact</p>
-              <h2>Let’s talk research.</h2>
-              <ul class="contact-links">
-                {site.email && (
-                  <li>
-                    <a href={`mailto:${site.email}`}>{site.email}</a>
-                  </li>
-                )}
-                {site.linkedin && (
-                  <li>
-                    <a href={site.linkedin} rel="me">LinkedIn</a>
-                  </li>
-                )}
-                {site.cv && (
-                  <li>
-                    <a href={site.cv}>CV</a>
-                  </li>
-                )}
-              </ul>
+            <div class="side-foot">
+              {site.linkedin && (
+                <a class="btn" href={site.linkedin} rel="me" aria-label="LinkedIn">
+                  <Icon name="linkedin" />
+                </a>
+              )}
+              {site.email && (
+                <a class="btn" href={`mailto:${site.email}`} aria-label="Email">
+                  <Icon name="mail" />
+                </a>
+              )}
+              {site.cv && (
+                <a class="btn" href={site.cv}>
+                  <Icon name="file" /> CV
+                </a>
+              )}
             </div>
           )
         }
-        <p class="copyright">
-          © {new Date().getFullYear()} {site.name}{site.location && ` · ${site.location}`}
-        </p>
-      </div>
-    </footer>
+      </aside>
+
+      <main id="main" class="main">
+        <slot />
+
+        {
+          hasContact && (
+            <section id="contact" class="card contact">
+              <div>
+                <h2>Let’s talk research</h2>
+                <p class="muted">Open to conversations about UX research roles and projects.</p>
+              </div>
+              <div class="contact-actions">
+                {site.email && (
+                  <a class="btn primary" href={`mailto:${site.email}`}>
+                    <Icon name="mail" /> {site.email}
+                  </a>
+                )}
+                {site.linkedin && (
+                  <a class="btn" href={site.linkedin} rel="me">
+                    <Icon name="linkedin" /> LinkedIn
+                  </a>
+                )}
+                {site.cv && (
+                  <a class="btn" href={site.cv}>
+                    <Icon name="file" /> CV
+                  </a>
+                )}
+              </div>
+            </section>
+          )
+        }
+
+        <footer class="foot">© {new Date().getFullYear()} {site.name}{site.location && ` · ${site.location}`}</footer>
+      </main>
+    </div>
   </body>
 </html>
 
 <style>
-  .site-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding-top: 28px;
-    padding-bottom: 28px;
+  .skip {
+    position: absolute;
+    left: -9999px;
   }
-  .brand {
-    font-family: var(--font-display);
-    font-size: 24px;
-    text-decoration: none;
-    line-height: 1;
-  }
-  nav {
-    display: flex;
-    gap: clamp(16px, 3vw, 32px);
-    font-size: 15px;
-  }
-  nav a {
-    text-decoration: none;
-    color: var(--muted);
-  }
-  nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--text);
+  .skip:focus {
+    left: 16px;
+    top: 16px;
+    background: var(--fg);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    z-index: 10;
   }
 
-  .site-footer {
-    padding: clamp(56px, 9vw, 112px) 0 40px;
-    margin-top: clamp(56px, 9vw, 112px);
+  .app {
+    display: flex;
+    gap: var(--gap);
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: var(--gap);
+    min-height: 100vh;
+  }
+
+  /* Side panel: the Backoffice nav rail, expanded */
+  .side {
+    width: 248px;
+    flex: none;
+    position: sticky;
+    top: var(--gap);
+    height: calc(100vh - 2 * var(--gap));
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .avatar {
+    width: 44px;
+    height: 40px;
+    flex: none;
+    border-radius: 12px;
+    background: var(--soft);
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--fg);
+  }
+  .who-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    min-width: 0;
+  }
+  .who-text b {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .who-text span {
+    font-size: 12px;
+    color: var(--fg-3);
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--navline);
+    border-radius: 8px;
+    color: var(--icon);
+    font-size: 14px;
+  }
+  .nav-item span {
+    color: var(--fg-2);
+    font-weight: 500;
+  }
+  .nav-item:hover {
+    background: var(--zebra);
+  }
+  .nav-item.on {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent-fg);
+  }
+  .nav-item.on span {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .toc {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 12px 0;
+    border-top: 1px solid var(--line);
+    overflow-y: auto;
+    min-height: 0;
+    scrollbar-width: thin;
+  }
+  .toc .label {
+    padding: 0 6px 6px;
+  }
+  .toc a {
+    font-size: 13px;
+    color: var(--fg-3);
+    padding: 6px;
+    border-radius: 6px;
+    line-height: 1.35;
+  }
+  .toc a:hover {
+    background: var(--zebra);
+    color: var(--fg);
+  }
+
+  .side-foot {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+    padding: 12px;
     border-top: 1px solid var(--line);
   }
-  .contact h2 {
-    font-size: clamp(40px, 7vw, 80px);
-    margin: 12px 0 24px;
-  }
-  .contact-links {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 64px;
+
+  .main {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px 32px;
-    font-size: 18px;
+    flex-direction: column;
+    gap: var(--gap);
   }
-  .copyright {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 0;
+
+  .contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .contact .muted {
+    margin-top: 4px;
+    font-size: 14px;
+  }
+  .contact-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .foot {
+    font-size: 12px;
+    color: var(--fg-4);
+    padding: 4px 4px 8px;
+    margin-top: auto;
+  }
+
+  /* Phones and small tablets: the side panel becomes a top bar */
+  @media (max-width: 900px) {
+    .app {
+      flex-direction: column;
+    }
+    .side {
+      position: static;
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .who {
+      border-bottom: 0;
+      padding: 12px;
+    }
+    .nav {
+      flex-direction: row;
+      padding: 12px;
+    }
+    .nav-item {
+      padding: 0 12px;
+    }
+    .toc,
+    .side-foot {
+      display: none;
+    }
+  }
+  @media (max-width: 520px) {
+    .who-text span,
+    .nav-item:not(.on) span {
+      display: none;
+    }
   }
 </style>

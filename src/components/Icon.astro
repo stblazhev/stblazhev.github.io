@@ -1,0 +1,21 @@
+---
+// Small stroke icons (24px grid, drawn at 16px by default).
+const paths = {
+  work: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  linkedin: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8h.01M12 16v-5M12 13a2 2 0 0 1 4 0v3"/>',
+  file: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  back: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  right: '<path d="M5 12h14M12 5l7 7-7 7"/>',
+  list: '<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+};
+
+interface Props {
+  name: keyof typeof paths;
+  size?: number;
+}
+const { name, size = 16 } = Astro.props;
+---
+
+<svg class="i" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" set:html={paths[name]} />

@@ -1,57 +1,73 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 ---
 
 <Base title="About" description={site.about[0]}>
-  <section class="wrap about-head">
-    <p class="eyebrow">About</p>
+  <section class="card intro">
+    <span class="badge success"><span class="dot"></span>{site.role}</span>
     <h1>{site.name}</h1>
-    <div class="prose bio">
+    <div class="bio">
       {site.about.map((p) => <p>{p}</p>)}
     </div>
   </section>
 
   {
     site.experience.length > 0 && (
-      <section class="section wrap">
-        <div class="section-head">
+      <section class="card">
+        <div class="card-head">
           <h2>Experience</h2>
           {site.cv && (
-            <a class="eyebrow" href={site.cv}>
-              Download CV →
+            <a class="btn" href={site.cv}>
+              <Icon name="file" /> Download CV
             </a>
           )}
         </div>
-        <ol class="rows">
+        <div class="rows">
           {site.experience.map((e) => (
-            <li>
+            <div class="row">
               <span class="muted">{e.period}</span>
-              <span>{e.role}</span>
+              <b>{e.role}</b>
               <span class="muted">{e.company}</span>
-            </li>
+            </div>
           ))}
-        </ol>
+        </div>
       </section>
     )
   }
 
-  <section class="section wrap">
-    <div class="section-head"><h2>Toolkit</h2></div>
-    <div class="cols">
+  <section class="card">
+    <div class="card-head"><h2>How I work</h2></div>
+    <div class="tiles">
+      {
+        site.approach.map((a, i) => (
+          <div class="tile">
+            <span class="label">0{i + 1}</span>
+            <h3>{a.title}</h3>
+            <p>{a.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Toolkit</h2></div>
+    <div class="kit">
       <div>
-        <p class="eyebrow">Methods</p>
-        <ul class="list">{site.methods.map((m) => <li>{m}</li>)}</ul>
+        <p class="label">Methods</p>
+        <div class="badges">{site.methods.map((m) => <span class="badge">{m}</span>)}</div>
       </div>
       {
         site.tools.length > 0 && (
           <div>
-            <p class="eyebrow">Tools</p>
-            <ul class="list">
+            <p class="label">Tools</p>
+            <div class="badges">
               {site.tools.map((t) => (
-                <li>{t}</li>
+                <span class="badge">{t}</span>
               ))}
-            </ul>
+            </div>
           </div>
         )
       }
@@ -60,55 +76,55 @@ import { site } from '../data/site';
 </Base>
 
 <style>
-  .about-head {
-    padding-top: clamp(48px, 10vw, 128px);
-  }
-  .about-head h1 {
-    font-size: clamp(44px, 8vw, 104px);
-    line-height: 1;
-    margin: 20px 0 40px;
+  .intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: clamp(24px, 5vw, 48px);
   }
   .bio {
-    font-size: clamp(18px, 2vw, 21px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 64ch;
+    font-size: 16px;
+    color: var(--fg-2);
   }
   .rows {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
   }
-  .rows li {
+  .row {
     display: grid;
-    grid-template-columns: 180px 1fr 1fr;
+    grid-template-columns: 160px 1fr 1fr;
     gap: 16px;
-    padding: 18px 0;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--line);
+    font-size: 14px;
   }
-  .muted {
-    color: var(--muted);
+  .row:last-child {
+    border-bottom: 0;
   }
-  .cols {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 48px;
-    padding-top: 32px;
+  .row:nth-child(even) {
+    background: var(--zebra);
   }
-  .list {
-    list-style: none;
-    padding: 0;
-    margin: 12px 0 0;
+  .row b {
+    font-weight: 600;
   }
-  .list li {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line);
+  .kit {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .kit .label {
+    margin-bottom: 8px;
   }
   @media (max-width: 760px) {
-    .rows li,
-    .cols {
+    .row {
       grid-template-columns: 1fr;
-      gap: 4px;
-    }
-    .cols {
-      gap: 40px;
+      gap: 2px;
     }
   }
 </style>
