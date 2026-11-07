@@ -139,6 +139,8 @@ The final bars balanced my proposals with business requirements the Product team
 
 In markets without sports betting, players see only the Casino bar, without the switch. Because the switch has its own fixed slot on the far left, removing it leaves the other tabs in the same order. Players get the same layout in every market, and no market needs its own version of the bar.
 
+For now nothing takes the empty slot, so casino-only markets have a four-tab bar. That leaves room to add a fifth tab there later without changing the rest of the bar.
+
 ## Design and implementation
 
 <p class="note"><b>Coming soon.</b> The next part covers how the wireframes became the final interface and how the new navigation performed after launch.</p>
