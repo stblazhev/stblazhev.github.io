@@ -133,7 +133,7 @@ The final bars balanced my proposals with business requirements the Product team
 <div class="tabbar" role="img" aria-label="Casino bottom bar: Switch, Casino, Live Casino, Search, Promotions"><span>Switch</span><span>Casino</span><span>Live Casino</span><span>Search</span><span>Promotions</span></div>
 
 <p class="tabbar-label">Sports</p>
-<div class="tabbar" role="img" aria-label="Sports bottom bar: Sport, Live Betting, Virtuals, Promotions"><span>Sport</span><span>Live Betting</span><span>Virtuals</span><span>Promotions</span></div>
+<div class="tabbar" role="img" aria-label="Sports bottom bar: Switch, Sport, Live Betting, Virtuals, Promotions"><span>Switch</span><span>Sport</span><span>Live Betting</span><span>Virtuals</span><span>Promotions</span></div>
 
 *The two bars as shipped, redrawn without branding.*
 
