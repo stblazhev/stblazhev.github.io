@@ -42,11 +42,8 @@ const pos = (y: number) => last - y + 2;
 
 const nEdu = site.education.length;
 const nSide = site.sideEducation.length;
-// Open on the degree by default
-const start = Math.max(
-  0,
-  stops.findIndex((s) => s.kind === 'edu' && /bachelor|master/i.test(s.title)),
-);
+// Open on the newest stop, the first one on the map
+const start = 0;
 ---
 
 <div class="lm" data-lm data-start={start}>

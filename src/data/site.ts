@@ -204,8 +204,8 @@ export const site = {
     {
       year: 2023,
       when: '2023',
-      short: 'UX/UI Design',
-      title: 'UX/UI Design, Upskill 22 Program',
+      short: 'Telerik UX/UI Design',
+      title: 'Telerik UX/UI Design, Upskill 22 Program',
       place: 'Telerik Academy, Sofia',
       type: 'Upskill program',
       detail: 'Final score 83.33%',
