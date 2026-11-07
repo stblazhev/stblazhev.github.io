@@ -58,6 +58,7 @@ Formatting conventions:
 - Participant quotes are blockquotes. The quote goes on the first line, then an empty `>` line, then the attribution (`Participant 4, Mexico`).
 - Image captions are an italic line directly after the image: `*Caption text.*`
 - Tables are fine for comparison matrices; they scroll sideways on mobile.
+- A highlighted note: `<p class="note"><b>Title.</b> Text</p>`. A redrawn, unbranded bottom bar: `<p class="tabbar-label">Casino</p>` then `<div class="tabbar" role="img" aria-label="…"><span>Tab</span>…</div>`, with an italic caption line after it.
 
 ### Writing style
 
@@ -73,7 +74,7 @@ Projects listed on the original portfolio, to be written up when Stefan provides
 
 1. **Smooth user registration and login flow**: usability tests, UX research and UI design, Framer prototype with native-keyboard inputs. Result: 40% increase in first-time deposits (FTDs).
 2. **Octopush: a UX strategy that made productivity personal**: visual research, UX strategy and testing, high-fidelity prototyping.
-3. **Bottom bar implementation**: card sorting and question tests, stakeholder interviews, wireframing. Result: 9x faster user flow with a guarded content switch.
+3. **Bottom bar implementation**: research phase published as `src/content/projects/bottom-navigation.md` (burger menu deliberately left out). The design and implementation phase is still to come, from the bottom-nav design file Stefan will connect; the 9x result belongs there. Anonymised: "a European market", "a leading competitor", stakeholders by role only. Shipped bars: Casino = Switch, Casino, Live Casino, Search, Promotions; Sports = Sport, Live Betting, Virtuals, Promotions.
 4. **Burger menu restructure**: user needs insights, competitive analysis, high-fidelity prototyping.
 
 From the CV, other candidates: Tournaments UX audit and redesign with a GA4 KPI framework, affiliate funnel UX blockers, sign-up and payment competitor benchmarks, social sign-up for the redesigned registration flow, new brand concept test, and the AI-assisted research process and repository.

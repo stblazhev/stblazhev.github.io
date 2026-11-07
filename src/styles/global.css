@@ -186,4 +186,14 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .prose tbody tr:nth-child(even) td { background: var(--zebra); }
 .prose th { background: var(--zebra); font-size: 12px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: var(--fg-4); white-space: nowrap; }
 
+/* A highlighted note inside a case study: <p class="note"><b>Title.</b> Text</p> */
+.prose .note { padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--zebra); font-size: 14px; color: var(--fg-2); }
+.prose .note b { color: var(--fg); font-weight: 600; }
+
+/* A redrawn, unbranded mobile bottom bar: <div class="tabbar"><span>Tab</span>…</div> */
+.prose .tabbar-label { margin-top: 1.4em; margin-bottom: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-4); }
+.prose .tabbar { display: flex; gap: 4px; max-width: 440px; margin-top: 0; padding: 6px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--card-shadow); }
+.prose .tabbar span { flex: 1; min-width: 0; padding: 10px 4px; border-radius: 9px; background: var(--zebra); font-size: 12px; font-weight: 500; line-height: 1.25; text-align: center; color: var(--fg-2); }
+.prose .tabbar + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: 0.6em; }
+
 .prose code { font-size: 0.9em; background: var(--soft); padding: 0.1em 0.35em; border-radius: 4px; }
