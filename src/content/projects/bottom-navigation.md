@@ -127,8 +127,8 @@ I also wrote success measures for each proposal, so the team would know whether 
 
 The final bars balanced my proposals with business requirements the Product team set. Live Casino and Promotions, which players rarely picked but the business relies on, took slots in the bar, and Account moved out of it.
 
-- **Casino:** Switch · Casino · Live Casino · Search · Promotions (My Bonuses for logged-in members)
-- **Sports:** Switch · Sport · Live Betting · Virtuals · Promotions
+- **Casino:** Switch · Casino · Live Casino · Search · Promotions. Logged-in members see My Bonuses in place of Promotions.
+- **Sports:** Switch · Sport · Live Betting · Virtuals · Promotions. Logged-in members see My Bets and My Bonuses in place of Virtuals and Promotions.
 
 The final design of both bars is shown under [Design and implementation](#the-final-design).
 
@@ -160,16 +160,16 @@ We used this version to test something a floating bar has to survive: the browse
 
 ### The final design
 
-The shipped bar is solid rather than see-through, and the current tab is green, so players can always see where they are.
+The shipped bar is still see-through, but the current tab is now green, so players can always see where they are, and the switch sits in its own cell at the left edge.
 
-![The shipped bars: the Casino bar for a guest ending in Promotions, for a member ending in My Bonuses, and the Sports bar.](/projects/bottom-navigation/final-bars.jpg)
+![The shipped bars. Casino for guests: Casino, Live Casino, Search, Promotions; for members the last tab is My Bonuses. Sports for guests: Sport, Live Betting, Virtuals, Promotions; for members: Sport, Live Betting, My Bets, My Bonuses.](/projects/bottom-navigation/final-bars.jpg)
 
-*The bars as shipped. For logged-in members the last Casino tab changes from Promotions to My Bonuses.*
+*The bars as shipped, for guests and for logged-in members.*
 
 Several details came straight from the research:
 
 - **The switch keeps its own place.** It sits in a fixed slot on the far left, separate from the tabs, so it never moves under the thumb of the players who switch often.
-- **The last tab follows the player's state.** Guests see Promotions, the offer that brings them in. Logged-in members see My Bonuses, the bonuses they already have. Players had told us that bonuses are one of the main reasons they come back.
+- **The tabs follow the player's state.** Guests see Promotions, the offers that bring them in. Logged-in members see My Bonuses, the bonuses they already have, and in Sports they also get My Bets, because only a member has bets to track. Both come from the research: bettors keep returning to their ongoing bets, and bonuses are one of the main reasons players come back.
 - **One component for every brand.** The bar is part of the platform's design system, so any brand can use it. Brands in markets without sports betting simply don't show the switch or the Sports bar.
 
 ### Results
