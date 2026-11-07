@@ -27,7 +27,7 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
                 <line x1="8" y1="50" x2="112" y2="50" class="base" />
                 <rect class="bar b1" x="24" y="22" width="28" height="28" rx="4" />
                 <rect class="bar b2" x="68" y="11" width="28" height="39" rx="4" />
-                <text class="tag" x="82" y="6">+40%</text>
+                <path class="arrow" d="M82 9V-1M78 3l4-4 4 4" />
                 <text x="38" y="62">Before</text>
                 <text x="82" y="62">After</text>
               </svg>
@@ -38,7 +38,7 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
                 <line x1="8" y1="50" x2="112" y2="50" class="base" />
                 <rect class="bar b1" x="24" y="11" width="28" height="39" rx="4" />
                 <rect class="bar b2" x="68" y="27" width="28" height="23" rx="4" />
-                <text class="tag" x="82" y="21">−{h.value}</text>
+                <path class="arrow" d="M82 8v11M78 15l4 4 4-4" />
                 <text x="38" y="62">Before</text>
                 <text x="82" y="62">After</text>
               </svg>
@@ -68,7 +68,7 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
                 <circle class="ico" cx="106" cy="47.5" r="1.8" />
                 <circle class="ripple" cx="94" cy="47.5" r="2.6" />
 
-                <text class="tag" x="60" y="27">9x faster</text>
+                <path class="arrow" d="M51 27h18M65 23l4 4-4 4" />
                 <text x="23" y="62">Before</text>
                 <text x="97" y="62">Now</text>
               </svg>
@@ -262,6 +262,17 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
     font-weight: 600;
     fill: var(--accent-fg);
   }
+  /* Direction arrow (used instead of repeating the headline number in the picture) */
+  .viz .arrow {
+    fill: none;
+    stroke: var(--accent-fg);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .play .arrow {
+    animation: fade 0.4s 1s backwards;
+  }
   .base {
     stroke: var(--line);
     stroke-width: 2;
@@ -370,7 +381,7 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
   .play .nav .ripple {
     animation: ripple 0.7s 0.3s ease-out;
   }
-  .play .nav .tag {
+  .play .nav .arrow {
     animation: fade 0.4s 0.6s backwards;
   }
   @keyframes trail {
