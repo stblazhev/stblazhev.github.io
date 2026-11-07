@@ -90,6 +90,10 @@ npm run build      # production build into dist/ (hides drafts)
 
 Node 22.23 or newer is required.
 
+## Link previews
+
+`public/og.png` (1200x630) is the default image when a page is shared (LinkedIn, Slack, WhatsApp). A page can pass its own `image` to `Base`. The current card is a draft made with Segoe UI; a Poppins version would match the site better.
+
 ## Accessibility rules
 
 - Text colours pass WCAG AA (4.5:1) on every background the site uses: use the `--fg-*` and `--accent-fg` tokens, never lighter greys for text. Check new colours before adding them.

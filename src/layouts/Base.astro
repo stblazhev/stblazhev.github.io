@@ -19,7 +19,8 @@ interface Props {
 const { title, description = site.description, image, sections = [], next = [], back } = Astro.props;
 const fullTitle = title ? `${title} · ${site.brand}` : `${site.brandFull} · ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = image ? new URL(image, Astro.site).href : undefined;
+// Link previews (LinkedIn, Slack, WhatsApp): a page's own image, else the site-wide card in /public/og.png
+const ogImage = new URL(image ?? '/og.png', Astro.site).href;
 const path = Astro.url.pathname;
 const hasContact = Boolean(site.email || site.linkedin);
 
@@ -43,8 +44,11 @@ const nav = [
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={ogImage} />
+    {!image && <meta property="og:image:width" content="1200" />}
+    {!image && <meta property="og:image:height" content="630" />}
+    <meta property="og:image:alt" content={`${site.name}, ${site.role}: ${site.brandFull}`} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
