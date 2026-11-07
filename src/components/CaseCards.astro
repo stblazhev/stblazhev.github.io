@@ -74,6 +74,24 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   </div>
 </div>
 
+<script>
+  // The brewing animation plays for a few seconds when the card first comes into view,
+  // then rests until it is hovered, so nothing on the page moves forever.
+  document.querySelectorAll<HTMLElement>('.cs-brew').forEach((card) => {
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        card.classList.add('on');
+        setTimeout(() => card.classList.remove('on'), 4500);
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(card);
+  });
+</script>
+
 <style>
   .cs-grid {
     display: grid;
@@ -213,7 +231,6 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     position: relative;
     width: 54px;
     height: 64px;
-    animation: sway 3.2s ease-in-out infinite;
     transform-origin: 50% 100%;
   }
   .bubble {
@@ -225,6 +242,11 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     border-radius: 50%;
     background: rgba(169, 31, 189, 0.55);
     opacity: 0;
+  }
+  .cs-brew:is(.on, :hover) .flask img {
+    animation: sway 3.2s ease-in-out infinite;
+  }
+  .cs-brew:is(.on, :hover) .bubble {
     animation: rise 2.8s ease-in infinite;
     animation-delay: calc(var(--b) * 0.35s);
   }
@@ -272,6 +294,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   }
   .dots i {
     font-style: normal;
+  }
+  .cs-brew:is(.on, :hover) .dots i {
     animation: dot 1.4s infinite;
   }
   .dots i:nth-child(2) {
@@ -305,6 +329,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     width: 40%;
     border-radius: 6px;
     background: linear-gradient(90deg, var(--pop), var(--pop-deep));
+  }
+  .cs-brew:is(.on, :hover) .brew-bar span {
     animation: load 1.8s ease-in-out infinite;
   }
   @keyframes load {

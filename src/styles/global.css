@@ -11,14 +11,15 @@
 
   --fg: #141515;
   --fg-2: #4b5563;
-  --fg-3: #6b7280;
-  --fg-4: #9ca3af;
-  --icon: #8a99af;
+  /* Text greys pass WCAG AA (4.5:1) on every background used; icons pass 3:1 */
+  --fg-3: #5f6673;
+  --fg-4: #68707c;
+  --icon: #7a879c;
 
   --accent: #6bed6a;
   --accent-bg: #f0fff0;
   --accent-press: #e3fbe3;
-  --accent-fg: #298c33;
+  --accent-fg: #237a2c; /* green text: 4.9:1 or better on all backgrounds */
 
   /* Logo purple: an attention colour, used sparingly (contact CTA, headline mark, highlight stories) */
   --pop: #a91fbd;
