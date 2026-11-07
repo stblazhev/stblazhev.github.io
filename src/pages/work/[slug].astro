@@ -28,11 +28,14 @@ const meta = [
 ].filter((m) => m.value);
 ---
 
-<Base title={data.title} description={data.summary} image={data.cover} sections={sections}>
-  <div class="page-head">
-    <a class="btn" href="/#work"><Icon name="back" /> All case studies</a>
-    {data.draft && <span class="badge warn">Draft: only visible locally</span>}
-  </div>
+<Base title={data.title} description={data.summary} image={data.cover} sections={sections} back={{ href: '/#work', label: 'All case studies' }}>
+  {
+    data.draft && (
+      <div class="page-head">
+        <span class="badge warn">Draft: only visible locally</span>
+      </div>
+    )
+  }
 
   <header id="overview" class="card head">
     <span class="ctx">{data.context}</span>

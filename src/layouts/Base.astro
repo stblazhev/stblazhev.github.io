@@ -12,9 +12,11 @@ interface Props {
   sections?: { id: string; text: string; hint?: boolean }[];
   /** "Where next?" tiles at the end of the page. href 'contact' opens the contact dialog. */
   next?: { label: string; title: string; text: string; href: string }[];
+  /** Optional back button at the far left of the sticky section bar (case study pages). */
+  back?: { href: string; label: string };
 }
 
-const { title, description = site.description, image, sections = [], next = [] } = Astro.props;
+const { title, description = site.description, image, sections = [], next = [], back } = Astro.props;
 const fullTitle = title ? `${title} · ${site.brand}` : `${site.brandFull} · ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
@@ -88,6 +90,12 @@ const nav = [
           sections.length > 1 && (
             <div class="secwrap">
               <nav class="secbar" aria-label="On this page">
+                {back && (
+                  <a class="sec-back" href={back.href} aria-label={back.label}>
+                    <Icon name="back" />
+                    <span aria-hidden="true">{back.label}</span>
+                  </a>
+                )}
                 <div class="sec-track">
                   <span class="sec-ind" aria-hidden="true" />
                   {sections.map((s) => (
@@ -569,6 +577,56 @@ const nav = [
     transition:
       transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
       width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Back button: an arrow that shows its label on hover or keyboard focus */
+  .sec-back {
+    flex: none;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 9px;
+    margin-right: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--line-2);
+    color: var(--fg-2);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      background 0.2s;
+  }
+  .sec-back::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--line);
+  }
+  .sec-back span {
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s,
+      margin 0.28s;
+  }
+  .sec-back:hover,
+  .sec-back:focus-visible {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: var(--fg);
+  }
+  .sec-back:hover span,
+  .sec-back:focus-visible span {
+    max-width: 180px;
+    opacity: 1;
+    margin-left: 8px;
   }
   .sec-top {
     flex: none;

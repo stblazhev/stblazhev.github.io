@@ -93,6 +93,7 @@ Node 22.23 or newer is required.
 
 - The side nav lists pages only (Work, About). Never add an item there that scrolls within a page.
 - Each page passes `sections` ({ id, text }[]) to `Base`; they show as the sticky section bar. Give every section card a matching `id`.
+- Case study pages also pass `back` ({ href, label }) to `Base`: an arrow at the far left of the sticky section bar that shows its label on hover or focus. It replaces the old "All case studies" button above the header, so it stays visible while scrolling.
 - "Get in touch" is an action, not a page: any link with `data-contact` opens the contact dialog (it falls back to `mailto:` without JavaScript).
 - All motion respects `prefers-reduced-motion`; the research loop also has a pause button.
 - Colour: green (`--accent`) is the system colour. The logo purple (`--pop*` tokens, `.btn.pop`, `.badge.pop`) is an attention colour, kept to a few places: the Get in touch / Write an email buttons (tinted, never filled), the hero typing word, the headline highlighter (`site.headlineMark`), the back of the highlight cards and the pulsing hint dot on the Case studies section tab (`hint: true` in a page's `sections`; it hides while that section is active). Do not spread it further.
