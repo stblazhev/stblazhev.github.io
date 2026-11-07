@@ -5,7 +5,7 @@ context: 'Online casino and sportsbook · B2C · Mobile web · European market'
 year: '2025'
 role: 'UX Researcher, end to end'
 timeline: 'Research phase, 2025'
-team: 'Me, with a Product Manager from the Product team'
+team: 'Me, with a Product Manager, the CPO and the Product Design team'
 methods: ['Stakeholder interviews', 'Competitor benchmark', 'Closed card sorting', 'Jobs-to-be-done', 'Wireframing']
 outcomes:
   - value: '2'
@@ -49,7 +49,7 @@ Two questions decided the design:
 
 I ran the project alone, from planning the research to low and mid-fidelity wireframes. I planned and ran the stakeholder interviews and the competitor benchmark, wrote and launched both card sorts, analysed the results, and built the wireframes and the brief deck that handed the work to design.
 
-I worked closely with the Product Manager responsible for navigation. They brought the business requirements, and together we balanced them against what the research showed.
+I worked closely with the Product Manager responsible for navigation, and agreed the business requirements with the CPO. Together we balanced those requirements against what the research showed. For the design, I worked with the Product Design team, who took my wireframes to the final interface.
 
 ## Approach
 
