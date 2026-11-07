@@ -93,7 +93,7 @@ Node 22.23 or newer is required.
 ## Accessibility rules
 
 - Text colours pass WCAG AA (4.5:1) on every background the site uses: use the `--fg-*` and `--accent-fg` tokens, never lighter greys for text. Check new colours before adding them.
-- Nothing may animate forever on its own. Loops either stop after a few seconds (a fixed iteration count), run only while hovered or focused, or have a pause button (the research loop). `prefers-reduced-motion` turns all motion off.
+- Animations: Stefan chose (2026-11-08) to keep the continuous loops (typing word, hint dot, current-role dot, brewing bubbles). Do not limit them unless he asks. `prefers-reduced-motion` turns all motion off; keep that working.
 - Keep a single h1 per page, alt text on content images (empty alt for decorative ones), and names on icon-only buttons.
 
 ## Navigation rules
