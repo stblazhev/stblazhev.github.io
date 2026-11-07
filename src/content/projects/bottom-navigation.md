@@ -12,16 +12,14 @@ outcomes:
     label: 'mode-specific bottom bars shipped as one reusable platform component'
   - value: '4'
     label: 'stakeholder interviews, each with a sorting task'
-  - value: '12'
-    label: 'players across two card sorts, 6 per mode'
+  - value: '24'
+    label: 'players across four card sorts, 6 per test'
   - value: '1 in 6'
     label: 'players use both casino and sports'
 tldr:
   - 'Casino and sports content shared one mobile navigation, so players of each had to work past content meant for the other.'
-  - 'I combined stakeholder interviews, a competitor benchmark and two closed card sorts with players into rules for what earns a place in the bottom bar.'
+  - 'I combined stakeholder interviews, a competitor benchmark and four closed card sorts with players into rules for what earns a place in the bottom bar.'
   - 'Two bottom bars shipped, one per mode, as a design-system component every brand on the platform can reuse. They balance what players asked for with what the business needed.'
-cover: '/projects/bottom-navigation/cover.jpg'
-coverAlt: 'Before: a top navigation with a sideways-scrolling category row. After: a bottom bar with a switch and four tabs.'
 order: 1
 ---
 
@@ -47,7 +45,7 @@ Two questions decided the design:
 
 ## My role
 
-I ran the project alone, from planning the research to low and mid-fidelity wireframes. I planned and ran the stakeholder interviews and the competitor benchmark, wrote and launched both card sorts, analysed the results, and built the wireframes and the brief deck that handed the work to design.
+I ran the project alone, from planning the research to low and mid-fidelity wireframes. I planned and ran the stakeholder interviews and the competitor benchmark, wrote and launched all four card sorts, analysed the results, and built the wireframes and the brief deck that handed the work to design.
 
 I worked closely with the Product Manager responsible for navigation, and agreed the business requirements with the CPO. Together we balanced those requirements against what the research showed. For the design, I worked with the Product Design team, who took my wireframes to the final interface. I reviewed their work every day, ran checks as it changed, and joined the day-to-day meetings where we discussed, changed and improved it.
 
@@ -60,17 +58,17 @@ Each phase answered a question the previous one could not.
 | 1 | **Stakeholder interviews** (4 internal roles: product, sportsbook risk, sales and revenue, partner success) with a sorting task | To learn what the business needs the navigation to do, and to see each stakeholder's ideal bar before any players were involved |
 | 1 | **Competitor benchmark** (a leading competitor plus other casino and sports brands with a mode switch) | To find the patterns players already know, so we don't invent new ones |
 | 1 | **Analytics question** to the reporting team | To size how many players actually play both casino and sports, as real evidence for a switch |
-| 2 | **Two closed card sorts** with players, one for Casino and one for Sports (26 cards each; pick 5 and order them) | The card list came from phase 1, so the question was which of these items players want, not how they would name them. A closed sort with a hard limit of five forces the same trade-off the real bar has. |
+| 2 | **Four closed card sorts** with players, 6 per test: two for the bottom bar (Casino and Sports; 26 cards each, pick 5 and order them) and two for the menu behind the bar (Casino and Sports; 39 cards each, pick up to 15) | The card list came from phase 1, so the question was which of these items players want, not how they would name them. Testing the bar and the menu side by side showed what belongs one tap away and what can sit a level deeper. The limit of five in the bar tests forces the same trade-off the real bar has. |
 | 2 | **Pre- and post-task questions,** then **jobs-to-be-done** | Card sorts show *what* players pick. The questions explain *why*, and the jobs say what each tab has to help a player do. |
 | 3 | **Low and mid-fidelity wireframes** and a brief deck | To turn the decisions into something the design team and stakeholders could react to |
 
-Both card sorts were run unmoderated, and six sessions were analysed in each.
+All four card sorts were run unmoderated, with six players in each, 24 in total. This case study is about the bar, so the findings below come mainly from the two bar tests. The menu tests appear where they say something about the bar, such as where the switch belongs.
 
 ## What we found
 
 ### 1. Players and the business wanted different bars
 
-In the casino sort, every tester picked **Account (6/6)** and almost all picked **Search (5/6)**. After those, they picked discovery shortcuts: New games, Popular and Tournaments, each chosen by 2 of 6.
+In the Casino bar test, every tester picked **Account (6/6)** and almost all picked **Search (5/6)**. After those, they picked discovery shortcuts: New games, Popular and Tournaments, each chosen by 2 of 6.
 
 The items the business considered essential (the Casino lobby, Live Casino, Promotions and the mode switch) were rarely or never picked. The game lobby, the main browse hub, was chosen by only 1 of 6 testers.
 
@@ -84,7 +82,7 @@ The items the business considered essential (the Casino lobby, Live Casino, Prom
 | **Casino lobby** | **1 of 6** | **Sports lobby** | **0 of 6** |
 | **Live Casino** | **0 of 6** | **Live Betting** | **0 of 6** |
 
-*How many testers picked each item for their five-tab bar. The bold rows are the hubs the business needed.*
+*The two bar tests: how many of the 6 testers in each picked an item for their five-tab bar. The bold rows are the hubs the business needed.*
 
 **So what:** neither list could simply win. I set rules for every slot: keep what most testers picked, add the anchors players expect from other sites, merge duplicates, and move niche items to the menu. My term for this was "user-led, business-safe".
 
@@ -94,19 +92,19 @@ Sports bettors did not think in terms of discovery. They opened the site to chec
 
 > “I look first at the ongoing bets, the possible bets available.”
 >
-> Sports bettor, Sports card sort
+> Sports bettor, Sports bar test
 
-My Bets and Sport Categories were the most-picked sports items (3/6 each). Several testers asked for a one-tap way to see results or follow live bets.
+My Bets and Sport Categories were the most-picked items in the Sports bar test (3 of 6 each). In the Sports menu test, players also put My Bets and the sports lobby in the menu, but these belong in the bar, one tap away. Several testers asked for a one-tap way to see results or follow live bets.
 
 **So what:** Live Betting and My Bets had to be one tap away, because bettors keep returning to them during a match.
 
 ### 3. The switch matters a lot, but only to a minority
 
-Most casino testers rarely or never switch to sports, and none of them wanted the switch in the bottom bar. Among sports bettors it was the opposite: a few switch constantly, and 3 of the 5 who answered wanted the switch in the bar.
+In the Casino bar test, most testers rarely or never switch to sports, and none of them wanted the switch in the bottom bar. In the Sports bar test it was the opposite: a few switch constantly, and 3 of the 5 who answered wanted the switch in the bar. In both menu tests, players also kept the switch out of the menu: they expected it as a button of its own.
 
 > “I switch quite often… maybe 5, 6, even 10 times during a football match. Usually to play Blackjack.”
 >
-> Sports bettor, Sports card sort
+> Sports bettor, Sports bar test
 
 The analytics agreed: about **1 in 6 players** play both, but **2 in 3 sports bettors** also play casino. Three of the four stakeholders, separately, put the switch on the far left of a fixed bar.
 
@@ -120,7 +118,7 @@ Players treated their account as the place where money and trust live. Several c
 
 > “At first, I added Deposit in the navigation, but then I realized it’s already inside My Profile. So I replaced it.”
 >
-> Casino player, Casino card sort
+> Casino player, Casino bar test
 
 **So what:** Deposit did not get a tab. It stays as an always-visible action next to the balance, which leaves the bar's slots for navigation.
 
@@ -201,7 +199,7 @@ The new navigation has shipped, but its impact has not been measured yet, so I a
 
 ## Reflection
 
-- **The samples were small.** With six usable sessions per sort, the results show direction, not certainty. That is why I paired them with stakeholder input, a benchmark and real play data rather than letting the card sorts decide alone.
+- **The samples were small.** With six players per test, the results show direction, not certainty. That is why I paired them with stakeholder input, a benchmark and real play data rather than letting the card sorts decide alone.
 - **One market, one language.** Navigation habits differ between markets, so the bars should be checked before rolling out elsewhere.
 - **A card sort measures preference, not performance.** Players told us what they want in the bar, not whether they can find things with it. Next time I would add a quick first-click or tree test on the wireframes before handover.
 - **What I would change in the design: the switch.** Its two mode icons are both round and turn the same colour when active, so at first glance Casino and Sports look alike. The current look was partly shaped by business decisions, so I would keep it on our own sites. In the design system, though, I would let each brand choose the switch's icons and colours, so it can make the current mode clearer for its players.
