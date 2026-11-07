@@ -94,6 +94,10 @@ Node 22.23 or newer is required.
 
 `public/og.png` (1200x630) is the default image when a page is shared (LinkedIn, Slack, WhatsApp). A page can pass its own `image` to `Base`. The current card is a draft made with Segoe UI; a Poppins version would match the site better.
 
+## Analytics
+
+GoatCounter (free, no cookies, so no consent banner) counts visits on every page; the script is in the `<head>` of `Base.astro`. Dashboard: https://stblazhev.goatcounter.com (Stefan's personal account). It does not count localhost.
+
 ## Accessibility rules
 
 - Text colours pass WCAG AA (4.5:1) on every background the site uses: use the `--fg-*` and `--accent-fg` tokens, never lighter greys for text. Check new colours before adding them.
