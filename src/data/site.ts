@@ -21,7 +21,7 @@ export const site = {
   // Words in the headline that get the purple highlighter stroke. Empty for none.
   headlineMark: 'Research and Design',
   intro:
-    'UX researcher in iGaming, across casino and sports betting. I own research end to end, from the research question and method to prioritised recommendations for Product, and combine usability testing with product analytics.',
+    'UX researcher in iGaming, across casino and sports betting. I own research end to end, from the research question and method to prioritised recommendations for Product, and combine usability testing with product analytics. I also design: I turn findings into wireframes and work with designers until the solution ships.',
   motto: 'Get to know your user first, then think about the rest.',
 
   // Headline results shown on the home page as flip cards.
