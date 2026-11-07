@@ -25,7 +25,7 @@ export const site = {
   motto: 'Get to know your user first, then think about the rest.',
 
   // Headline results shown on the home page as flip cards.
-  // viz: the small animated picture on the front (bars = growth | drop = reduction | race | people | tally).
+  // viz: the small animated picture on the front (bars = growth | drop = reduction | nav = bottom navigation | people | tally).
   // The back of the card tells where the number comes from.
   highlights: [
     {
@@ -39,11 +39,11 @@ export const site = {
     },
     {
       value: '9x',
-      label: 'faster user flow with a new bottom navigation bar',
-      viz: 'race',
+      label: 'faster, more accessible user flow with a newly implemented bottom navigation bar',
+      viz: 'nav',
       where: 'Bottom navigation bar',
       org: 'ALL IN Platform',
-      story: 'Core flows were simplified with a new bottom navigation bar, so players reach key pages far faster.',
+      story: 'Key pages moved from a menu at the top of the screen into a bottom navigation bar, so players reach them in one tap, within thumb reach.',
       tag: 'Case study coming soon',
     },
     {
