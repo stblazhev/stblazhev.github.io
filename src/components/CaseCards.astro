@@ -1,0 +1,318 @@
+---
+// Home page case studies as cards, plus a purple "Brewing new ideas" placeholder
+// with bubbles rising out of the logo flask. Each card leads with its headline result.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+const { projects } = Astro.props;
+
+const minutes = (body = '') => {
+  const text = body.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/<[^>]+>/g, '');
+  return Math.max(1, Math.round((text.match(/\w+/g) ?? []).length / 230));
+};
+const bubbles = Array.from({ length: 8 }, (_, i) => i);
+---
+
+<div class="cs-grid">
+  {
+    projects.map((p, i) => {
+      const kpi = p.data.outcomes[0];
+      return (
+        <a class="cs" href={`/work/${p.id}/`} data-spot data-reveal style={`transition-delay:${i * 90}ms`}>
+          <span class="spot" aria-hidden="true" />
+          {kpi && (
+            <span class="cs-art" aria-hidden="true">
+              <b class="cs-num" data-count>
+                {kpi.value}
+              </b>
+              <span class="cs-num-lbl">{kpi.label}</span>
+            </span>
+          )}
+          <span class="cs-body">
+            <span class="cs-meta">
+              <span class="badge">{p.data.year}</span>
+              <span class="badge">{minutes(p.body)} min read</span>
+              {p.data.draft && <span class="badge warn">Draft</span>}
+            </span>
+            <h3 class="cs-title">{p.data.title}</h3>
+            <span class="cs-sum">{p.data.summary}</span>
+            <span class="badges">
+              {p.data.methods.slice(0, 3).map((m) => (
+                <span class="badge">{m}</span>
+              ))}
+            </span>
+            <span class="cs-go">
+              Read case study <Icon name="right" />
+            </span>
+          </span>
+        </a>
+      );
+    })
+  }
+
+  <div class="cs cs-brew" data-reveal role="note" aria-label="Brewing new ideas: the next case study is on its way">
+    <span class="cs-art brew-art" aria-hidden="true">
+      <span class="flask">
+        {bubbles.map((b) => <i class="bubble" style={`--b:${b}`} />)}
+        <img src={site.logo} alt="" width="54" height="64" />
+      </span>
+    </span>
+    <span class="cs-body">
+      <span class="cs-meta">
+        <span class="badge pop">In progress</span>
+      </span>
+      <h3 class="cs-title">
+        Brewing new ideas<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>
+      </h3>
+      <span class="cs-sum">The next case study is being written up. Check back soon.</span>
+      <span class="brew-bar" aria-hidden="true"><span /></span>
+    </span>
+  </div>
+</div>
+
+<style>
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  @media (max-width: 760px) {
+    .cs-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Card ---------- */
+  .cs {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    overflow: hidden;
+    min-width: 0;
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.2s,
+      box-shadow 0.25s;
+  }
+  a.cs:hover,
+  a.cs:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 14px 32px rgba(17, 24, 39, 0.09);
+    transform: translateY(-4px);
+    transition-delay: 0s !important;
+  }
+
+  /* Result panel at the top of the card: the headline number on a dotted green ground */
+  .cs-art {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 4px;
+    min-height: 148px;
+    padding: 20px;
+    background:
+      radial-gradient(circle, rgba(41, 140, 51, 0.16) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      linear-gradient(135deg, var(--accent-bg), #e9fbe9);
+    border-bottom: 1px solid var(--line);
+    transition: background-position 0.8s ease;
+  }
+  a.cs:hover .cs-art {
+    background-position:
+      8px -8px,
+      0 0;
+  }
+  .cs-num {
+    font-size: 44px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent-fg);
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: left bottom;
+  }
+  a.cs:hover .cs-num {
+    transform: scale(1.06);
+  }
+  .cs-num-lbl {
+    max-width: 34ch;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--fg-2);
+  }
+
+  .cs-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    padding: 18px 20px 20px;
+  }
+  .cs-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cs-title {
+    font-size: 17px;
+    line-height: 1.3;
+    color: #000;
+  }
+  .cs-sum {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg-3);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .cs-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-fg);
+  }
+  .cs-go :global(svg) {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  a.cs:hover .cs-go :global(svg) {
+    transform: translateX(5px);
+  }
+
+  /* ---------- "Brewing new ideas" placeholder (logo purple) ---------- */
+  .cs-brew {
+    border-color: var(--pop-line);
+    background: var(--pop-bg);
+  }
+  .brew-art {
+    align-items: center;
+    justify-content: flex-end;
+    background:
+      radial-gradient(circle, rgba(169, 31, 189, 0.14) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      linear-gradient(135deg, #fbeffd, #f4ddf8);
+    border-bottom-color: var(--pop-line);
+  }
+  .flask {
+    position: relative;
+    display: block;
+    width: 54px;
+    height: 64px;
+  }
+  .flask img {
+    position: relative;
+    width: 54px;
+    height: 64px;
+    animation: sway 3.2s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+  .bubble {
+    position: absolute;
+    left: calc(50% - 4px + (var(--b) - 3.5) * 2.4px);
+    top: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(169, 31, 189, 0.55);
+    opacity: 0;
+    animation: rise 2.8s ease-in infinite;
+    animation-delay: calc(var(--b) * 0.35s);
+  }
+  .bubble:nth-child(3n + 2) {
+    width: 10px;
+    height: 10px;
+  }
+  .bubble:nth-child(4n + 1) {
+    width: 5px;
+    height: 5px;
+  }
+  .bubble:nth-child(3n) {
+    background: transparent;
+    border: 1.5px solid var(--pop);
+  }
+  .bubble:nth-child(4n) {
+    background: rgba(126, 26, 168, 0.4);
+  }
+  .cs-brew:hover .bubble {
+    animation-duration: 1.6s;
+  }
+  @keyframes rise {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.4);
+    }
+    15% {
+      opacity: 1;
+    }
+    50% {
+      transform: translate(calc((var(--b) - 3.5) * 3px), -46px) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(calc((var(--b) - 3.5) * -2px), -96px) scale(1.15);
+    }
+  }
+  @keyframes sway {
+    50% {
+      transform: rotate(-4deg);
+    }
+  }
+  .cs-brew .cs-title {
+    color: var(--pop-deep);
+  }
+  .dots i {
+    font-style: normal;
+    animation: dot 1.4s infinite;
+  }
+  .dots i:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .dots i:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  @keyframes dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.2;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+  /* Indeterminate "loading" bar */
+  .brew-bar {
+    position: relative;
+    height: 6px;
+    margin-top: auto;
+    border-radius: 6px;
+    background: var(--pop-line);
+    overflow: hidden;
+  }
+  .brew-bar span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--pop), var(--pop-deep));
+    animation: load 1.8s ease-in-out infinite;
+  }
+  @keyframes load {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(260%);
+    }
+  }
+</style>

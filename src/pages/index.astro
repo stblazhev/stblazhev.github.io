@@ -4,6 +4,7 @@ import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import ResearchLoop from '../components/ResearchLoop.astro';
 import Highlights from '../components/Highlights.astro';
+import CaseCards from '../components/CaseCards.astro';
 import { getProjects } from '../lib';
 
 const projects = await getProjects();
@@ -90,46 +91,10 @@ const focus = site.domain.map((d) => d.toLowerCase());
         <h2>Case studies</h2>
         {projects.length > 0 && <span class="badge">{projects.length}</span>}
       </div>
+      <span class="cs-hint">How research turned into product decisions</span>
     </div>
 
-    {
-      projects.length === 0 ? (
-        <div class="empty">
-          <b>Case studies are on their way</b>
-          <span>New projects are being written up. Check back soon.</span>
-        </div>
-      ) : (
-        <div class="tbl" role="list">
-          <div class="tr th" aria-hidden="true">
-            <span>Project</span>
-            <span>Methods</span>
-            <span>Year</span>
-            <span />
-          </div>
-          {projects.map((p) => (
-            <a class="tr" href={`/work/${p.id}/`} role="listitem">
-              <span class="proj">
-                <b>
-                  {p.data.title}
-                  {p.data.draft && <span class="badge warn">Draft</span>}
-                </b>
-                <span class="sum">{p.data.summary}</span>
-                <span class="ctx">{p.data.context}</span>
-              </span>
-              <span class="badges">
-                {p.data.methods.slice(0, 3).map((m) => (
-                  <span class="badge">{m}</span>
-                ))}
-              </span>
-              <span class="year">{p.data.year}</span>
-              <span class="go">
-                <Icon name="right" />
-              </span>
-            </a>
-          ))}
-        </div>
-      )
-    }
+    <CaseCards projects={projects} />
   </section>
 
   <section id="process" class="card">
@@ -356,105 +321,8 @@ const focus = site.domain.map((d) => d.toLowerCase());
     margin-top: 4px;
   }
 
-  /* Projects list styled as a Backoffice table */
-  .tbl {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 220px) 48px 32px;
-    gap: 16px;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid var(--line);
-  }
-  .tr:last-child {
-    border-bottom: 0;
-  }
-  .tr:nth-child(odd):not(.th) {
-    background: var(--zebra);
-  }
-  .th {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    background: var(--zebra);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--fg-4);
-  }
-  a.tr:hover {
-    background: var(--accent-bg);
-  }
-  .proj {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-  .proj b {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    font-weight: 600;
-    font-size: 15px;
-    color: #000;
-  }
-  .sum {
-    font-size: 14px;
-    color: var(--fg-3);
-  }
-  .ctx {
+  .cs-hint {
     font-size: 12px;
     color: var(--fg-4);
-  }
-  .year {
-    font-size: 14px;
-    color: var(--fg-2);
-    font-variant-numeric: tabular-nums;
-  }
-  .go {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--line-2);
-    background: var(--card);
-    color: var(--fg-2);
-  }
-  .go :global(svg) {
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  a.tr:hover .go {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: #000;
-  }
-  a.tr:hover .go :global(svg) {
-    transform: translateX(3px);
-  }
-
-  @media (max-width: 760px) {
-    .th {
-      display: none;
-    }
-    .tr {
-      grid-template-columns: minmax(0, 1fr) 32px;
-      gap: 10px 12px;
-    }
-    .proj {
-      grid-column: 1 / -1;
-    }
-    .badges {
-      grid-column: 1 / -1;
-    }
-    .year {
-      grid-row: 3;
-    }
   }
 </style>

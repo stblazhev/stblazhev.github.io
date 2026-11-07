@@ -20,6 +20,7 @@ This file is the handover for any Claude session or developer picking up the wor
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
 | Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
+| Home page case study cards (result panel from the first `outcomes` item, read time, hover lift) and the purple "Brewing new ideas" placeholder | `src/components/CaseCards.astro` |
 | Highlights flip cards (number count-up, animated picture, story on the back; content from `site.highlights`) | `src/components/Highlights.astro` |
 | About > Education "learning map" (two lanes on a year axis: `site.education` = formal, `site.sideEducation` = courses, awards, exchanges; filter, pick a stop for details) | `src/components/LearningMap.astro` |
 | "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
@@ -96,7 +97,7 @@ Node 22.23 or newer is required.
 - Case study pages also pass `back` ({ href, label }) to `Base`: an arrow at the far left of the sticky section bar that shows its label on hover or focus. It replaces the old "All case studies" button above the header, so it stays visible while scrolling.
 - "Get in touch" is an action, not a page: any link with `data-contact` opens the contact dialog (it falls back to `mailto:` without JavaScript).
 - All motion respects `prefers-reduced-motion`; the research loop also has a pause button.
-- Colour: green (`--accent`) is the system colour. The logo purple (`--pop*` tokens, `.btn.pop`, `.badge.pop`) is an attention colour, kept to a few places: the Get in touch / Write an email buttons (tinted, never filled), the hero typing word, the headline highlighter (`site.headlineMark`), the back of the highlight cards and the pulsing hint dot on the Case studies section tab (`hint: true` in a page's `sections`; it hides while that section is active). Do not spread it further.
+- Colour: green (`--accent`) is the system colour. The logo purple (`--pop*` tokens, `.btn.pop`, `.badge.pop`) is an attention colour, kept to a few places: the Get in touch / Write an email buttons (tinted, never filled), the hero typing word, the headline highlighter (`site.headlineMark`), the back of the highlight cards, the "Brewing new ideas" placeholder card in Case studies, and the pulsing hint dot on the Case studies section tab (`hint: true` in a page's `sections`; it hides while that section is active). Do not spread it further.
 - The side panel has one contact action (Get in touch). Email, LinkedIn and CV live inside the contact dialog only.
 - Desktop side nav is a 72px icon rail that widens to 248px on hover or keyboard focus and pushes the content aside, never covering it; it is only as tall as its items (Base.astro, "Collapsing rail"). Below 900px it is a top bar.
 - Pointer glow: add `data-spot` to a card and `<span class="spot" aria-hidden="true"></span>` as its first child (Home intro, About me).
