@@ -1,7 +1,8 @@
 ---
 // Education as a "learning map": a time axis with two lanes, formal education
 // and side education. Pick a stop to see its details in the panel underneath.
-// Wide screens run the years left to right; narrower ones run them top to bottom.
+// Newest first, like a CV: wide screens put the newest year on the left,
+// narrower ones on top.
 // Stops that share a lane and a year stack in one cell.
 import Icon from './Icon.astro';
 import { site } from '../data/site';
@@ -18,11 +19,12 @@ type Stop = {
   focus?: string[];
 };
 
-// Date order; within a year formal education comes first (the data lists are already in date order)
+// Newest first; within a year formal education comes first. The data lists are in
+// date order, so they are reversed before the (stable) sort.
 const stops: Stop[] = [
-  ...site.education.map((e) => ({ kind: 'edu' as const, ...e })),
-  ...site.sideEducation.map((c) => ({ kind: 'side' as const, ...c })),
-].sort((a, b) => a.year - b.year || (a.kind === b.kind ? 0 : a.kind === 'edu' ? -1 : 1));
+  ...site.education.map((e) => ({ kind: 'edu' as const, ...e })).reverse(),
+  ...site.sideEducation.map((c) => ({ kind: 'side' as const, ...c })).reverse(),
+].sort((a, b) => b.year - a.year || (a.kind === b.kind ? 0 : a.kind === 'edu' ? -1 : 1));
 
 // Group neighbours that share a lane and a year into one cell (keeps DOM order = date order)
 const cells: { kind: Stop['kind']; year: number; items: { s: Stop; i: number }[] }[] = [];
@@ -34,16 +36,16 @@ stops.forEach((s, i) => {
 
 const first = Math.min(...stops.map((s) => s.year));
 const last = Math.max(...stops.map((s) => s.year));
-const years = Array.from({ length: last - first + 1 }, (_, i) => first + i);
+const years = Array.from({ length: last - first + 1 }, (_, i) => last - i);
 // Grid line for a year: line 1 holds the lane labels (wide) or lane headers (narrow)
-const pos = (y: number) => y - first + 2;
+const pos = (y: number) => last - y + 2;
 
 const nEdu = site.education.length;
 const nSide = site.sideEducation.length;
 // Open on the degree by default
 const start = Math.max(
   0,
-  stops.findIndex((s) => s.kind === 'edu' && /bachelor|master|(BSc|BA|MSc|MA)/i.test(s.title)),
+  stops.findIndex((s) => s.kind === 'edu' && /bachelor|master/i.test(s.title)),
 );
 ---
 
@@ -58,7 +60,7 @@ const start = Math.max(
         <span class="sw side" /> Side education <span class="n">{nSide}</span>
       </button>
     </div>
-    <span class="lm-span">{years.length} years of learning, {first} – {last}</span>
+    <span class="lm-span">{years.length} years of learning, {last} back to {first}</span>
   </div>
 
   <div class="lm-grid" style={`--years:${years.length}`}>
@@ -132,9 +134,9 @@ const start = Math.max(
       }
     </div>
     <div class="lm-nav">
-      <button type="button" class="btn" data-step="-1" aria-label="Earlier"><Icon name="left" /></button>
+      <button type="button" class="btn" data-step="-1" aria-label="Newer"><Icon name="left" /></button>
       <span class="lm-count" aria-hidden="true">{start + 1} / {stops.length}</span>
-      <button type="button" class="btn" data-step="1" aria-label="Later"><Icon name="right" /></button>
+      <button type="button" class="btn" data-step="1" aria-label="Older"><Icon name="right" /></button>
     </div>
   </div>
 </div>
