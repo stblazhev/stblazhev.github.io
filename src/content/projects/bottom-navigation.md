@@ -43,7 +43,7 @@ Two questions decided the design:
 - **Five tabs at most per mode,** and the switch counts as one of them.
 - **Business requirements were fixed going in:** revenue areas such as Promotions and Live Casino had to stay easy to reach.
 - **Legal pages, responsible gaming and verification must always be reachable,** even if not from the bar.
-- **Features differ per market,** so the structure had to cope with items being switched on or off.
+- **Markets differ.** Some markets have no sports betting at all, and other features are switched on or off per market, so the structure had to keep working when items are missing.
 
 ## My role
 
@@ -136,6 +136,8 @@ The final bars balanced my proposals with business requirements the Product team
 <div class="tabbar" role="img" aria-label="Sports bottom bar: Switch, Sport, Live Betting, Virtuals, Promotions"><span>Switch</span><span>Sport</span><span>Live Betting</span><span>Virtuals</span><span>Promotions</span></div>
 
 *The two bars as shipped, redrawn without branding.*
+
+In markets without sports betting, players see only the Casino bar, without the switch. Because the switch has its own fixed slot on the far left, removing it leaves the other tabs in the same order. Players get the same layout in every market, and no market needs its own version of the bar.
 
 ## Design and implementation
 
