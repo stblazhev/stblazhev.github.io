@@ -127,9 +127,10 @@ I also wrote success measures for each proposal, so the team would know whether 
 
 The final bars balanced my proposals with business requirements the Product team set. Live Casino and Promotions, which players rarely picked but the business relies on, took slots in the bar, and Account moved out of it.
 
-![The shipped Casino bar: Switch, Casino, Live Casino, Search, Promotions. Below it the Sports bar: Switch, Sport, Live Betting, Virtuals, Promotions.](/projects/bottom-navigation/shipped-bars.jpg)
+- **Casino:** Switch · Casino · Live Casino · Search · Promotions (My Bonuses for logged-in members)
+- **Sports:** Switch · Sport · Live Betting · Virtuals · Promotions
 
-*The two bars as shipped: Casino on top, Sports below. The active tab is green.*
+The final design of both bars is shown under [Design and implementation](#the-final-design).
 
 In markets without sports betting, players see only the Casino bar, without the switch. Because the switch has its own fixed slot on the far left, removing it leaves the other tabs in the same order. Players get the same layout in every market, and no market needs its own version of the bar.
 
@@ -147,21 +148,28 @@ I handed my low and mid-fidelity wireframes and the brief deck to the Product De
 
 The old navigation was a top bar with a row of categories that scrolled sideways. Stakeholders had already named this as a pain point in the interviews: whatever didn't fit on screen was effectively invisible. The new bar sits at the bottom, floats above the page, and shows every tab at once.
 
-### Details that came from the research
+### An earlier iteration
 
-- **The switch keeps its own place.** It is a round button in a fixed slot on the far left, separate from the tabs, so it never moves under the thumb of the players who switch often.
+The Product Design team went through several iterations before the final one. In this earlier version, the bar was dark and see-through, floating over the page content, and the current tab was not highlighted.
+
+We used this version to test something a floating bar has to survive: the browser's own toolbars, which sit in different places on iOS and Android. We checked it in Safari and Chrome on iOS, Chrome on Android and the installed web app, so it always sits clear of them.
+
+![An earlier iteration of the Casino bar in four environments: Safari on iOS, Chrome on iOS, Chrome on Android and the installed web app.](/projects/bottom-navigation/browsers.jpg)
+
+*An earlier iteration, checked in four environments. This is not the design that shipped; the final one follows below.*
+
+### The final design
+
+The shipped bar is solid rather than see-through, and the current tab is green, so players can always see where they are.
+
+![The shipped bars: the Casino bar for a guest ending in Promotions, for a member ending in My Bonuses, and the Sports bar.](/projects/bottom-navigation/final-bars.jpg)
+
+*The bars as shipped. For logged-in members the last Casino tab changes from Promotions to My Bonuses.*
+
+Several details came straight from the research:
+
+- **The switch keeps its own place.** It sits in a fixed slot on the far left, separate from the tabs, so it never moves under the thumb of the players who switch often.
 - **The last tab follows the player's state.** Guests see Promotions, the offer that brings them in. Logged-in members see My Bonuses, the bonuses they already have. Players had told us that bonuses are one of the main reasons they come back.
-
-![The Casino bar for a guest, ending in Promotions, and for a member, ending in My Bonuses.](/projects/bottom-navigation/guest-member.jpg)
-
-*The same bar for a guest and for a logged-in member: only the last tab changes.*
-
-- **It had to work in every browser.** A floating bar can clash with the browser's own toolbars, which sit in different places on iOS and Android. We checked it in Safari and Chrome on iOS, Chrome on Android and the installed web app, so it always sits clear of them.
-
-![The Casino bar in four environments: Safari on iOS, Chrome on iOS, Chrome on Android and the installed web app.](/projects/bottom-navigation/browsers.jpg)
-
-*The bar in four environments. It keeps clear of each browser's toolbars.*
-
 - **One component for every brand.** The bar is part of the platform's design system, so any brand can use it. Brands in markets without sports betting simply don't show the switch or the Sports bar.
 
 ### Results
