@@ -38,13 +38,13 @@ export const site = {
       tag: 'Case study coming soon',
     },
     {
-      value: '9x',
-      label: 'faster, more accessible user flow with a newly implemented bottom navigation bar',
+      value: '2',
+      label: 'mode-specific bottom bars shipped as one reusable platform component',
       viz: 'nav',
       where: 'Bottom navigation bar',
       org: 'ALL IN Platform',
-      story: 'Key pages moved from a menu at the top of the screen into a bottom navigation bar, so players reach them in one tap, within thumb reach.',
-      tag: 'Case study coming soon',
+      story: 'Stakeholder interviews and card sorts with players shaped separate Casino and Sports bars. Key pages moved from the top of the screen to one tap, within thumb reach.',
+      tag: 'Case study published',
     },
     {
       value: '50+',

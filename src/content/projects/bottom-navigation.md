@@ -1,15 +1,15 @@
 ---
 title: 'One app, two mindsets: a bottom bar for casino and for sports'
-summary: 'Players and the business wanted different things from the mobile navigation. I ran stakeholder interviews, a competitor benchmark and card sorts with players to turn that conflict into two mode-specific bottom bars, both of which shipped.'
-context: 'Online casino and sportsbook · B2C · Mobile web · European market'
+summary: 'Players and the business wanted different things from the mobile navigation. I ran stakeholder interviews, a competitor benchmark and card sorts with players to turn that conflict into two mode-specific bottom bars, which shipped as a reusable component across the platform.'
+context: 'All In Platform · B2B iGaming platform · Casino and sportsbook · Mobile web'
 year: '2025'
 role: 'UX Researcher, end to end'
-timeline: 'Research phase, 2025'
+timeline: 'Research to launch, 2025'
 team: 'Me, with a Product Manager, the CPO and the Product Design team'
-methods: ['Stakeholder interviews', 'Competitor benchmark', 'Closed card sorting', 'Jobs-to-be-done', 'Wireframing']
+methods: ['Stakeholder interviews', 'Competitor benchmark', 'Closed card sorting', 'Jobs-to-be-done', 'Wireframing', 'Design reviews']
 outcomes:
   - value: '2'
-    label: 'mode-specific bottom bars shipped, Casino and Sports'
+    label: 'mode-specific bottom bars shipped as one reusable platform component'
   - value: '4'
     label: 'stakeholder interviews, each with a sorting task'
   - value: '12'
@@ -19,17 +19,15 @@ outcomes:
 tldr:
   - 'Casino and sports content shared one mobile navigation, so players of each had to work past content meant for the other.'
   - 'I combined stakeholder interviews, a competitor benchmark and two closed card sorts with players into rules for what earns a place in the bottom bar.'
-  - 'Two bottom bars shipped, one per mode, balancing what players asked for with what the business needed.'
+  - 'Two bottom bars shipped, one per mode, as a design-system component every brand on the platform can reuse. They balance what players asked for with what the business needed.'
 order: 1
 ---
 
-<p class="note"><b>Research phase.</b> This case study covers the research up to the wireframes. The design and implementation phase, including the results after launch, is coming soon.</p>
-
 ## Context
 
-The product is an online casino and sportsbook, used mostly on mobile. Casino games and sports betting lived in one shared navigation, so a sports bettor scrolled past slot categories and a casino player past football leagues.
+All In Platform is a B2B iGaming platform: many casino and sportsbook brands run on it and share its design system. On mobile, casino games and sports betting lived in one shared navigation, so a sports bettor scrolled past slot categories and a casino player past football leagues.
 
-The team wanted to separate the two: a bottom navigation of at most five tabs for each mode, and a way to switch between them. The work is under NDA, so the brand, market and internal figures are left out. Players were recruited in our biggest European market and tested in their own language.
+The team wanted to separate the two: a bottom navigation of at most five tabs for each mode, and a way to switch between them. It had to work as one component that every brand on the platform could reuse. The research was run for one brand on the platform, whose name, market and internal figures are left out under NDA. Players were recruited in its biggest European market and tested in their own language.
 
 ## The challenge
 
@@ -49,7 +47,7 @@ Two questions decided the design:
 
 I ran the project alone, from planning the research to low and mid-fidelity wireframes. I planned and ran the stakeholder interviews and the competitor benchmark, wrote and launched both card sorts, analysed the results, and built the wireframes and the brief deck that handed the work to design.
 
-I worked closely with the Product Manager responsible for navigation, and agreed the business requirements with the CPO. Together we balanced those requirements against what the research showed. For the design, I worked with the Product Design team, who took my wireframes to the final interface.
+I worked closely with the Product Manager responsible for navigation, and agreed the business requirements with the CPO. Together we balanced those requirements against what the research showed. For the design, I worked with the Product Design team, who took my wireframes to the final interface. I reviewed their work every day, ran checks as it changed, and joined the day-to-day meetings where we discussed, changed and improved it.
 
 ## Approach
 
@@ -129,13 +127,9 @@ I also wrote success measures for each proposal, so the team would know whether 
 
 The final bars balanced my proposals with business requirements the Product team set. Live Casino and Promotions, which players rarely picked but the business relies on, took slots in the bar, and Account moved out of it.
 
-<p class="tabbar-label">Casino</p>
-<div class="tabbar" role="img" aria-label="Casino bottom bar: Switch, Casino, Live Casino, Search, Promotions"><span>Switch</span><span>Casino</span><span>Live Casino</span><span>Search</span><span>Promotions</span></div>
+![The shipped Casino bar: Switch, Casino, Live Casino, Search, Promotions. Below it the Sports bar: Switch, Sport, Live Betting, Virtuals, Promotions.](/projects/bottom-navigation/shipped-bars.jpg)
 
-<p class="tabbar-label">Sports</p>
-<div class="tabbar" role="img" aria-label="Sports bottom bar: Switch, Sport, Live Betting, Virtuals, Promotions"><span>Switch</span><span>Sport</span><span>Live Betting</span><span>Virtuals</span><span>Promotions</span></div>
-
-*The two bars as shipped, redrawn without branding.*
+*The two bars as shipped: Casino on top, Sports below. The active tab is green.*
 
 In markets without sports betting, players see only the Casino bar, without the switch. Because the switch has its own fixed slot on the far left, removing it leaves the other tabs in the same order. Players get the same layout in every market, and no market needs its own version of the bar.
 
@@ -143,11 +137,45 @@ For now nothing takes the empty slot, so casino-only markets have a four-tab bar
 
 ## Design and implementation
 
-<p class="note"><b>Coming soon.</b> The next part covers how the wireframes became the final interface and how the new navigation performed after launch.</p>
+### From wireframes to the final interface
+
+I handed my low and mid-fidelity wireframes and the brief deck to the Product Design team, who designed the final interface. I stayed involved every day: reviewing each version, checking it against the research, and adjusting it with them in our day-to-day meetings.
+
+![The old top navigation: a menu button, the balance and a row of categories that scrolls sideways.](/projects/bottom-navigation/old-top-nav.jpg)
+
+*Before: everything sat at the top of the screen, out of thumb reach. Categories scrolled sideways, so anything past the edge of the screen was hidden.*
+
+The old navigation was a top bar with a row of categories that scrolled sideways. Stakeholders had already named this as a pain point in the interviews: whatever didn't fit on screen was effectively invisible. The new bar sits at the bottom, floats above the page, and shows every tab at once.
+
+### Details that came from the research
+
+- **The switch keeps its own place.** It is a round button in a fixed slot on the far left, separate from the tabs, so it never moves under the thumb of the players who switch often.
+- **The last tab follows the player's state.** Guests see Promotions, the offer that brings them in. Logged-in members see My Bonuses, the bonuses they already have. Players had told us that bonuses are one of the main reasons they come back.
+
+![The Casino bar for a guest, ending in Promotions, and for a member, ending in My Bonuses.](/projects/bottom-navigation/guest-member.jpg)
+
+*The same bar for a guest and for a logged-in member: only the last tab changes.*
+
+- **It had to work in every browser.** A floating bar can clash with the browser's own toolbars, which sit in different places on iOS and Android. We checked it in Safari and Chrome on iOS, Chrome on Android and the installed web app, so it always sits clear of them.
+
+![The Casino bar in four environments: Safari on iOS, Chrome on iOS, Chrome on Android and the installed web app.](/projects/bottom-navigation/browsers.jpg)
+
+*The bar in four environments. It keeps clear of each browser's toolbars.*
+
+- **One component for every brand.** The bar is part of the platform's design system, so any brand can use it. Brands in markets without sports betting simply don't show the switch or the Sports bar.
+
+### Results
+
+The new navigation has shipped, but its impact has not been measured yet, so I am not claiming any numbers. The success measures from the research are the plan for checking it:
+
+- at least 80% task success
+- no more than 2 taps from home to the first game or event
+- no increase in "can't find" support tickets
 
 ## Reflection
 
 - **The samples were small.** With six usable sessions per sort, the results show direction, not certainty. That is why I paired them with stakeholder input, a benchmark and real play data rather than letting the card sorts decide alone.
 - **One market, one language.** Navigation habits differ between markets, so the bars should be checked before rolling out elsewhere.
 - **A card sort measures preference, not performance.** Players told us what they want in the bar, not whether they can find things with it. Next time I would add a quick first-click or tree test on the wireframes before handover.
+- **What I would change in the design: the switch.** Its two mode icons are both round and turn the same colour when active, so at first glance Casino and Sports look alike. The current look was partly shaped by business decisions, so I would keep it on our own sites. In the design system, though, I would let each brand choose the switch's icons and colours, so it can make the current mode clearer for its players.
 - **What I learned:** research rarely hands over a finished answer when business needs are fixed. Writing clear rules for what earns a tab made the trade-offs easier to discuss with the Product Manager than arguing item by item.
