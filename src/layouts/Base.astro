@@ -390,7 +390,6 @@ const nav = [
     align-items: center;
     gap: 12px;
     padding: 16px;
-    border-bottom: 1px solid var(--line);
   }
   .logo {
     width: 30px;
@@ -416,11 +415,12 @@ const nav = [
     color: var(--fg-3);
   }
 
+  /* No divider lines: the logo, the pages and the contact action are told apart by space alone */
   .nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 12px;
+    padding: 4px 12px 20px;
   }
   .nav-item {
     display: flex;
@@ -454,8 +454,7 @@ const nav = [
     margin-top: auto;
     display: flex;
     flex-direction: column;
-    padding: 12px;
-    border-top: 1px solid var(--line);
+    padding: 4px 12px 12px;
   }
   .talk {
     height: 40px;
@@ -793,7 +792,6 @@ const nav = [
       flex-wrap: wrap;
     }
     .who {
-      border-bottom: 0;
       padding: 12px;
       margin-right: auto;
     }
@@ -806,7 +804,6 @@ const nav = [
     }
     .side-foot {
       margin: 0;
-      border-top: 0;
       padding: 12px;
     }
     .talk {
