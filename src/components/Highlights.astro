@@ -33,6 +33,17 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
               </svg>
             )}
 
+            {h.viz === 'drop' && (
+              <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
+                <line x1="8" y1="50" x2="112" y2="50" class="base" />
+                <rect class="bar b1" x="24" y="11" width="28" height="39" rx="4" />
+                <rect class="bar b2" x="68" y="27" width="28" height="23" rx="4" />
+                <text class="tag" x="82" y="21">−{h.value}</text>
+                <text x="38" y="62">Before</text>
+                <text x="82" y="62">After</text>
+              </svg>
+            )}
+
             {h.viz === 'race' && (
               <svg class="viz" viewBox="0 0 120 64" aria-hidden="true">
                 <text x="0" y="21" class="l">Before</text>

@@ -25,16 +25,16 @@ export const site = {
   motto: 'Get to know your user first, then think about the rest.',
 
   // Headline results shown on the home page as flip cards.
-  // viz: the small animated picture on the front (bars | race | people | tally).
+  // viz: the small animated picture on the front (bars = growth | drop = reduction | race | people | tally).
   // The back of the card tells where the number comes from.
   highlights: [
     {
       value: '40%',
-      label: 'increase in first-time deposits after an optimised registration flow',
-      viz: 'bars',
+      label: 'shorter sign-up time after an optimised registration flow',
+      viz: 'drop',
       where: 'Registration and login flow',
       org: 'ALL IN Platform',
-      story: 'Research into where players dropped out of sign-up shaped an optimised registration flow.',
+      story: 'Research into where players lost time and dropped out of sign-up shaped an optimised registration flow.',
       tag: 'Case study coming soon',
     },
     {
