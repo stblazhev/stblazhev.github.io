@@ -22,7 +22,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     projects.map((p, i) => {
       const kpi = p.data.outcomes[0];
       return (
-        <a class="cs" href={`/work/${p.id}/`} data-spot data-reveal style={`transition-delay:${i * 90}ms`}>
+        <a class="cs" href={`/work/${p.id}/`} data-spot data-reveal style={`transition-delay:${i * 90}ms`} data-goatcounter-click={`case-study-${p.id}`} data-goatcounter-title={`Open case study: ${p.data.title}`}>
           <span class="spot" aria-hidden="true" />
           {kpi && (
             <span class="cs-art" aria-hidden="true">

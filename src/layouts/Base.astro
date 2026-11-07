@@ -82,7 +82,7 @@ const nav = [
         {
           hasContact && (
             <div class="side-foot">
-              <a class="btn pop talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact>
+              <a class="btn pop talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact data-goatcounter-click="contact-open-side-nav" data-goatcounter-title="Get in touch (side navigation)">
                 <Icon name="chat" /> <span>Get in touch</span>
               </a>
             </div>
@@ -97,7 +97,7 @@ const nav = [
             <div class="secwrap">
               <nav class="secbar" aria-label="On this page">
                 {back && (
-                  <a class="sec-back" href={back.href} aria-label={back.label}>
+                  <a class="sec-back" href={back.href} aria-label={back.label} data-goatcounter-click="back-to-case-studies" data-goatcounter-title="Back to all case studies">
                     <Icon name="back" />
                     <span aria-hidden="true">{back.label}</span>
                   </a>
@@ -135,6 +135,8 @@ const nav = [
                       class:list={['wn-tile', { pop: contact }]}
                       href={contact ? `mailto:${site.email}` : n.href}
                       data-contact={contact ? '' : undefined}
+                      data-goatcounter-click={contact ? 'contact-open-where-next' : `where-next-${n.title.toLowerCase().replace(/\W+/g, '-')}`}
+                      data-goatcounter-title={`Where next: ${n.title}`}
                     >
                       <span class="label">{n.label}</span>
                       <b>{n.title}</b>
@@ -173,9 +175,9 @@ const nav = [
               <span class="contact-ico"><Icon name="mail" /></span>
               <span class="contact-val">
                 <span class="label">Email</span>
-                <a href={`mailto:${site.email}`}>{site.email}</a>
+                <a href={`mailto:${site.email}`} data-goatcounter-click="email-address" data-goatcounter-title="Contact: email address link">{site.email}</a>
               </span>
-              <button class="btn copy" type="button" data-copy={site.email}>
+              <button class="btn copy" type="button" data-copy={site.email} data-goatcounter-click="email-copy" data-goatcounter-title="Contact: copy email">
                 <Icon name="copy" /> <span>Copy</span>
               </button>
             </div>
@@ -185,9 +187,9 @@ const nav = [
               <span class="contact-ico"><Icon name="linkedin" /></span>
               <span class="contact-val">
                 <span class="label">LinkedIn</span>
-                <a href={site.linkedin} rel="me">{site.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+                <a href={site.linkedin} rel="me" data-goatcounter-click="linkedin-link" data-goatcounter-title="Contact: LinkedIn link">{site.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
               </span>
-              <a class="btn" href={site.linkedin} rel="me">
+              <a class="btn" href={site.linkedin} rel="me" data-goatcounter-click="linkedin-open" data-goatcounter-title="Contact: open LinkedIn">
                 Open <Icon name="right" />
               </a>
             </div>
@@ -198,7 +200,7 @@ const nav = [
             </a>
           )}
           {site.email && (
-            <a class="btn pop wide" href={`mailto:${site.email}`}>
+            <a class="btn pop wide" href={`mailto:${site.email}`} data-goatcounter-click="email-write" data-goatcounter-title="Contact: write an email">
               <Icon name="mail" /> Write an email
             </a>
           )}

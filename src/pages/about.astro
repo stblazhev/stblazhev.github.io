@@ -42,12 +42,12 @@ const next = [
       (site.linkedin || site.email) && (
         <div class="actions">
           {site.linkedin && (
-            <a class="btn primary" href={site.linkedin} rel="me">
+            <a class="btn primary" href={site.linkedin} rel="me" data-goatcounter-click="linkedin-about" data-goatcounter-title="About: LinkedIn">
               <Icon name="linkedin" /> LinkedIn
             </a>
           )}
           {site.email && (
-            <a class="btn" href={`mailto:${site.email}`}>
+            <a class="btn" href={`mailto:${site.email}`} data-goatcounter-click="email-about" data-goatcounter-title="About: Email me">
               <Icon name="mail" /> Email me
             </a>
           )}

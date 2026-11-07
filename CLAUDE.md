@@ -96,7 +96,7 @@ Node 22.23 or newer is required.
 
 ## Analytics
 
-GoatCounter (free, no cookies, so no consent banner) counts visits on every page; the script is in the `<head>` of `Base.astro`. Dashboard: https://stblazhev.goatcounter.com (Stefan's personal account). It does not count localhost.
+GoatCounter (free, no cookies, so no consent banner) counts visits on every page; the script is in the `<head>` of `Base.astro`. Dashboard: https://stblazhev.goatcounter.com (Stefan's personal account). It does not count localhost. Key clicks are counted as events with `data-goatcounter-click="name"` (plus `data-goatcounter-title`): contact buttons, email and LinkedIn links, case study cards, highlight flips, hero and Where next links, the case study back arrow. Add the attribute to any new important button.
 
 ## Accessibility rules
 

@@ -11,7 +11,7 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
 <div class="hls">
   {
     site.highlights.map((h, k) => (
-      <button class="hl" type="button" aria-expanded="false" data-hl>
+      <button class="hl" type="button" aria-expanded="false" data-hl data-goatcounter-click={`highlight-${k + 1}`} data-goatcounter-title={`Highlight flipped: ${h.value} ${h.label}`}>
         <span class="hl-in">
           <span class="side front">
             <span class="top">

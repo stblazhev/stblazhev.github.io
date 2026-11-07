@@ -57,10 +57,10 @@ const focus = site.domain.map((d) => d.toLowerCase());
     <p class="intro">{site.intro}</p>
     {site.motto && <p class="motto">“{site.motto}”</p>}
     <div class="hero-actions">
-      <a class="btn primary" href="#work">View case studies</a>
+      <a class="btn primary" href="#work" data-goatcounter-click="hero-view-case-studies" data-goatcounter-title="Hero: View case studies">View case studies</a>
       {
         site.email && (
-          <a class="btn" href={`mailto:${site.email}`} data-contact>
+          <a class="btn" href={`mailto:${site.email}`} data-contact data-goatcounter-click="contact-open-hero" data-goatcounter-title="Get in touch (hero)">
             <Icon name="mail" /> Get in touch
           </a>
         )
