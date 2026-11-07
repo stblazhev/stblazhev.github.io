@@ -176,7 +176,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 
 /* Images: put a caption in italics on the line right after the image */
 .prose img { border-radius: 12px; border: 1px solid var(--line); width: 100%; margin-top: 1.6em; }
-.prose p:has(> img) + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: -0.3em; }
+.prose p:has(> img) + p > em:only-child, .prose table + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: -0.3em; }
 
 /* Tables look like Backoffice tables */
 .prose table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }

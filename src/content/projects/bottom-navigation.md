@@ -20,6 +20,8 @@ tldr:
   - 'Casino and sports content shared one mobile navigation, so players of each had to work past content meant for the other.'
   - 'I combined stakeholder interviews, a competitor benchmark and two closed card sorts with players into rules for what earns a place in the bottom bar.'
   - 'Two bottom bars shipped, one per mode, as a design-system component every brand on the platform can reuse. They balance what players asked for with what the business needed.'
+cover: '/projects/bottom-navigation/cover.jpg'
+coverAlt: 'Before: a top navigation with a sideways-scrolling category row. After: a bottom bar with a switch and four tabs.'
 order: 1
 ---
 
@@ -62,7 +64,7 @@ Each phase answered a question the previous one could not.
 | 2 | **Pre- and post-task questions,** then **jobs-to-be-done** | Card sorts show *what* players pick. The questions explain *why*, and the jobs say what each tab has to help a player do. |
 | 3 | **Low and mid-fidelity wireframes** and a brief deck | To turn the decisions into something the design team and stakeholders could react to |
 
-Both card sorts were run unmoderated. Ten players were recruited per test and six usable sessions were analysed in each.
+Both card sorts were run unmoderated, and six sessions were analysed in each.
 
 ## What we found
 
@@ -71,6 +73,18 @@ Both card sorts were run unmoderated. Ten players were recruited per test and si
 In the casino sort, every tester picked **Account (6/6)** and almost all picked **Search (5/6)**. After those, they picked discovery shortcuts: New games, Popular and Tournaments, each chosen by 2 of 6.
 
 The items the business considered essential (the Casino lobby, Live Casino, Promotions and the mode switch) were rarely or never picked. The game lobby, the main browse hub, was chosen by only 1 of 6 testers.
+
+| Casino sort | Picked by | Sports sort | Picked by |
+| --- | --- | --- | --- |
+| Account | 6 of 6 | My Bets | 3 of 6 |
+| Search | 5 of 6 | Sport Categories | 3 of 6 |
+| New games | 2 of 6 | Search | 2 of 6 |
+| Popular games | 2 of 6 | Promotions | 2 of 6 |
+| Tournaments | 2 of 6 | Deposit | 2 of 6 |
+| **Casino lobby** | **1 of 6** | **Sports lobby** | **0 of 6** |
+| **Live Casino** | **0 of 6** | **Live Betting** | **0 of 6** |
+
+*How many testers picked each item for their five-tab bar. The bold rows are the hubs the business needed.*
 
 **So what:** neither list could simply win. I set rules for every slot: keep what most testers picked, add the anchors players expect from other sites, merge duplicates, and move niche items to the menu. My term for this was "user-led, business-safe".
 
@@ -88,7 +102,7 @@ My Bets and Sport Categories were the most-picked sports items (3/6 each). Sever
 
 ### 3. The switch matters a lot, but only to a minority
 
-About 70% of casino testers rarely or never switch to sports, and none of them wanted the switch in the bottom bar. Among sports bettors it was the opposite: a few switch constantly, and 3 of 5 wanted the switch in the bar.
+Most casino testers rarely or never switch to sports, and none of them wanted the switch in the bottom bar. Among sports bettors it was the opposite: a few switch constantly, and 3 of the 5 who answered wanted the switch in the bar.
 
 > “I switch quite often… maybe 5, 6, even 10 times during a football match. Usually to play Blackjack.”
 >
@@ -96,7 +110,9 @@ About 70% of casino testers rarely or never switch to sports, and none of them w
 
 The analytics agreed: about **1 in 6 players** play both, but **2 in 3 sports bettors** also play casino. Three of the four stakeholders, separately, put the switch on the far left of a fixed bar.
 
-**So what:** keep the switch, always in the same far-left slot, so it never moves under the thumb of the players who rely on it.
+The competitor benchmark showed the pattern was already familiar: brands offering both products used a separate bottom bar for each mode, with a round switch button. But the leading competitor's switch changed sides, sitting on the far right of its Sports bar and on the far left of its Casino bar.
+
+**So what:** keep the switch, always in the same far-left slot in both modes, so it never moves under the thumb of the players who rely on it.
 
 ### 4. Account is where players feel in control, so a Deposit tab is redundant
 
@@ -108,6 +124,15 @@ Players treated their account as the place where money and trust live. Several c
 
 **So what:** Deposit did not get a tab. It stays as an always-visible action next to the balance, which leaves the bar's slots for navigation.
 
+### Beyond the bar
+
+The research also surfaced needs that a bottom bar can't solve on its own:
+
+- **A "Continue playing" row.** Players wanted to get back to recent games without searching for them.
+- **Bonus alerts.** Players expect a red dot or badge so they don't miss a bonus.
+- **Results and live-bet tracking.** Sports bettors asked for a one-tap way to see results and follow bets in play.
+- **A personalised view.** Logged-in players expect content adapted to them, not a general page.
+
 ## From insights to decisions
 
 | Insight | Decision in the proposal | What was left out, and why |
@@ -116,12 +141,6 @@ Players treated their account as the place where money and trust live. Several c
 | Sports bettors return to the same few pages again and again | Live Betting and My Bets one tap away | Bet-history variants and notifications: useful, but not something you navigate to from the bar |
 | The switch is vital for a minority | A fixed switch in the far-left slot | A floating switch: one stakeholder liked it, but it competes with content and moves around |
 | Account already covers money actions | No Deposit tab; Deposit stays next to the balance | A separate Withdraw tab, for the same reason |
-
-I also wrote success measures for each proposal, so the team would know whether it worked after launch:
-
-- at least 80% task success
-- no more than 2 taps from home to the first game or event
-- no increase in "can't find" support tickets
 
 ### What shipped
 
@@ -140,19 +159,19 @@ For now nothing takes the empty slot, so casino-only markets have a four-tab bar
 
 ### From wireframes to the final interface
 
-I handed my low and mid-fidelity wireframes and the brief deck to the Product Design team, who designed the final interface. I stayed involved every day: reviewing each version, checking it against the research, and adjusting it with them in our day-to-day meetings.
+I handed my wireframes and the brief deck to the Product Design team and reviewed each version with them against the research, every day, until launch.
 
 ![The old top navigation: a menu button, the balance and a row of categories that scrolls sideways.](/projects/bottom-navigation/old-top-nav.jpg)
 
 *Before: everything sat at the top of the screen, out of thumb reach. Categories scrolled sideways, so anything past the edge of the screen was hidden.*
 
-The old navigation was a top bar with a row of categories that scrolled sideways. Stakeholders had already named this as a pain point in the interviews: whatever didn't fit on screen was effectively invisible. The new bar sits at the bottom, floats above the page, and shows every tab at once.
+Stakeholders had already named this as a pain point in the interviews: whatever didn't fit on screen was effectively invisible. The new bar sits at the bottom, floats above the page, and shows every tab at once.
 
 ### An earlier iteration
 
 The Product Design team went through several iterations before the final one. In this earlier version, the bar was dark and see-through, floating over the page content, and the current tab was not highlighted.
 
-We used this version to test something a floating bar has to survive: the browser's own toolbars, which sit in different places on iOS and Android. We checked it in Safari and Chrome on iOS, Chrome on Android and the installed web app, so it always sits clear of them.
+This version was used to test something a floating bar has to survive: the browser's own toolbars, which sit in different places on iOS and Android. The Product Design team mocked it up in Safari and Chrome on iOS, Chrome on Android and the installed web app, to make sure it sits clear of them in each.
 
 ![An earlier iteration of the Casino bar in four environments: Safari on iOS, Chrome on iOS, Chrome on Android and the installed web app.](/projects/bottom-navigation/browsers.jpg)
 
@@ -170,11 +189,11 @@ Several details came straight from the research:
 
 - **The switch keeps its own place.** It sits in a fixed slot on the far left, separate from the tabs, so it never moves under the thumb of the players who switch often.
 - **The tabs follow the player's state.** Guests see Promotions, the offers that bring them in. Logged-in members see My Bonuses, the bonuses they already have, and in Sports they also get My Bets, because only a member has bets to track. Both come from the research: bettors keep returning to their ongoing bets, and bonuses are one of the main reasons players come back.
-- **One component for every brand.** The bar is part of the platform's design system, so any brand can use it. Brands in markets without sports betting simply don't show the switch or the Sports bar.
+- **One component for every brand.** The bar is part of the platform's design system, so any brand can use it, including brands in markets without sports betting.
 
 ### Results
 
-The new navigation has shipped, but its impact has not been measured yet, so I am not claiming any numbers. The success measures from the research are the plan for checking it:
+The new navigation has shipped, but its impact has not been measured yet, so I am not claiming any numbers. When I wrote the proposals, I also set success measures, and they are the plan for checking it:
 
 - at least 80% task success
 - no more than 2 taps from home to the first game or event

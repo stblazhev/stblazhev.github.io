@@ -57,7 +57,7 @@ Formatting conventions:
 
 - Participant quotes are blockquotes. The quote goes on the first line, then an empty `>` line, then the attribution (`Participant 4, Mexico`).
 - Image captions are an italic line directly after the image: `*Caption text.*`
-- Tables are fine for comparison matrices; they scroll sideways on mobile.
+- Tables are fine for comparison matrices; they scroll sideways on mobile. An italic line right after a table is styled as its caption.
 - A highlighted note: `<p class="note"><b>Title.</b> Text</p>`. A redrawn, unbranded bottom bar: `<p class="tabbar-label">Casino</p>` then `<div class="tabbar" role="img" aria-label="…"><span>Tab</span>…</div>`, with an italic caption line after it.
 
 ### Writing style
