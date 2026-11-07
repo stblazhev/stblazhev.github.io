@@ -17,7 +17,7 @@ const hasMark = hBefore !== site.headline || hAfter !== '';
 const sections = [
   { id: 'intro', text: 'Intro' },
   ...(site.highlights.length ? [{ id: 'highlights', text: 'Highlights' }] : []),
-  { id: 'work', text: 'Case studies' },
+  { id: 'work', text: 'Case studies', hint: true },
   { id: 'process', text: 'How I work' },
   ...(site.testimonials.length ? [{ id: 'references', text: 'References' }] : []),
 ];

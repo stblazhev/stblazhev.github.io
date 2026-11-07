@@ -8,7 +8,8 @@ interface Props {
   description?: string;
   image?: string;
   /** Sections of this page, shown in the sticky section bar at the top. */
-  sections?: { id: string; text: string }[];
+  // hint: a small pulsing purple dot that asks for a click; it hides while that section is active
+  sections?: { id: string; text: string; hint?: boolean }[];
   /** "Where next?" tiles at the end of the page. href 'contact' opens the contact dialog. */
   next?: { label: string; title: string; text: string; href: string }[];
 }
@@ -92,6 +93,7 @@ const nav = [
                   {sections.map((s) => (
                     <a class="sec" href={`#${s.id}`} data-sec={s.id}>
                       {s.text}
+                      {s.hint && <span class="sec-hint" aria-hidden="true" />}
                     </a>
                   ))}
                 </div>
@@ -521,6 +523,38 @@ const nav = [
   .sec[aria-current] {
     color: var(--fg);
     font-weight: 600;
+  }
+  /* Attention dot in the logo purple; sits in the corner so it never shifts the label */
+  .sec-hint {
+    position: absolute;
+    top: 6px;
+    right: 3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--pop);
+    transition:
+      opacity 0.25s,
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .sec-hint::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--pop);
+    animation: sec-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes sec-ping {
+    75%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+  .sec[aria-current] .sec-hint {
+    opacity: 0;
+    transform: scale(0);
   }
   .sec-ind {
     position: absolute;
