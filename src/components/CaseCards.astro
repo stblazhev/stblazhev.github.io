@@ -1,6 +1,9 @@
 ---
-// Home page case studies as cards, plus a purple "Brewing new ideas" placeholder
-// with bubbles rising out of the logo flask. Each card leads with its headline result.
+// Home page case studies as compact rows: a small result tile, then year and read time,
+// title, a two-line summary and methods, with an arrow. The last row is the purple
+// "Brewing new ideas" placeholder with bubbles rising out of the logo flask.
+// Accessibility: each row is one link whose name is the title (aria-labelledby) and whose
+// description is the headline result (aria-describedby), with a visible focus ring.
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 import type { CollectionEntry } from 'astro:content';
@@ -17,132 +20,142 @@ const minutes = (body = '') => {
 const bubbles = Array.from({ length: 8 }, (_, i) => i);
 ---
 
-<div class="cs-grid">
+<ul class="cs-list">
   {
     projects.map((p, i) => {
       const kpi = p.data.outcomes[0];
       return (
-        <a class="cs" href={`/work/${p.id}/`} data-spot data-reveal style={`transition-delay:${i * 90}ms`} data-goatcounter-click={`case-study-${p.id}`} data-goatcounter-title={`Open case study: ${p.data.title}`}>
-          <span class="spot" aria-hidden="true" />
-          {kpi && (
-            <span class="cs-art" aria-hidden="true">
-              <b class="cs-num" data-count>
-                {kpi.value}
-              </b>
-              <span class="cs-num-lbl">{kpi.label}</span>
+        <li data-reveal style={`transition-delay:${i * 90}ms`}>
+          <a
+            class="cs"
+            href={`/work/${p.id}/`}
+            aria-labelledby={`cs-${p.id}-t`}
+            aria-describedby={kpi ? `cs-${p.id}-k` : undefined}
+            data-spot
+            data-goatcounter-click={`case-study-${p.id}`}
+            data-goatcounter-title={`Open case study: ${p.data.title}`}
+          >
+            <span class="spot" aria-hidden="true" />
+            {kpi && (
+              <span class="cs-kpi" id={`cs-${p.id}-k`}>
+                <b data-count>{kpi.value}</b>{' '}
+                <span>{kpi.label}</span>
+              </span>
+            )}
+            <span class="cs-body">
+              <span class="cs-meta">
+                {p.data.year} · {minutes(p.body)} min read
+                {p.data.draft && <span class="badge warn">Draft</span>}
+              </span>
+              <h3 class="cs-title" id={`cs-${p.id}-t`}>
+                {p.data.title}
+              </h3>
+              <span class="cs-sum">{p.data.summary}</span>
+              <span class="badges cs-methods">
+                {p.data.methods.slice(0, 3).map((m) => (
+                  <span class="badge">{m}</span>
+                ))}
+              </span>
             </span>
-          )}
-          <span class="cs-body">
-            <span class="cs-meta">
-              <span class="badge">{p.data.year}</span>
-              <span class="badge">{minutes(p.body)} min read</span>
-              {p.data.draft && <span class="badge warn">Draft</span>}
+            <span class="cs-go" aria-hidden="true">
+              <Icon name="right" />
             </span>
-            <h3 class="cs-title">{p.data.title}</h3>
-            <span class="cs-sum">{p.data.summary}</span>
-            <span class="badges">
-              {p.data.methods.slice(0, 3).map((m) => (
-                <span class="badge">{m}</span>
-              ))}
-            </span>
-            <span class="cs-go">
-              Read case study <Icon name="right" />
-            </span>
-          </span>
-        </a>
+          </a>
+        </li>
       );
     })
   }
 
-  <div class="cs cs-brew" data-reveal role="note" aria-label="Brewing new ideas: the next case study is on its way">
-    <span class="cs-art brew-art" aria-hidden="true">
-      <span class="flask">
-        {bubbles.map((b) => <i class="bubble" style={`--b:${b}`} />)}
-        <img src={site.logo} alt="" width="54" height="64" />
+  <li data-reveal>
+    <div class="cs cs-brew" role="note" aria-label="Brewing new ideas: the next case study is on its way">
+      <span class="cs-kpi brew-art" aria-hidden="true">
+        <span class="flask">
+          {bubbles.map((b) => <i class="bubble" style={`--b:${b}`} />)}
+          <img src={site.logo} alt="" width="40" height="48" />
+        </span>
       </span>
-    </span>
-    <span class="cs-body">
-      <span class="cs-meta">
-        <span class="badge pop">In progress</span>
+      <span class="cs-body">
+        <span class="cs-meta"><span class="badge pop">In progress</span></span>
+        <h3 class="cs-title">
+          Brewing new ideas<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>
+        </h3>
+        <span class="cs-sum">The next case study is being written up. Check back soon.</span>
+        <span class="brew-bar" aria-hidden="true"><span /></span>
       </span>
-      <h3 class="cs-title">
-        Brewing new ideas<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>
-      </h3>
-      <span class="cs-sum">The next case study is being written up. Check back soon.</span>
-      <span class="brew-bar" aria-hidden="true"><span /></span>
-    </span>
-  </div>
-</div>
+    </div>
+  </li>
+</ul>
 
 <style>
-  .cs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--gap);
-  }
-  @media (max-width: 760px) {
-    .cs-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* ---------- Card ---------- */
-  .cs {
+  .cs-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
+    gap: var(--gap);
+  }
+  .cs-list > li {
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ---------- Row ---------- */
+  .cs {
+    display: grid;
+    grid-template-columns: 196px minmax(0, 1fr) 40px;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 16px 12px 12px;
     border: 1px solid var(--line);
     border-radius: 14px;
     background: var(--card);
-    overflow: hidden;
-    min-width: 0;
     transition:
-      opacity 0.6s ease,
-      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
       border-color 0.2s,
-      box-shadow 0.25s;
+      box-shadow 0.25s,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
   a.cs:hover,
   a.cs:focus-visible {
     border-color: var(--accent);
-    box-shadow: 0 14px 32px rgba(17, 24, 39, 0.09);
-    transform: translateY(-4px);
-    transition-delay: 0s !important;
+    box-shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
+    transform: translateY(-2px);
+  }
+  a.cs:focus-visible {
+    outline: 2px solid var(--accent-fg);
+    outline-offset: 3px;
   }
 
-  /* Result panel at the top of the card: the headline number on a dotted green ground */
-  .cs-art {
+  /* Small result tile: the headline number and what it means */
+  .cs-kpi {
+    align-self: stretch;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    gap: 4px;
-    min-height: 148px;
-    padding: 20px;
+    justify-content: center;
+    gap: 6px;
+    min-height: 112px;
+    padding: 14px 16px;
+    border-radius: 10px;
     background:
-      radial-gradient(circle, rgba(41, 140, 51, 0.16) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      radial-gradient(circle, rgba(35, 122, 44, 0.14) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
       linear-gradient(135deg, var(--accent-bg), #e9fbe9);
-    border-bottom: 1px solid var(--line);
     transition: background-position 0.8s ease;
   }
-  a.cs:hover .cs-art {
+  a.cs:hover .cs-kpi {
     background-position:
-      8px -8px,
+      7px -7px,
       0 0;
   }
-  .cs-num {
-    font-size: 44px;
+  .cs-kpi b {
+    font-size: 32px;
     font-weight: 600;
     line-height: 1;
     color: var(--accent-fg);
     font-variant-numeric: tabular-nums;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform-origin: left bottom;
   }
-  a.cs:hover .cs-num {
-    transform: scale(1.06);
-  }
-  .cs-num-lbl {
-    max-width: 34ch;
-    font-size: 13px;
+  .cs-kpi span {
+    font-size: 12px;
     line-height: 1.4;
     color: var(--fg-2);
   }
@@ -150,18 +163,19 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs-body {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    flex: 1;
-    padding: 18px 20px 20px;
+    gap: 6px;
+    min-width: 0;
   }
   .cs-meta {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--fg-3);
   }
   .cs-title {
-    font-size: 17px;
-    line-height: 1.3;
+    font-size: 16px;
+    line-height: 1.35;
     color: #000;
   }
   .cs-sum {
@@ -169,59 +183,122 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     line-height: 1.5;
     color: var(--fg-3);
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .cs-methods {
+    margin-top: 2px;
+  }
+
   .cs-go {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--accent-fg);
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    color: var(--fg-2);
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      color 0.2s;
   }
   .cs-go :global(svg) {
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  a.cs:hover .cs-go,
+  a.cs:focus-visible .cs-go {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
   a.cs:hover .cs-go :global(svg) {
-    transform: translateX(5px);
+    transform: translateX(3px);
+  }
+
+  /* ---------- Phones: tile on top as a slim strip ---------- */
+  @media (max-width: 640px) {
+    .cs {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px;
+      position: relative;
+    }
+    .cs-kpi {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      min-height: 0;
+      padding: 12px 14px;
+    }
+    .cs-kpi b {
+      font-size: 28px;
+      flex: none;
+    }
+    .cs-body {
+      padding: 0 4px;
+    }
+    .cs-go {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      width: 36px;
+      height: 36px;
+    }
+    /* Methods are secondary: hidden on phones to keep the rows short */
+    .cs-methods {
+      display: none;
+    }
+    a.cs .cs-sum {
+      padding-right: 44px;
+    }
   }
 
   /* ---------- "Brewing new ideas" placeholder (logo purple) ---------- */
   .cs-brew {
+    grid-template-columns: 196px minmax(0, 1fr);
     border-color: var(--pop-line);
     background: var(--pop-bg);
+  }
+  @media (max-width: 640px) {
+    .cs-brew {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   .brew-art {
     align-items: center;
     justify-content: flex-end;
+    overflow: hidden;
     background:
-      radial-gradient(circle, rgba(169, 31, 189, 0.14) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      radial-gradient(circle, rgba(169, 31, 189, 0.14) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
       linear-gradient(135deg, #fbeffd, #f4ddf8);
-    border-bottom-color: var(--pop-line);
+  }
+  @media (max-width: 640px) {
+    .brew-art {
+      justify-content: center;
+      min-height: 96px;
+    }
   }
   .flask {
     position: relative;
     display: block;
-    width: 54px;
-    height: 64px;
+    width: 40px;
+    height: 48px;
   }
   .flask img {
     position: relative;
-    width: 54px;
-    height: 64px;
+    width: 40px;
+    height: 48px;
     animation: sway 3.2s ease-in-out infinite;
     transform-origin: 50% 100%;
   }
   .bubble {
     position: absolute;
-    left: calc(50% - 4px + (var(--b) - 3.5) * 2.4px);
+    left: calc(50% - 3px + (var(--b) - 3.5) * 2px);
     top: 2px;
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: rgba(169, 31, 189, 0.55);
     opacity: 0;
@@ -229,12 +306,12 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     animation-delay: calc(var(--b) * 0.35s);
   }
   .bubble:nth-child(3n + 2) {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
   .bubble:nth-child(4n + 1) {
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
   }
   .bubble:nth-child(3n) {
     background: transparent;
@@ -255,11 +332,11 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
       opacity: 1;
     }
     50% {
-      transform: translate(calc((var(--b) - 3.5) * 3px), -46px) scale(1);
+      transform: translate(calc((var(--b) - 3.5) * 2.5px), -30px) scale(1);
     }
     100% {
       opacity: 0;
-      transform: translate(calc((var(--b) - 3.5) * -2px), -96px) scale(1.15);
+      transform: translate(calc((var(--b) - 3.5) * -1.5px), -58px) scale(1.15);
     }
   }
   @keyframes sway {
@@ -294,7 +371,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .brew-bar {
     position: relative;
     height: 6px;
-    margin-top: auto;
+    max-width: 360px;
+    margin-top: 6px;
     border-radius: 6px;
     background: var(--pop-line);
     overflow: hidden;

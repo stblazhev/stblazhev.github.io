@@ -20,7 +20,7 @@ This file is the handover for any Claude session or developer picking up the wor
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
 | Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
-| Home page case study cards (result panel from the first `outcomes` item, read time, hover lift) and the purple "Brewing new ideas" placeholder | `src/components/CaseCards.astro` |
+| Home page case studies as compact rows (small result tile from the first `outcomes` item, year and read time, title, two-line summary, methods; link named by the title and described by the result) and the purple "Brewing new ideas" placeholder row | `src/components/CaseCards.astro` |
 | Highlights flip cards (number count-up, animated picture, story on the back; content from `site.highlights`) | `src/components/Highlights.astro` |
 | About > Education "learning map" (two lanes on a year axis: `site.education` = formal, `site.sideEducation` = courses, awards, exchanges; filter, pick a stop for details) | `src/components/LearningMap.astro` |
 | "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
