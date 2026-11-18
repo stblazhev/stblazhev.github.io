@@ -35,7 +35,7 @@ export const site = {
       where: 'Registration and login flow',
       org: 'ALL IN Platform',
       story: 'Research into where players lost time and dropped out of sign-up shaped an optimised registration flow.',
-      tag: 'Case study coming soon',
+      tag: 'Case study published',
     },
     {
       value: '2',
