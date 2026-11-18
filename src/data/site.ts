@@ -25,16 +25,16 @@ export const site = {
   motto: 'Get to know your user first, then think about the rest.',
 
   // Headline results shown on the home page as flip cards.
-  // viz: the small animated picture on the front (bars = growth | drop = reduction | nav = bottom navigation | people | tally).
+  // viz: the small animated picture on the front (bars = growth | drop = reduction | gauge = score out of 100 | nav = bottom navigation | people | tally).
   // The back of the card tells where the number comes from.
   highlights: [
     {
-      value: '40%',
-      label: 'shorter sign-up time after an optimised registration flow',
-      viz: 'drop',
+      value: '82',
+      label: 'SUS usability score for the redesigned registration, rated excellent',
+      viz: 'gauge',
       where: 'Registration and login flow',
       org: 'ALL IN Platform',
-      story: 'Research into where players lost time and dropped out of sign-up shaped an optimised registration flow.',
+      story: 'Tested with 11 players before launch: all six design hypotheses held, and the two-step registration is now live.',
       tag: 'Case study published',
     },
     {
