@@ -62,6 +62,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
                 </span>
               </span>
             </span>
+            <span class="cs-side">
             {preview.length > 0 && (
               <span class="cs-peek" aria-hidden="true">
                 {preview.slice(0, 3).map((src) => (
@@ -86,6 +87,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
               <span class="cs-go" aria-hidden="true">
                 <Icon name="right" />
               </span>
+            </span>
             </span>
           </div>
 
@@ -178,7 +180,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs {
     position: relative;
     display: grid;
-    grid-template-columns: 196px minmax(0, 1fr) 150px auto;
+    grid-template-columns: 196px minmax(0, 1fr) auto;
     align-items: center;
     gap: 20px;
     padding: 12px 16px 12px 12px;
@@ -290,7 +292,14 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs-foot {
     margin-top: 2px;
   }
-  /* Quick look and the open arrow sit together on the right */
+  /* Right column: the screen fan on top, Quick look and the open arrow underneath */
+  .cs-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  /* Quick look and the open arrow sit together */
   .cs-actions {
     display: flex;
     align-items: center;
@@ -333,34 +342,34 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   /* Screen peek: three phone screens stacked like cards that fan out on hover */
   .cs-peek {
     position: relative;
-    align-self: stretch;
-    min-height: 120px;
+    width: 170px;
+    height: 96px;
   }
   .cs-peek img {
     position: absolute;
     left: 50%;
     bottom: 0;
-    width: 52px;
+    width: 42px;
     height: auto;
-    margin-left: -26px;
+    margin-left: -21px;
     border-radius: 8px;
     box-shadow: 0 6px 16px rgba(17, 24, 39, 0.22);
     transform-origin: 50% 100%;
     transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .cs-peek img:nth-child(1) {
-    transform: translateX(-12px) rotate(-7deg);
+    transform: translateX(-10px) rotate(-7deg);
   }
   .cs-peek img:nth-child(2) {
     z-index: 1;
     transform: translateY(-4px);
   }
   .cs-peek img:nth-child(3) {
-    transform: translateX(12px) rotate(7deg);
+    transform: translateX(10px) rotate(7deg);
   }
   .cs-item .cs:hover .cs-peek img:nth-child(1),
   .cs-item .cs:focus-within .cs-peek img:nth-child(1) {
-    transform: translateX(-46px) rotate(-10deg);
+    transform: translateX(-40px) rotate(-10deg);
   }
   .cs-item .cs:hover .cs-peek img:nth-child(2),
   .cs-item .cs:focus-within .cs-peek img:nth-child(2) {
@@ -368,7 +377,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   }
   .cs-item .cs:hover .cs-peek img:nth-child(3),
   .cs-item .cs:focus-within .cs-peek img:nth-child(3) {
-    transform: translateX(46px) rotate(10deg);
+    transform: translateX(40px) rotate(10deg);
   }
 
   .cs-go {
@@ -477,9 +486,6 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
 
   /* ---------- Narrower screens: no fan; phones: tile on top as a slim strip ---------- */
   @media (max-width: 1100px) {
-    .cs {
-      grid-template-columns: 196px minmax(0, 1fr) auto;
-    }
     .cs-peek {
       display: none;
     }
@@ -515,8 +521,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     .cs-body {
       padding: 0 4px;
     }
-    .cs-actions {
-      justify-content: flex-end;
+    .cs-side {
+      align-items: flex-end;
       margin-top: -4px;
     }
     .cs-go {
