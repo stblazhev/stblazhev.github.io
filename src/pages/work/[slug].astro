@@ -587,7 +587,7 @@ const steps =
   .fan img {
     cursor: zoom-in;
   }
-  .fan img:hover,
+  /* No highlight on hover; keyboard focus still shows a ring */
   .fan img:focus-visible {
     z-index: 2;
     outline: 3px solid var(--accent);
