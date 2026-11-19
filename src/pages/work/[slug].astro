@@ -82,10 +82,10 @@ const steps =
 
     {
       screens.length > 0 && (
-        <div class="head-visual" aria-hidden="true">
+        <div class="head-visual">
           <div class="fan">
-            {screens.map((src) => (
-              <img src={src} alt="" width="540" height="1200" />
+            {screens.map((src, i) => (
+              <img src={src} alt={`Screen ${i + 1} from the study`} width="540" height="1200" />
             ))}
           </div>
         </div>
@@ -126,13 +126,13 @@ const steps =
         <ol class="steps">
           {data.tldr.map((t, i) => (
             <li class="step" style={`--i:${i}`}>
-              <span class="step-top">
-                <span class="step-ico" aria-hidden="true">
-                  <Icon name={steps[i].icon} size={18} />
-                </span>
-                <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="step-node" aria-hidden="true">
+                <Icon name={steps[i].icon} size={16} />
               </span>
-              <b class="step-label">{steps[i].label}</b>
+              <span class="step-tag">
+                <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+                {steps[i].label}
+              </span>
               <p>{t}</p>
             </li>
           ))}
@@ -320,20 +320,29 @@ const steps =
       const img = group[at];
       vImg.src = img.currentSrc || img.src;
       vImg.alt = img.alt;
-      const cap = img.closest('figure')?.querySelector('figcaption');
+      const cap = (img.closest('figure') ?? twin(img)?.closest('figure'))?.querySelector('figcaption');
       if (cap) vCap.innerHTML = cap.innerHTML; // our own markup: a bold title and a line of text
       else vCap.textContent = img.alt;
       viewer.classList.toggle('single', group.length < 2);
     };
+    // Header screens are copies of screens shown further down: borrow their alt text and caption
+    const twin = (img: HTMLImageElement) =>
+      img.closest('.fan')
+        ? document.querySelector<HTMLImageElement>(`.prose img[src="${img.getAttribute('src')}"]`)
+        : null;
+    document.querySelectorAll<HTMLImageElement>('.fan img').forEach((img) => {
+      const t = twin(img);
+      if (t?.alt) img.alt = t.alt;
+    });
     let opener: HTMLElement | null = null;
     const open = (img: HTMLImageElement) => {
-      const gallery = img.closest('.gallery');
+      const gallery = img.closest('.gallery, .fan');
       group = gallery ? [...gallery.querySelectorAll<HTMLImageElement>('img')] : [img];
       opener = img;
       show(group.indexOf(img));
       viewer.showModal();
     };
-    document.querySelectorAll<HTMLImageElement>('.prose img').forEach((img) => {
+    document.querySelectorAll<HTMLImageElement>('.prose img, .fan img').forEach((img) => {
       img.dataset.zoom = '';
       img.tabIndex = 0;
       img.setAttribute('role', 'button');
@@ -575,6 +584,15 @@ const steps =
   .fan img:nth-child(3) {
     transform: translateX(84px) rotate(10deg);
   }
+  .fan img {
+    cursor: zoom-in;
+  }
+  .fan img:hover,
+  .fan img:focus-visible {
+    z-index: 2;
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
   .head:hover .fan img:nth-child(1) {
     transform: translateX(-96px) rotate(-13deg);
   }
@@ -671,83 +689,104 @@ const steps =
   .story-head .muted {
     font-size: 13px;
   }
+  /* A stepper: icon nodes on a track that draws itself in, each with a tag and a short text.
+     No boxes; whitespace separates the steps. Amber marks the problem, green the rest. */
   .steps {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
-    counter-reset: none;
+    gap: 32px;
   }
   .step {
+    --tone: var(--accent-fg);
+    --tone-bg: var(--accent-bg);
+    --tone-line: #bfeec0;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 18px 18px 20px;
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    border-radius: 14px;
-    background: var(--card);
+    align-items: flex-start;
+    gap: 10px;
     animation: step-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(0.45s + var(--i) * 0.12s);
+    animation-delay: calc(0.35s + var(--i) * 0.14s);
   }
-  .step:nth-child(1) {
-    border-top-color: #f59e0b;
+  .step:first-child {
+    --tone: #b45309;
+    --tone-bg: #fff7e8;
+    --tone-line: #fcdcaa;
   }
-  .step:nth-child(3) {
-    border-top-color: var(--accent-fg);
+  .step-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--tone-bg);
+    color: var(--tone);
+    box-shadow:
+      0 0 0 1px var(--tone-line),
+      0 0 0 6px var(--card);
   }
-  /* Arrow joining the steps (desktop) */
+  .step:last-child .step-node {
+    background: var(--accent);
+    color: #0b3d12;
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 0 0 6px var(--card),
+      0 6px 18px rgba(107, 237, 106, 0.45);
+  }
+  /* Track from this node to the next one; it draws from left to right */
   .step:not(:last-child)::after {
     content: '';
     position: absolute;
-    top: 50%;
-    right: -21px;
-    width: 14px;
-    height: 14px;
-    border-top: 2px solid var(--line-2);
-    border-right: 2px solid var(--line-2);
-    transform: translateY(-50%) rotate(45deg);
+    top: 19px;
+    left: 52px;
+    width: calc(100% + 32px - 64px);
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--tone-line), #bfeec0);
+    transform-origin: left center;
+    animation: track-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.55s + var(--i) * 0.14s);
   }
-  .step-top {
-    display: flex;
+  .step-tag {
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-  }
-  .step-ico {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: var(--accent-bg);
-    color: var(--accent-fg);
-  }
-  .step:nth-child(1) .step-ico {
-    background: #fffbeb;
-    color: #b45309;
-  }
-  .step-n {
-    font-size: 26px;
-    font-weight: 600;
-    line-height: 1;
-    color: var(--line-2);
-    font-variant-numeric: tabular-nums;
-  }
-  .step-label {
+    gap: 8px;
+    margin-top: 6px;
+    padding: 4px 12px 4px 4px;
+    border-radius: 999px;
+    background: var(--tone-bg);
     font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--fg);
+    color: var(--tone);
+  }
+  .step-n {
+    display: grid;
+    place-items: center;
+    min-width: 26px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--card);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--tone);
   }
   .step p {
     margin: 0;
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.6;
     color: var(--fg-2);
+  }
+  @keyframes track-in {
+    from {
+      transform: scaleX(0);
+    }
   }
   @keyframes step-in {
     from {
@@ -790,15 +829,33 @@ const steps =
     }
     .steps {
       grid-template-columns: minmax(0, 1fr);
-      gap: 14px;
+      gap: 22px;
+    }
+    .step {
+      padding-left: 56px;
+      min-height: 40px;
+    }
+    .step-node {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .step-tag {
+      margin-top: 6px;
     }
     .step:not(:last-child)::after {
-      top: auto;
-      bottom: -12px;
-      right: 50%;
-      width: 10px;
-      height: 10px;
-      transform: translateX(50%) rotate(135deg);
+      top: 50px;
+      left: 19px;
+      width: 2px;
+      height: calc(100% - 60px + 22px);
+      background: linear-gradient(180deg, var(--tone-line), #bfeec0);
+      transform-origin: center top;
+      animation-name: track-down;
+    }
+    @keyframes track-down {
+      from {
+        transform: scaleY(0);
+      }
     }
   }
   @media (max-width: 520px) {
