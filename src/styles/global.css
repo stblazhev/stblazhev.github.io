@@ -280,7 +280,30 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 
 /* Tables look like Backoffice tables */
 .prose table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-@media (max-width: 600px) { .prose table { display: block; overflow-x: auto; } }
+/* Phones: the page script marks each table. Tables with long text (.t-cards) turn every row
+   into a small card: an optional key chip (Phase 1, #2), a bold title, then "label: value"
+   blocks. Tables with short cells (.t-compact) stay tables, just tighter, so all columns fit. */
+@media (max-width: 600px) {
+  .prose table.t-compact { font-size: 13px; }
+  .prose table.t-compact th { white-space: normal; font-size: 11px; }
+  .prose table.t-compact th, .prose table.t-compact td { padding: 8px; }
+
+  .prose table.t-cards, .prose table.t-cards tbody, .prose table.t-cards tr, .prose table.t-cards td { display: block; }
+  .prose table.t-cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .prose table.t-cards tr { display: flex; flex-wrap: wrap; column-gap: 16px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .prose table.t-cards td { flex: 0 0 100%; min-width: 0; }
+  .prose table.t-cards td.t-short { flex: 1 1 calc(50% - 8px); }
+  .prose table.t-cards tbody tr:last-child { border-bottom: 0; }
+  .prose table.t-cards tbody tr:nth-child(even) { background: var(--zebra); }
+  .prose table.t-cards td, .prose table.t-cards tbody tr:nth-child(even) td { padding: 0; border: 0; background: none; color: var(--fg-2); }
+  .prose table.t-cards td + td { margin-top: 8px; }
+  .prose table.t-cards td::before { content: attr(data-label); display: block; margin-bottom: 1px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-4); }
+  .prose table.t-cards td.t-title { font-weight: 600; color: var(--fg-strong); }
+  .prose table.t-cards td.t-title::before { content: none; }
+  .prose table.t-cards td.t-key, .prose table.t-cards tbody tr:nth-child(even) td.t-key { flex: none; display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px; padding: 1px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent-fg); font-size: 12px; font-weight: 600; }
+  .prose table.t-cards td.t-key::before { content: attr(data-label); display: inline; margin: 0; font-size: 12px; letter-spacing: 0; text-transform: none; color: inherit; }
+  .prose table.t-cards td.t-key + td { margin-top: 0; }
+}
 .prose th, .prose td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--fg); }
 .prose tbody tr:last-child td { border-bottom: 0; }
 .prose tbody tr:nth-child(even) td { background: var(--zebra); }

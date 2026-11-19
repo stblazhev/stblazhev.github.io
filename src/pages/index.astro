@@ -131,12 +131,39 @@ const focus = site.domain.map((d) => d.toLowerCase());
             </figure>
           ))}
         </div>
+        <div class="q-dots" hidden>
+          {site.testimonials.map((t, i) => (
+            <button type="button" class="q-dot" aria-label={`Show the reference from ${t.name}`} aria-current={i === 0 ? 'true' : undefined} data-q={i} />
+          ))}
+        </div>
       </section>
     )
   }
 </Base>
 
 <script>
+  // References swipe row (phones and tablets): dots follow the scroll and jump to a quote
+  const quotes = document.querySelector<HTMLElement>('.quotes');
+  const qDots = [...document.querySelectorAll<HTMLButtonElement>('.q-dot')];
+  if (quotes && qDots.length) {
+    qDots[0].parentElement!.hidden = false;
+    const items = [...quotes.querySelectorAll<HTMLElement>('.quote')];
+    const mark = () => {
+      const x = quotes.scrollLeft + quotes.clientWidth / 2;
+      let at = 0;
+      items.forEach((q, i) => {
+        if (q.offsetLeft - quotes.offsetLeft <= x) at = i;
+      });
+      qDots.forEach((d, i) => (i === at ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+    };
+    quotes.addEventListener('scroll', mark, { passive: true });
+    qDots.forEach((d, i) =>
+      d.addEventListener('click', () =>
+        quotes.scrollTo({ left: items[i].offsetLeft - quotes.offsetLeft, behavior: 'smooth' }),
+      ),
+    );
+  }
+
   // Hero: the research topics type themselves out, one after another
   const el = document.querySelector<HTMLElement>('.typed');
   if (el && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -253,6 +280,63 @@ const focus = site.domain.map((d) => d.toLowerCase());
   @media (min-width: 1200px) {
     .quotes {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .q-dots {
+    display: none;
+  }
+  /* Phones and tablets: one quote per view, the next one peeking, swipe or tap a dot */
+  @media (max-width: 760px) {
+    .quotes {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 88%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      margin: 0 -4px;
+      padding: 4px;
+    }
+    .quotes::-webkit-scrollbar {
+      display: none;
+    }
+    .quote {
+      scroll-snap-align: start;
+    }
+    /* Quotes off to the side never scroll into view vertically, so skip the reveal */
+    .quotes .quote.reveal {
+      opacity: 1;
+      transform: none;
+    }
+    .q-dots:not([hidden]) {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .q-dot {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+    .q-dot::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--line-2);
+      transition:
+        width 0.25s,
+        background 0.25s;
+    }
+    .q-dot[aria-current]::before {
+      width: 22px;
+      background: var(--accent);
     }
   }
   .quote {

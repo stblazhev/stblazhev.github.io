@@ -601,6 +601,21 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     .cs-methods {
       display: none;
     }
+    /* Bigger touch targets */
+    .cs-quick-btn {
+      height: 40px;
+      padding: 0 14px;
+      font-size: 13px;
+    }
+    .cs-go {
+      width: 40px;
+      height: 40px;
+    }
+    /* A shorter Quick look: the numbers and the first TL;DR point (the problem), then the link */
+    .q-tldr li:nth-child(n + 2),
+    .q-screens {
+      display: none;
+    }
     .cs-quick-in {
       grid-template-columns: minmax(0, 1fr);
       margin: 0 6px;

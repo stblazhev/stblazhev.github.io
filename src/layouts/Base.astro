@@ -195,7 +195,7 @@ const nav = [
               <span class="contact-ico"><Icon name="mail" /></span>
               <span class="contact-val">
                 <span class="label">Email</span>
-                <a href={`mailto:${site.email}`} data-goatcounter-click="email-address" data-goatcounter-title="Contact: email address link">{site.email}</a>
+                <a href={`mailto:${site.email}`} data-goatcounter-click="email-address" data-goatcounter-title="Contact: email address link"><Fragment set:html={site.email.replace('@', '<wbr>@')} /></a>
               </span>
               <button class="btn copy" type="button" data-copy={site.email} data-goatcounter-click="email-copy" data-goatcounter-title="Contact: copy email">
                 <Icon name="copy" /> <span>Copy</span>
@@ -825,6 +825,13 @@ const nav = [
   .contact-val a:hover {
     color: var(--accent-fg);
   }
+  @media (max-width: 560px) {
+    .contact-val a {
+      font-size: 13px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
   .copy.done {
     border-color: var(--accent);
     background: var(--accent-bg);
@@ -997,6 +1004,13 @@ const nav = [
     }
   }
   /* Small phones: the current page shows as an icon too */
+  /* Bigger touch targets in the section bar on phones */
+  @media (max-width: 760px) {
+    .sec,
+    .sec-back {
+      height: 40px;
+    }
+  }
   @media (max-width: 420px) {
     .nav-item.on {
       width: 40px;

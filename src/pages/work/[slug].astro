@@ -168,11 +168,34 @@ const steps =
       <img alt="" />
       <figcaption></figcaption>
     </figure>
+    <span class="v-count" aria-hidden="true"></span>
     <button class="btn v-nav v-next" type="button" data-v-step="1" aria-label="Next screen"><Icon name="right" /></button>
   </dialog>
 </Base>
 
 <script>
+  // Tables on phones: label every cell with its column header, then mark the table as cards
+  // (rows become small cards) when any cell holds long text, or compact when all cells are short.
+  document.querySelectorAll<HTMLTableElement>('.prose table').forEach((t) => {
+    const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent?.trim() ?? '');
+    const rows = [...t.querySelectorAll('tbody tr')];
+    rows.forEach((tr) => [...tr.children].forEach((td, i) => td.setAttribute('data-label', heads[i] ?? '')));
+    const long = rows.some((tr) => [...tr.children].some((td) => (td.textContent?.trim().length ?? 0) > 32));
+    t.classList.add(long ? 't-cards' : 't-compact');
+    if (!long) return;
+    // A first column of short keys (#, Phase) becomes a chip; the next column is the card title
+    const keyCol = rows.every((tr) => (tr.children[0]?.textContent?.trim().length ?? 9) <= 3);
+    rows.forEach((tr) => {
+      if (keyCol) tr.children[0]?.classList.add('t-key');
+      tr.children[keyCol ? 1 : 0]?.classList.add('t-title');
+      // Short values (High, 2 of 6) sit two to a line instead of one per line
+      [...tr.children].forEach((td) => {
+        if (!td.classList.contains('t-key') && !td.classList.contains('t-title') && (td.textContent?.trim().length ?? 99) <= 22)
+          td.classList.add('t-short');
+      });
+    });
+  });
+
   // Galleries: drag to scroll with a mouse, faded ends that only show when there is more to
   // see, arrow buttons, position dots with a counter, and arrow keys when the gallery has focus.
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -324,6 +347,7 @@ const steps =
       if (cap) vCap.innerHTML = cap.innerHTML; // our own markup: a bold title and a line of text
       else vCap.textContent = img.alt;
       viewer.classList.toggle('single', group.length < 2);
+      viewer.querySelector('.v-count')!.textContent = `${at + 1} / ${group.length}`;
     };
     // Header screens are copies of screens shown further down: borrow their alt text and caption
     const twin = (img: HTMLImageElement) =>
@@ -434,17 +458,51 @@ const steps =
   .v-next {
     right: 12px;
   }
-  .viewer.single .v-nav {
+  .viewer.single .v-nav,
+  .viewer.single .v-count {
     display: none;
   }
+  .v-count {
+    display: none;
+  }
+  /* Phones: the arrows and a counter get their own bar under the caption, so they never cover it */
   @media (max-width: 600px) {
     .viewer {
-      padding: 52px 12px 16px;
+      width: 100vw;
+      max-width: 100vw;
+      max-height: 100dvh;
+      padding: 52px 14px 72px;
+      border-radius: 0;
+    }
+    .viewer img {
+      max-height: calc(100dvh - 230px);
+      border-radius: 14px;
+    }
+    .viewer figcaption {
+      font-size: 13px;
     }
     .v-nav {
       top: auto;
-      bottom: 12px;
+      bottom: 16px;
       transform: none;
+      width: 44px;
+      height: 44px;
+    }
+    .v-prev {
+      left: 14px;
+    }
+    .v-next {
+      right: 14px;
+    }
+    .v-count {
+      display: block;
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      color: #9ca3af;
     }
   }
 
@@ -858,21 +916,84 @@ const steps =
       }
     }
   }
-  @media (max-width: 520px) {
-    /* Facts two by two on phones so they don't run four cards deep */
+  /* Phones: facts become one compact list (icon, label, value per row), result tiles stay
+     two by two and smaller, and the screens panel is shorter, so the story starts sooner. */
+  @media (max-width: 560px) {
+    .head {
+      gap: 18px;
+    }
+    .head-main {
+      gap: 12px;
+    }
+    .lead {
+      font-size: 15px;
+    }
     .facts {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      margin: 2px 0 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
     }
     .fact {
-      flex-direction: column;
-      gap: 6px;
-      padding: 10px;
+      align-items: center;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 0;
+      background: none;
     }
-  }
-  @media (max-width: 420px) {
+    .fact + .fact {
+      border-top: 1px solid var(--line);
+    }
+    .fact-ico {
+      width: 26px;
+      height: 26px;
+    }
+    .fact > span:last-child {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      align-items: baseline;
+      gap: 8px;
+      width: 100%;
+    }
+    .fact dd {
+      margin: 0;
+    }
+    .head-visual {
+      min-height: 190px;
+    }
+    .fan img {
+      width: 88px;
+      left: -44px;
+    }
+    .fan img:nth-child(1) {
+      transform: translateX(-70px) rotate(-10deg);
+    }
+    .fan img:nth-child(3) {
+      transform: translateX(70px) rotate(10deg);
+    }
+    .results {
+      padding: 12px;
+    }
     .tiles-r {
-      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+    .r-tile {
+      padding: 12px;
+      gap: 4px;
+    }
+    .r-tile b {
+      font-size: 26px;
+    }
+    .r-tile span {
+      font-size: 12px;
+    }
+    .steps {
+      gap: 18px;
+    }
+    .step p {
+      font-size: 14px;
     }
   }
 
@@ -893,5 +1014,15 @@ const steps =
   }
   .next:hover {
     border-color: var(--accent);
+  }
+  @media (max-width: 560px) {
+    .next {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .next .btn {
+      justify-content: center;
+      height: 44px;
+    }
   }
 </style>

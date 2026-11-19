@@ -172,7 +172,15 @@ const start = 0;
     };
 
     nodes.forEach((n, i) => {
-      n.addEventListener('click', () => select(i));
+      n.addEventListener('click', () => {
+        select(i);
+        // On phones the details sit below the tall map: scroll them into view if they are off screen
+        if (matchMedia('(max-width: 760px)').matches) {
+          const r = panel.getBoundingClientRect();
+          if (r.bottom > innerHeight || r.top < 70)
+            panel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+        }
+      });
       n.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
           e.preventDefault();

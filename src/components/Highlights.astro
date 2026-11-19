@@ -503,36 +503,39 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
     margin-top: auto;
     align-self: flex-start;
   }
-  @media (max-width: 420px) {
+  /* Phones: two by two. The card is as tall as its front; the story on the back only takes
+     space once the card is flipped, and then the card widens to the full row to show it. */
+  @media (max-width: 560px) {
     .hls {
-      grid-template-columns: 1fr;
+      gap: 8px;
     }
-    /* One column: number and label on the left, picture on the right */
-    .front {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 112px;
-      column-gap: 14px;
-      align-items: center;
-      align-content: center;
+    .hl-in {
       position: relative;
     }
-    .hint {
+    .hl[aria-expanded='false'] .back {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      inset: 0;
+      overflow: hidden;
     }
-    .front .viz {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      margin: 0;
-      padding: 0;
+    .hl[aria-expanded='true'] {
+      grid-column: 1 / -1;
     }
-    .front .top,
-    .front .lbl {
-      grid-column: 1;
+    .side {
+      padding: 12px;
+      gap: 4px;
+    }
+    .num {
+      font-size: 26px;
+    }
+    .hint {
+      width: 26px;
+      height: 26px;
     }
     .lbl {
       min-height: 0;
+    }
+    .viz {
+      max-width: 150px;
     }
   }
 </style>
