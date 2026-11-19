@@ -81,7 +81,11 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
                   data-goatcounter-click={`quick-look-${p.id}`}
                   data-goatcounter-title={`Quick look: ${p.data.title}`}
                 >
-                  <Icon name="list" size={14} /> Quick look
+                  <span class="q-ico" aria-hidden="true">
+                    <Icon name="list" size={14} />
+                    <Icon name="close" size={14} />
+                  </span>
+                  Quick look
                 </button>
               )}
               <span class="cs-go" aria-hidden="true">
@@ -95,8 +99,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
             <div class="cs-quick-in">
               {p.data.outcomes.length > 0 && (
                 <ul class="q-nums">
-                  {p.data.outcomes.map((o) => (
-                    <li>
+                  {p.data.outcomes.map((o, n) => (
+                    <li style={`--n:${n}`}>
                       <b>{o.value}</b>
                       <span>{o.label}</span>
                     </li>
@@ -105,8 +109,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
               )}
               {p.data.tldr.length > 0 && (
                 <ul class="q-tldr">
-                  {p.data.tldr.map((t) => (
-                    <li>{t}</li>
+                  {p.data.tldr.map((t, n) => (
+                    <li style={`--n:${n + 2}`}>{t}</li>
                   ))}
                 </ul>
               )}
@@ -484,6 +488,65 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .q-screens {
     display: none;
   }
+  /* Opening animation: the panel slides down (rows 0fr -> 1fr), then the number cards pop in
+     and the points slide in one after another. Closing is quick, with no delays. */
+  .q-nums li,
+  .q-tldr li,
+  .q-screens,
+  .q-open {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
+  }
+  .q-nums li {
+    transform: translateY(10px) scale(0.94);
+  }
+  .cs-item.open .q-nums li,
+  .cs-item.open .q-tldr li,
+  .cs-item.open .q-screens,
+  .cs-item.open .q-open {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.35s ease,
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: calc(0.12s + var(--n, 0) * 0.06s);
+  }
+  .cs-item.open .q-screens {
+    --n: 5;
+  }
+  .cs-item.open .q-open {
+    --n: 6;
+  }
+
+  /* The Quick look icon turns into an X while the panel is open */
+  .q-ico {
+    position: relative;
+    display: inline-grid;
+    width: 14px;
+    height: 14px;
+  }
+  .q-ico :global(svg) {
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.2s,
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .q-ico :global(svg:last-child) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  .cs-item.open .q-ico :global(svg:first-child) {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+  .cs-item.open .q-ico :global(svg:last-child) {
+    opacity: 1;
+    transform: none;
+  }
+
   .q-open {
     grid-column: 1 / -1;
     justify-self: start;
