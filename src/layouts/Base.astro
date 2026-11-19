@@ -647,11 +647,12 @@ const nav = [
     opacity: 0;
     transform: scale(0);
   }
+  /* The pill spans the track's full height, so it always matches the links (34px, 40px on phones) */
   .sec-ind {
     position: absolute;
     left: 0;
     top: 0;
-    height: 34px;
+    bottom: 0;
     width: 0;
     border-radius: 8px;
     background: var(--accent-bg);
@@ -1008,6 +1009,10 @@ const nav = [
   @media (max-width: 760px) {
     .sec,
     .sec-back {
+      height: 40px;
+    }
+    .sec-top {
+      width: 40px;
       height: 40px;
     }
   }
