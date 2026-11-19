@@ -6,7 +6,7 @@ year: '2025–2026'
 role: 'UX Researcher, end to end'
 timeline: 'Two phases, 2025–2026'
 team: 'Me, with the Product Manager and the Product Design team'
-methods: ['Session-recording analysis', 'UX audit', 'Usability testing', 'Competitor benchmarks', 'Prototyping', 'Wireframing', 'Design reviews']
+methods: ['Session-recording analysis', 'UX audit', 'Usability testing', 'Competitor benchmarks', 'Wireframing', 'High-fidelity prototyping', 'Design reviews']
 outcomes:
   - value: '82'
     label: 'SUS score for the redesigned registration, in the "excellent" range'
@@ -57,8 +57,9 @@ In **Phase 2** I did the research and the first design:
 - tests of how social sign-up links accounts
 - the sign-up logic options and the questions for Compliance
 - wireframes, versions 1 to 3
+- high-fidelity screens and prototypes, to discuss the direction with the Product Design team before they started the final work
 
-The final interface was designed by the Product Design team, and I reviewed it with the Product Manager. I worked with the Product Manager throughout.
+The Product Design team then designed the final interface. I supported them along the way and reviewed their work with the Product Manager, whom I worked with throughout.
 
 ## Phase 1: fixing the registration form
 
@@ -191,7 +192,9 @@ My wireframes went through three versions. The key idea held: one gate, many tri
 - opening the cashier
 - claiming a bonus
 
-The Product Design team turned this into the final design, which I reviewed with the Product Manager:
+I then turned the wireframes into high-fidelity screens and prototypes. They gave the Product Design team something concrete to discuss and challenge before starting the final work, so the hand-over was a conversation about a working idea, not a document.
+
+The Product Design team turned this into the final design. I supported them along the way and reviewed it with the Product Manager:
 
 - **The quick sign-up asks only for email, password, country and the chosen offer.** The player starts in a "pre-registered" state and can look around straight away.
 - **The full details come at the first deposit:** "Complete your account to deposit. It takes about a minute." The full registration then collects every field the licence requires.
