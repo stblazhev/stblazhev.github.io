@@ -330,6 +330,8 @@ const nav = [
       onScroll();
     });
     document.fonts?.ready.then(() => current >= 0 && place(current));
+    // The back-to-top button changes the track's width as it opens or closes: re-centre the active link
+    top.addEventListener('transitionend', (e) => e.propertyName === 'width' && current >= 0 && place(current));
     update();
     requestAnimationFrame(() => bar.classList.add('ready'));
   }
@@ -713,25 +715,35 @@ const nav = [
     opacity: 1;
     margin-left: 8px;
   }
+  /* Back to top: takes no space until it shows (zero width, and a negative margin cancels
+     the bar's gap), then slides open, so the links use the full bar near the top of the page */
   .sec-top {
+    --size: 34px;
     flex: none;
     display: grid;
     place-items: center;
-    width: 34px;
-    height: 34px;
+    width: 0;
+    height: var(--size);
+    margin-left: -8px;
+    overflow: hidden;
     border-radius: 8px;
-    border: 1px solid var(--line-2);
+    border: 0 solid var(--line-2);
     color: var(--fg-2);
     opacity: 0;
-    transform: translateY(6px);
+    visibility: hidden;
     pointer-events: none;
     transition:
+      width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       opacity 0.2s,
-      transform 0.2s;
+      visibility 0.25s;
   }
   .sec-top.show {
+    width: var(--size);
+    margin-left: 0;
+    border-width: 1px;
     opacity: 1;
-    transform: none;
+    visibility: visible;
     pointer-events: auto;
   }
   .sec-top:hover {
@@ -1012,8 +1024,7 @@ const nav = [
       height: 40px;
     }
     .sec-top {
-      width: 40px;
-      height: 40px;
+      --size: 40px;
     }
   }
   @media (max-width: 420px) {
