@@ -19,6 +19,7 @@ const projects = defineCollection({
     tldr: z.array(z.string()).default([]),
     cover: z.string().optional(), // path under /public, e.g. /projects/my-slug/cover.png
     coverAlt: z.string().optional(),
+    preview: z.array(z.string()).default([]), // 2-3 small phone screens for the home page peek, e.g. /projects/my-slug/thumbs/a.jpg
     order: z.number().default(100), // lower = higher on the home page
     draft: z.boolean().default(false), // drafts show locally, never on the live site
   }),

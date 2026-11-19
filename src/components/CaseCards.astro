@@ -1,9 +1,10 @@
 ---
 // Home page case studies as compact rows: a small result tile, then year and read time,
-// title, a two-line summary and methods, with an arrow. The last row is the purple
-// "Brewing new ideas" placeholder with bubbles rising out of the logo flask.
-// Accessibility: each row is one link whose name is the title (aria-labelledby) and whose
-// description is the headline result (aria-describedby), with a visible focus ring.
+// title, a two-line summary and methods, a fan of phone screens that spreads out on hover
+// (desktop), and an arrow. "Quick look" opens the study's TL;DR and numbers in place.
+// The last row is the purple "Brewing new ideas" placeholder.
+// Accessibility: the title is the link (stretched over the row); "Quick look" is a separate
+// button with aria-expanded, and the closed panel is inert so it stays out of the tab order.
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 import type { CollectionEntry } from 'astro:content';
@@ -24,17 +25,11 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   {
     projects.map((p, i) => {
       const kpi = p.data.outcomes[0];
+      const qid = `cs-${p.id}-q`;
+      const preview = p.data.preview ?? [];
       return (
-        <li data-reveal style={`transition-delay:${i * 90}ms`}>
-          <a
-            class="cs"
-            href={`/work/${p.id}/`}
-            aria-labelledby={`cs-${p.id}-t`}
-            aria-describedby={kpi ? `cs-${p.id}-k` : undefined}
-            data-spot
-            data-goatcounter-click={`case-study-${p.id}`}
-            data-goatcounter-title={`Open case study: ${p.data.title}`}
-          >
+        <li class="cs-item" data-reveal style={`transition-delay:${i * 90}ms`}>
+          <div class="cs" data-spot>
             <span class="spot" aria-hidden="true" />
             {kpi && (
               <span class="cs-kpi" id={`cs-${p.id}-k`}>
@@ -47,20 +42,82 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
                 {p.data.year} · {minutes(p.body)} min read
                 {p.data.draft && <span class="badge warn">Draft</span>}
               </span>
-              <h3 class="cs-title" id={`cs-${p.id}-t`}>
-                {p.data.title}
+              <h3 class="cs-title">
+                <a
+                  class="cs-link"
+                  href={`/work/${p.id}/`}
+                  aria-describedby={kpi ? `cs-${p.id}-k` : undefined}
+                  data-goatcounter-click={`case-study-${p.id}`}
+                  data-goatcounter-title={`Open case study: ${p.data.title}`}
+                >
+                  {p.data.title}
+                </a>
               </h3>
               <span class="cs-sum">{p.data.summary}</span>
-              <span class="badges cs-methods">
-                {p.data.methods.slice(0, 3).map((m) => (
-                  <span class="badge">{m}</span>
-                ))}
+              <span class="cs-foot">
+                <span class="badges cs-methods">
+                  {p.data.methods.slice(0, 3).map((m) => (
+                    <span class="badge">{m}</span>
+                  ))}
+                </span>
+                {(p.data.tldr.length > 0 || p.data.outcomes.length > 1) && (
+                  <button
+                    class="cs-quick-btn"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={qid}
+                    data-quick
+                    data-goatcounter-click={`quick-look-${p.id}`}
+                    data-goatcounter-title={`Quick look: ${p.data.title}`}
+                  >
+                    <Icon name="list" size={14} /> Quick look
+                  </button>
+                )}
               </span>
             </span>
+            {preview.length > 0 && (
+              <span class="cs-peek" aria-hidden="true">
+                {preview.slice(0, 3).map((src) => (
+                  <img src={src} alt="" width="180" height="400" loading="lazy" />
+                ))}
+              </span>
+            )}
             <span class="cs-go" aria-hidden="true">
               <Icon name="right" />
             </span>
-          </a>
+          </div>
+
+          <div class="cs-quick" id={qid} inert>
+            <div class="cs-quick-in">
+              {p.data.outcomes.length > 0 && (
+                <ul class="q-nums">
+                  {p.data.outcomes.map((o) => (
+                    <li>
+                      <b>{o.value}</b>
+                      <span>{o.label}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {p.data.tldr.length > 0 && (
+                <ul class="q-tldr">
+                  {p.data.tldr.map((t) => (
+                    <li>{t}</li>
+                  ))}
+                </ul>
+              )}
+              {preview.length > 0 && (
+                <span class="q-screens" aria-hidden="true">
+                  {preview.slice(0, 3).map((src) => (
+                    <img src={src} alt="" width="180" height="400" loading="lazy" />
+                  ))}
+                </span>
+              )}
+              <a class="btn primary q-open" href={`/work/${p.id}/`} data-goatcounter-click={`quick-look-open-${p.id}`}>
+                Read the case study <Icon name="right" />
+              </a>
+            </div>
+          </div>
         </li>
       );
     })
@@ -86,6 +143,20 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   </li>
 </ul>
 
+<script>
+  // Quick look: open and close the TL;DR panel under a row
+  document.querySelectorAll<HTMLButtonElement>('[data-quick]').forEach((btn) => {
+    const panel = document.getElementById(btn.getAttribute('aria-controls')!)!;
+    const item = btn.closest('.cs-item')!;
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      item.classList.toggle('open', open);
+      panel.toggleAttribute('inert', !open);
+    });
+  });
+</script>
+
 <style>
   .cs-list {
     list-style: none;
@@ -103,8 +174,9 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
 
   /* ---------- Row ---------- */
   .cs {
+    position: relative;
     display: grid;
-    grid-template-columns: 196px minmax(0, 1fr) 40px;
+    grid-template-columns: 196px minmax(0, 1fr) 150px 40px;
     align-items: center;
     gap: 20px;
     padding: 12px 16px 12px 12px;
@@ -114,15 +186,41 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     transition:
       border-color 0.2s,
       box-shadow 0.25s,
-      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      border-radius 0.2s;
   }
-  a.cs:hover,
-  a.cs:focus-visible {
+  .cs-item .cs:hover,
+  .cs-item .cs:focus-within {
     border-color: var(--accent);
     box-shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
     transform: translateY(-2px);
   }
-  a.cs:focus-visible {
+  /* The title link covers the whole row, so the row is one big target. The body must not be
+     a positioning context (the global glow rule makes card children relative), and the glow
+     sits behind the content inside the row's own stacking context. */
+  .cs-item .cs {
+    isolation: isolate;
+  }
+  .cs-item .cs > .cs-body {
+    position: static;
+  }
+  .cs-item .cs > .spot {
+    z-index: -1;
+  }
+  .cs-link {
+    color: inherit;
+  }
+  .cs-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 14px;
+  }
+  .cs-link:focus-visible {
+    outline: none;
+  }
+  .cs-link:focus-visible::after {
     outline: 2px solid var(--accent-fg);
     outline-offset: 3px;
   }
@@ -142,7 +240,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
       linear-gradient(135deg, var(--accent-bg), #e9fbe9);
     transition: background-position 0.8s ease;
   }
-  a.cs:hover .cs-kpi {
+  .cs-item .cs:hover .cs-kpi {
     background-position:
       7px -7px,
       0 0;
@@ -187,8 +285,86 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .cs-methods {
+  .cs-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
     margin-top: 2px;
+  }
+  /* Sits above the stretched link so it can be clicked on its own */
+  .cs-quick-btn {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    background: var(--card);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fg-2);
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      color 0.2s;
+  }
+  .cs-quick-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: var(--fg);
+  }
+  .cs-item.open .cs-quick-btn {
+    border-color: var(--accent-fg);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+  }
+
+  /* Screen peek: three phone screens stacked like cards that fan out on hover */
+  .cs-peek {
+    position: relative;
+    align-self: stretch;
+    min-height: 120px;
+  }
+  .cs-peek img {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 52px;
+    height: auto;
+    margin-left: -26px;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(17, 24, 39, 0.22);
+    transform-origin: 50% 100%;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .cs-peek img:nth-child(1) {
+    transform: translateX(-12px) rotate(-7deg);
+  }
+  .cs-peek img:nth-child(2) {
+    z-index: 1;
+    transform: translateY(-4px);
+  }
+  .cs-peek img:nth-child(3) {
+    transform: translateX(12px) rotate(7deg);
+  }
+  .cs-item .cs:hover .cs-peek img:nth-child(1),
+  .cs-item .cs:focus-within .cs-peek img:nth-child(1) {
+    transform: translateX(-46px) rotate(-10deg);
+  }
+  .cs-item .cs:hover .cs-peek img:nth-child(2),
+  .cs-item .cs:focus-within .cs-peek img:nth-child(2) {
+    transform: translateY(-10px) scale(1.08);
+  }
+  .cs-item .cs:hover .cs-peek img:nth-child(3),
+  .cs-item .cs:focus-within .cs-peek img:nth-child(3) {
+    transform: translateX(46px) rotate(10deg);
   }
 
   .cs-go {
@@ -207,23 +383,119 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs-go :global(svg) {
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  a.cs:hover .cs-go,
-  a.cs:focus-visible .cs-go {
+  .cs-item .cs:hover .cs-go,
+  .cs-item .cs:focus-within .cs-go {
     background: var(--accent);
     border-color: var(--accent);
     color: #000;
   }
-  a.cs:hover .cs-go :global(svg) {
+  .cs-item .cs:hover .cs-go :global(svg) {
     transform: translateX(3px);
   }
 
-  /* ---------- Phones: tile on top as a slim strip ---------- */
+  /* ---------- Quick look panel ---------- */
+  .cs-quick {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cs-item.open .cs-quick {
+    grid-template-rows: 1fr;
+  }
+  .cs-quick-in {
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 14px 24px;
+    padding: 0 18px;
+    margin: 0 10px;
+    border: 1px solid transparent;
+    border-top: 0;
+    border-radius: 0 0 14px 14px;
+    background: var(--zebra);
+    transition:
+      padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.2s;
+  }
+  .cs-item.open .cs-quick-in {
+    padding: 16px 18px 18px;
+    border-color: var(--line);
+  }
+  .q-nums {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    align-content: start;
+  }
+  .q-nums li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+  }
+  .q-nums b {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent-fg);
+    line-height: 1.1;
+  }
+  .q-nums span {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--fg-3);
+  }
+  .q-tldr {
+    margin: 0;
+    padding-left: 1.1em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg-2);
+  }
+  .q-tldr li::marker {
+    color: var(--accent-fg);
+  }
+  .q-screens {
+    display: none;
+  }
+  .q-open {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  /* ---------- Narrower screens: no fan; phones: tile on top as a slim strip ---------- */
+  @media (max-width: 1100px) {
+    .cs {
+      grid-template-columns: 196px minmax(0, 1fr) 40px;
+    }
+    .cs-peek {
+      display: none;
+    }
+    .q-screens {
+      display: flex;
+      gap: 10px;
+      grid-column: 1 / -1;
+    }
+    .q-screens img {
+      width: 72px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(17, 24, 39, 0.18);
+    }
+  }
   @media (max-width: 640px) {
     .cs {
       grid-template-columns: minmax(0, 1fr);
       gap: 12px;
       padding: 12px;
-      position: relative;
     }
     .cs-kpi {
       flex-direction: row;
@@ -250,8 +522,12 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     .cs-methods {
       display: none;
     }
-    a.cs .cs-sum {
+    .cs-item .cs-sum {
       padding-right: 44px;
+    }
+    .cs-quick-in {
+      grid-template-columns: minmax(0, 1fr);
+      margin: 0 6px;
     }
   }
 

@@ -20,6 +20,7 @@ tldr:
   - 'Session recordings showed players dropping out of a three-step registration that looked like the login screen and asked for everything upfront.'
   - 'Phase 1: I turned the friction into six hypotheses, built a prototype and tested it with 11 players. All six held, and the two-step form is now live.'
   - 'Phase 2: for new LatAm markets, competitor benchmarks showed players trust calm flows more than fast ones. The quick sign-up I recommended, email and password first and the rest at the first deposit, is designed and ready for development.'
+preview: ['/projects/registration/thumbs/q2-signup.jpg', '/projects/registration/thumbs/q3-offer.jpg', '/projects/registration/thumbs/q5-ready.jpg']
 order: 2
 ---
 

@@ -20,7 +20,7 @@ This file is the handover for any Claude session or developer picking up the wor
 | Images for a case study | `public/projects/<slug>/` referenced as `/projects/<slug>/file.png` |
 | Colours, fonts, shared components (cards, badges, buttons, tiles, KPIs) | `src/styles/global.css` (tokens on `:root`) |
 | Page shell: side nav (pages only), sticky section bar with scroll spy, contact dialog, scroll reveal, KPI count-up, footer | `src/layouts/Base.astro` |
-| Home page case studies as compact rows (small result tile from the first `outcomes` item, year and read time, title, two-line summary, methods; link named by the title and described by the result) and the purple "Brewing new ideas" placeholder row | `src/components/CaseCards.astro` |
+| Home page case studies as compact rows (small result tile from the first `outcomes` item, year and read time, title, two-line summary, methods, a fan of `preview` screens on hover, and a "Quick look" panel with outcomes and TL;DR; the title link is stretched over the row) and the purple "Brewing new ideas" placeholder row | `src/components/CaseCards.astro` |
 | Highlights flip cards (number count-up, animated picture, story on the back; content from `site.highlights`) | `src/components/Highlights.astro` |
 | About > Education "learning map" (two lanes on a year axis: `site.education` = formal, `site.sideEducation` = courses, awards, exchanges; filter, pick a stop for details) | `src/components/LearningMap.astro` |
 | "How I work" research loop (ring + tabs, autoplay; content from `site.approach`) | `src/components/ResearchLoop.astro` |
@@ -36,7 +36,7 @@ Empty strings and empty lists in `site.ts` are hidden on the site (for example, 
 ## Adding a case study
 
 1. Copy `src/content/projects/example-case-study.md` to `src/content/projects/<short-slug>.md`. The filename becomes the URL: `/work/<short-slug>/`.
-2. Fill in the frontmatter. `summary` is one sentence covering problem and result. `outcomes` are 2 to 4 headline numbers. `tldr` is 3 bullets. `order` sets position on the home page (lower is higher).
+2. Fill in the frontmatter. `preview` lists 2–3 small phone screens (180px wide JPGs in `public/projects/<slug>/thumbs/`) for the home page: they fan out on hover and appear inside "Quick look", which also shows the `outcomes` and `tldr`. `summary` is one sentence covering problem and result. `outcomes` are 2 to 4 headline numbers. `tldr` is 3 bullets. `order` sets position on the home page (lower is higher).
 3. Write the body in the standard structure below.
 4. Put images in `public/projects/<short-slug>/`. A cover image (`cover`) is optional; without it the home page shows an arrow instead of a thumbnail.
 5. Set `draft: true` while writing. Drafts appear with `npm run dev` but are never built for the live site.

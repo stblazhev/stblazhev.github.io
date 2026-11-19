@@ -20,6 +20,7 @@ tldr:
   - 'Casino and sports content shared one mobile navigation, so players of each had to work past content meant for the other.'
   - 'I combined stakeholder interviews, a competitor benchmark and two closed card sorts with players into rules for what earns a place in the bottom bar.'
   - 'Two bottom bars shipped, one per mode, as a design-system component every brand on the platform can reuse. They balance what players asked for with what the business needed.'
+preview: ['/projects/bottom-navigation/thumbs/b1-safari-ios.jpg', '/projects/bottom-navigation/thumbs/b3-chrome-android.jpg', '/projects/bottom-navigation/thumbs/b4-web-app.jpg']
 order: 1
 ---
 
