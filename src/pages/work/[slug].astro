@@ -125,6 +125,140 @@ const meta = [
 </Base>
 
 <script>
+  // Galleries: drag to scroll with a mouse, faded ends that only show when there is more to
+  // see, arrow buttons, position dots with a counter, and arrow keys when the gallery has focus.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const arrow = (d: string) =>
+    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+  document.querySelectorAll<HTMLElement>('.prose .gallery').forEach((g, gi) => {
+    const figs = [...g.querySelectorAll<HTMLElement>('figure')];
+    if (figs.length < 2) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'g-wrap';
+    g.before(wrap);
+    wrap.append(g);
+
+    const prev = document.createElement('button');
+    prev.type = 'button';
+    prev.className = 'g-arrow g-prev';
+    prev.setAttribute('aria-label', 'Previous screens');
+    prev.innerHTML = arrow('M19 12H5M12 5l-7 7 7 7');
+    const next = document.createElement('button');
+    next.type = 'button';
+    next.className = 'g-arrow g-next';
+    next.setAttribute('aria-label', 'Next screens');
+    next.innerHTML = arrow('M5 12h14M12 5l7 7-7 7');
+    wrap.append(prev, next);
+
+    const bar = document.createElement('div');
+    bar.className = 'g-bar';
+    const dots = document.createElement('div');
+    dots.className = 'g-dots';
+    const count = document.createElement('span');
+    count.className = 'g-count';
+    count.setAttribute('aria-live', 'polite');
+    figs.forEach((f, i) => {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.className = 'g-dot';
+      const title = f.querySelector('figcaption b')?.textContent ?? `Screen ${i + 1}`;
+      d.setAttribute('aria-label', `Show ${title}`);
+      d.addEventListener('click', () => go(i));
+      dots.append(d);
+    });
+    bar.append(dots, count);
+    wrap.after(bar);
+
+    const step = () => figs[1].offsetLeft - figs[0].offsetLeft;
+    const go = (i: number) =>
+      g.scrollTo({ left: figs[Math.max(0, Math.min(figs.length - 1, i))].offsetLeft - figs[0].offsetLeft, behavior: reduce ? 'auto' : 'smooth' });
+    const current = () => Math.round(g.scrollLeft / step());
+
+    const update = () => {
+      const max = g.scrollWidth - g.clientWidth - 2;
+      g.classList.toggle('fade-l', g.scrollLeft > 2);
+      g.classList.toggle('fade-r', g.scrollLeft < max);
+      prev.hidden = g.scrollLeft <= 2;
+      next.hidden = g.scrollLeft >= max;
+      const first = current();
+      const visible = Math.max(1, Math.floor((g.clientWidth + 16) / step()));
+      const last = Math.min(figs.length, first + visible);
+      [...dots.children].forEach((d, i) => d.setAttribute('aria-current', String(i >= first && i < last)));
+      count.textContent =
+        visible >= figs.length
+          ? `${figs.length} screens`
+          : last - first === 1
+            ? `${first + 1} of ${figs.length}`
+            : `${first + 1}–${last} of ${figs.length}`;
+    };
+    let raf = 0;
+    g.addEventListener('scroll', () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    }, { passive: true });
+    addEventListener('resize', update);
+    prev.addEventListener('click', () => g.scrollBy({ left: -step(), behavior: reduce ? 'auto' : 'smooth' }));
+    next.addEventListener('click', () => g.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }));
+    g.addEventListener('keydown', (e) => {
+      if (e.target !== g) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(current() - 1); }
+      if (e.key === 'Home') { e.preventDefault(); go(0); }
+      if (e.key === 'End') { e.preventDefault(); go(figs.length - 1); }
+    });
+
+    // Drag to scroll (mouse only; touch already scrolls natively)
+    let startX = 0, startLeft = 0, dragged = false, down = false;
+    g.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true;
+      dragged = false;
+      startX = e.clientX;
+      startLeft = g.scrollLeft;
+    });
+    addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (!dragged && Math.abs(dx) > 6) {
+        dragged = true;
+        g.classList.add('dragging');
+      }
+      if (dragged) g.scrollLeft = startLeft - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!down) return;
+      down = false;
+      if (dragged) {
+        const target = Math.round(g.scrollLeft / step());
+        g.classList.remove('dragging');
+        go(target);
+      }
+    });
+    // A drag should not open the viewer
+    g.addEventListener('click', (e) => {
+      if (dragged) {
+        e.stopPropagation();
+        e.preventDefault();
+        dragged = false;
+      }
+    }, true);
+    g.querySelectorAll('img').forEach((img) => (img.draggable = false));
+
+    update();
+
+    // A small nudge the first time the first gallery comes into view, to show it scrolls
+    if (gi === 0 && !reduce && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([en]) => {
+        if (!en.isIntersecting) return;
+        io.disconnect();
+        if (g.scrollLeft > 2) return;
+        g.scrollTo({ left: 64, behavior: 'smooth' });
+        setTimeout(() => g.scrollTo({ left: 0, behavior: 'smooth' }), 650);
+      }, { threshold: 0.6 });
+      io.observe(g);
+    }
+  });
+
   // Screen viewer: any image in the case study opens full size. In a gallery,
   // arrows (buttons or keyboard) step through that gallery's screens.
   const viewer = document.getElementById('viewer') as HTMLDialogElement | null;
