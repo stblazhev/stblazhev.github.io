@@ -112,9 +112,151 @@ const meta = [
       </a>
     )
   }
+
+  <dialog class="viewer" id="viewer" aria-label="Screen viewer">
+    <button class="btn ghost v-close" type="button" data-v-close aria-label="Close"><Icon name="close" /></button>
+    <button class="btn v-nav v-prev" type="button" data-v-step="-1" aria-label="Previous screen"><Icon name="left" /></button>
+    <figure>
+      <img alt="" />
+      <figcaption></figcaption>
+    </figure>
+    <button class="btn v-nav v-next" type="button" data-v-step="1" aria-label="Next screen"><Icon name="right" /></button>
+  </dialog>
 </Base>
 
+<script>
+  // Screen viewer: any image in the case study opens full size. In a gallery,
+  // arrows (buttons or keyboard) step through that gallery's screens.
+  const viewer = document.getElementById('viewer') as HTMLDialogElement | null;
+  if (viewer) {
+    const vImg = viewer.querySelector('img')!;
+    const vCap = viewer.querySelector('figcaption')!;
+    let group: HTMLImageElement[] = [];
+    let at = 0;
+    const show = (i: number) => {
+      at = (i + group.length) % group.length;
+      const img = group[at];
+      vImg.src = img.currentSrc || img.src;
+      vImg.alt = img.alt;
+      const cap = img.closest('figure')?.querySelector('figcaption');
+      if (cap) vCap.innerHTML = cap.innerHTML; // our own markup: a bold title and a line of text
+      else vCap.textContent = img.alt;
+      viewer.classList.toggle('single', group.length < 2);
+    };
+    let opener: HTMLElement | null = null;
+    const open = (img: HTMLImageElement) => {
+      const gallery = img.closest('.gallery');
+      group = gallery ? [...gallery.querySelectorAll<HTMLImageElement>('img')] : [img];
+      opener = img;
+      show(group.indexOf(img));
+      viewer.showModal();
+    };
+    document.querySelectorAll<HTMLImageElement>('.prose img').forEach((img) => {
+      img.dataset.zoom = '';
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-label', `Enlarge: ${img.alt}`);
+      img.addEventListener('click', () => open(img));
+      img.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open(img);
+        }
+      });
+    });
+    viewer.querySelectorAll<HTMLButtonElement>('[data-v-step]').forEach((b) =>
+      b.addEventListener('click', () => show(at + Number(b.dataset.vStep))),
+    );
+    viewer.querySelector('[data-v-close]')!.addEventListener('click', () => viewer.close());
+    viewer.addEventListener('click', (e) => {
+      if (e.target === viewer) viewer.close();
+    });
+    viewer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(at + 1);
+      if (e.key === 'ArrowLeft') show(at - 1);
+    });
+    viewer.addEventListener('close', () => opener?.focus());
+  }
+</script>
+
 <style>
+  /* ---------- Screen viewer ---------- */
+  .viewer {
+    width: min(96vw, 1100px);
+    max-height: 94vh;
+    padding: 20px 64px;
+    border: 0;
+    border-radius: 18px;
+    background: #0b1216;
+    color: #e5e7eb;
+  }
+  .viewer::backdrop {
+    background: rgba(3, 10, 14, 0.78);
+    backdrop-filter: blur(3px);
+  }
+  .viewer figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .viewer img {
+    max-width: 100%;
+    max-height: calc(94vh - 110px);
+    width: auto;
+    height: auto;
+    border-radius: 16px;
+  }
+  .viewer figcaption {
+    font-size: 14px;
+    text-align: center;
+    color: #d1d5db;
+    max-width: 60ch;
+  }
+  .viewer figcaption :global(b) {
+    display: block;
+    color: #fff;
+    font-weight: 600;
+  }
+  .v-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #e5e7eb;
+  }
+  .v-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .v-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .v-prev {
+    left: 12px;
+  }
+  .v-next {
+    right: 12px;
+  }
+  .viewer.single .v-nav {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .viewer {
+      padding: 52px 12px 16px;
+    }
+    .v-nav {
+      top: auto;
+      bottom: 12px;
+      transform: none;
+    }
+  }
+
   .page-head {
     display: flex;
     align-items: center;

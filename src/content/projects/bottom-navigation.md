@@ -171,7 +171,12 @@ The Product Design team went through several iterations before the final one. In
 
 This version was used to test something a floating bar has to survive: the browser's own toolbars, which sit in different places on iOS and Android. The Product Design team mocked it up in Safari and Chrome on iOS, Chrome on Android and the installed web app, to make sure it sits clear of them in each.
 
-![An earlier iteration of the Casino bar in four environments: Safari on iOS, Chrome on iOS, Chrome on Android and the installed web app.](/projects/bottom-navigation/browsers.jpg)
+<div class="gallery" tabindex="0" role="group" aria-label="An earlier iteration of the bar in four environments">
+<figure><img src="/projects/bottom-navigation/screens/b1-safari-ios.jpg" alt="Casino lobby in Safari on iOS with the floating bottom bar above the address bar" width="375" height="812" loading="lazy"><figcaption><b>Safari on iOS</b> The bar sits above Safari’s address bar.</figcaption></figure>
+<figure><img src="/projects/bottom-navigation/screens/b2-chrome-ios.jpg" alt="Casino lobby in Chrome on iOS with the bottom bar above the browser toolbar" width="375" height="812" loading="lazy"><figcaption><b>Chrome on iOS</b> Clear of Chrome’s bottom toolbar.</figcaption></figure>
+<figure><img src="/projects/bottom-navigation/screens/b3-chrome-android.jpg" alt="Casino lobby in Chrome on Android with the bottom bar near the bottom edge" width="375" height="812" loading="lazy"><figcaption><b>Chrome on Android</b> The address bar is at the top, so the bar sits lower.</figcaption></figure>
+<figure><img src="/projects/bottom-navigation/screens/b4-web-app.jpg" alt="Casino lobby as an installed web app, logged in, with the bottom bar" width="375" height="812" loading="lazy"><figcaption><b>Installed web app</b> No browser UI at all, logged in.</figcaption></figure>
+</div>
 
 *An earlier iteration, checked in four environments. This is not the design that shipped; the final one follows below.*
 

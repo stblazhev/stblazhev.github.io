@@ -133,9 +133,16 @@ Three players wanted a single page. 10 of 11 normally sign up with email and a p
 
 The two-step registration is now live: account details first, then personal details. It keeps the live password checklist and the typed date of birth. The design also asks "Leave without registering?" when a player tries to close the form halfway.
 
-![The live registration: step 1 with email, password and the password checklist; step 2 with personal details; and the check when a player tries to leave halfway.](/projects/registration/phase1-shipped.jpg)
+<div class="gallery" tabindex="0" role="group" aria-label="The live registration, screen by screen">
+<figure><img src="/projects/registration/screens/r1-home.jpg" alt="Lobby with Log in and Register buttons in the header" width="540" height="1200" loading="lazy"><figcaption><b>1. Start</b> Register sits top right, clearly apart from Log in.</figcaption></figure>
+<figure><img src="/projects/registration/screens/r2-account.jpg" alt="Step 1 of 2: email, password and a checklist of password rules" width="540" height="1200" loading="lazy"><figcaption><b>2. Account details</b> Email and password, with the live password checklist.</figcaption></figure>
+<figure><img src="/projects/registration/screens/r3-personal.jpg" alt="Step 2 of 2: first name, last name, typed date of birth and country" width="540" height="1200" loading="lazy"><figcaption><b>3. Personal details</b> Name, typed date of birth and the rest of the required details.</figcaption></figure>
+<figure><img src="/projects/registration/screens/r4-creating.jpg" alt="Loading pop-up: Registering your account" width="540" height="1200" loading="lazy"><figcaption><b>4. Creating the account</b> A short loading state that already points to the bonus.</figcaption></figure>
+<figure><img src="/projects/registration/screens/r5-done.jpg" alt="Lobby for a logged-in player with the balance shown" width="540" height="1200" loading="lazy"><figcaption><b>5. Done</b> Back in the lobby, logged in, with the balance in the header.</figcaption></figure>
+<figure><img src="/projects/registration/screens/r6-leave.jpg" alt="Pop-up: Leave without registering? with a Keep Registering button" width="540" height="1200" loading="lazy"><figcaption><b>Leaving halfway</b> A calm check with one clear way back.</figcaption></figure>
+</div>
 
-*The registration as it ships, on the platform's own brand.*
+*The registration as it ships, on the platform's own brand. Scroll sideways, and tap a screen to enlarge it.*
 
 **One finding changed the design.** Because 3 of 11 players were surprised to see the bonus first, the bonus choice moves to after the account is created ("Choose your bonus, applied on your first deposit"). It comes in a later release.
 
@@ -190,20 +197,59 @@ The Product Design team turned this into the final design, which I reviewed with
 - **The full details come at the first deposit:** "Complete your account to deposit. It takes about a minute." The full registration then collects every field the licence requires.
 - **Google and Apple sign-up** come in a second release, with the account-linking cases my research flagged: verifying ownership, the wrong provider account, and Apple's hidden email.
 
-![The quick sign-up: email, password and country; choosing a welcome offer; and Apple sign-up with the details it can fill in.](/projects/registration/phase2-signup.jpg)
+#### Signing up in seconds
 
-*Quick sign-up, choosing an offer, and Apple sign-up. The screens use placeholder data.*
+<div class="gallery" tabindex="0" role="group" aria-label="Quick sign-up, screen by screen">
+<figure><img src="/projects/registration/screens/q1-lobby.jpg" alt="Lobby for a guest with Log in and Register" width="540" height="1200" loading="lazy"><figcaption><b>1. A guest in the lobby</b> The same entry point as today.</figcaption></figure>
+<figure><img src="/projects/registration/screens/q2-signup.jpg" alt="Quick Sign-Up form with email, password, country and the selected welcome offer" width="540" height="1200" loading="lazy"><figcaption><b>2. Quick sign-up</b> Only email, password and country, with the chosen offer on top.</figcaption></figure>
+<figure><img src="/projects/registration/screens/q3-offer.jpg" alt="Select your offer: VIP, Casino, Sports or No Bonus" width="540" height="1200" loading="lazy"><figcaption><b>3. Choose an offer</b> Casino, sports, VIP or no bonus at all.</figcaption></figure>
+<figure><img src="/projects/registration/screens/q4-creating.jpg" alt="Loading pop-up: Creating your account, adding your welcome offer" width="540" height="1200" loading="lazy"><figcaption><b>4. Creating the account</b> The offer stays visible while it loads.</figcaption></figure>
+<figure><img src="/projects/registration/screens/q5-ready.jpg" alt="Your account is ready: Start playing or Complete my profile" width="540" height="1200" loading="lazy"><figcaption><b>5. Account ready</b> Play demo games now, or complete the profile.</figcaption></figure>
+<figure><img src="/projects/registration/screens/q6-pre-registered.jpg" alt="Lobby with a zero balance, a Complete Registration button and a Claim bonus button" width="540" height="1200" loading="lazy"><figcaption><b>6. Pre-registered</b> A demo balance, with a nudge to complete registration.</figcaption></figure>
+</div>
 
-![The gate at the first deposit, "Complete your account to deposit", and the full registration form that follows.](/projects/registration/phase2-gate.jpg)
+*Quick sign-up, from the lobby to a pre-registered account. The screens use placeholder data.*
 
-*The player signs up fast, and completes the full registration only when they want to deposit.*
+#### Completing the account at the first deposit
 
-The final specification covers about 120 screen states, including:
-- email confirmation
-- security checks
-- blocked and self-excluded accounts
-- demo play with a legal-age check
-- a privacy-safe message when someone signs up with an email that already exists
+<div class="gallery" tabindex="0" role="group" aria-label="First deposit, screen by screen">
+<figure><img src="/projects/registration/screens/d1-claim.jpg" alt="Lobby for a pre-registered player with Claim Bonus" width="540" height="1200" loading="lazy"><figcaption><b>1. The player wants to deposit</b> Claim Bonus or the plus button starts the deposit.</figcaption></figure>
+<figure><img src="/projects/registration/screens/d2-gate.jpg" alt="Pop-up: Complete your account to deposit, with Complete Registration and Not Now" width="540" height="1200" loading="lazy"><figcaption><b>2. The gate</b> One clear ask: complete your account, about a minute.</figcaption></figure>
+<figure><img src="/projects/registration/screens/d3-profile.jpg" alt="Complete your profile form filled in with name, date of birth, city, address and postal code" width="540" height="1200" loading="lazy"><figcaption><b>3. Full registration</b> Every field the licence requires, nothing more.</figcaption></figure>
+<figure><img src="/projects/registration/screens/d4-payment.jpg" alt="Deposit step 2: grid of payment methods" width="540" height="1200" loading="lazy"><figcaption><b>4. Payment method</b> Straight into the cashier, bonus already applied.</figcaption></figure>
+<figure><img src="/projects/registration/screens/d5-success.jpg" alt="Deposit summary: Success, 200 EUR added, Play games" width="540" height="1200" loading="lazy"><figcaption><b>5. Deposit done</b> Funds added, and one button back to the games.</figcaption></figure>
+</div>
+
+*The full registration appears only when the player wants to play for real money.*
+
+#### Google and Apple sign-up (second release)
+
+<div class="gallery" tabindex="0" role="group" aria-label="Google and Apple sign-up, screen by screen">
+<figure><img src="/projects/registration/screens/s1-connecting.jpg" alt="Pop-up: Connecting to Google, secure connection to accounts.google.com" width="540" height="1200" loading="lazy"><figcaption><b>1. Handing off</b> Says where the player is going, and that it is secure.</figcaption></figure>
+<figure><img src="/projects/registration/screens/s2-google.jpg" alt="Google account picker: Choose an account to continue to All in platform" width="540" height="1200" loading="lazy"><figcaption><b>2. Google account picker</b> Google's own screen.</figcaption></figure>
+<figure><img src="/projects/registration/screens/s3-almost.jpg" alt="Almost there: signed in with Google, country and consent checkboxes" width="540" height="1200" loading="lazy"><figcaption><b>3. Almost there</b> Only country and consent are left.</figcaption></figure>
+<figure><img src="/projects/registration/screens/s4-apple-hidden.jpg" alt="Almost there with Apple: a relay email and a note that Apple is hiding the player's email" width="540" height="1200" loading="lazy"><figcaption><b>Apple's hidden email</b> Explained in plain words, with a way to add a real email later.</figcaption></figure>
+<figure><img src="/projects/registration/screens/s5-linking.jpg" alt="You already have an account: enter your password to add Google sign-in" width="540" height="1200" loading="lazy"><figcaption><b>Existing account</b> Confirm the password once to add Google sign-in.</figcaption></figure>
+</div>
+
+*The account-linking cases from my research, designed in.*
+
+#### Handling the edge cases
+
+The final specification covers about 120 screen states, including email confirmation, security checks, blocked and self-excluded accounts, demo play and existing emails. A few of them:
+
+<div class="gallery" tabindex="0" role="group" aria-label="Edge cases, screen by screen">
+<figure><img src="/projects/registration/screens/e1-leave-bonus.jpg" alt="Pop-up: Leave without your bonus? with Keep Registering" width="540" height="1200" loading="lazy"><figcaption><b>Leaving with an offer picked</b> Reminds the player the offer is reserved, without pressure.</figcaption></figure>
+<figure><img src="/projects/registration/screens/e2-inbox.jpg" alt="Check your inbox: we have sent an email with the next steps" width="540" height="1200" loading="lazy"><figcaption><b>An email that already exists</b> The same neutral message either way, so no one can check who has an account.</figcaption></figure>
+<figure><img src="/projects/registration/screens/e3-age.jpg" alt="Pop-up: Are you 18 or older? You must be of legal age to play, even in demo mode" width="540" height="1200" loading="lazy"><figcaption><b>Demo play</b> Legal age is confirmed even for demo games.</figcaption></figure>
+<figure><img src="/projects/registration/screens/e4-blocked.jpg" alt="We can't open an account for you, with a reference code and Contact Support" width="540" height="1200" loading="lazy"><figcaption><b>Blocked at sign-up</b> A clear outcome with a reference code for Support.</figcaption></figure>
+</div>
+
+*Each edge case gets a calm, specific message instead of a generic error.*
+
+![The quick sign-up on desktop: the same form opens as a centred pop-up over the lobby.](/projects/registration/screens/desktop-signup.jpg)
+
+*On desktop, the same sign-up opens as a centred pop-up over the lobby.*
 
 ## Results
 

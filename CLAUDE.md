@@ -59,6 +59,7 @@ Formatting conventions:
 - Participant quotes are blockquotes. The quote goes on the first line, then an empty `>` line, then the attribution (`Participant 4, Mexico`).
 - Image captions are an italic line directly after the image: `*Caption text.*`
 - Tables are fine for comparison matrices; they scroll sideways on mobile. An italic line right after a table is styled as its caption.
+- Screen galleries: `<div class="gallery" tabindex="0" role="group" aria-label="…">` with one `<figure><img … loading="lazy"><figcaption><b>Title</b> text</figcaption></figure>` per screen, then an italic caption line. They scroll sideways. Every image in a case study (gallery or not) opens full size in the viewer on the case study page; in a gallery, arrows step through it. Export phone screens from Figma at 1.5x, flatten them onto #0B1216 (dark, so rounded corners vanish in the viewer) and save them as JPG, 540px wide, in `public/projects/<slug>/screens/`.
 - A highlighted note: `<p class="note"><b>Title.</b> Text</p>`. A redrawn, unbranded bottom bar: `<p class="tabbar-label">Casino</p>` then `<div class="tabbar" role="img" aria-label="…"><span>Tab</span>…</div>`, with an italic caption line after it.
 
 ### Writing style

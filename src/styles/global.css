@@ -152,7 +152,8 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .prose h2 { color: #000; font-size: 20px; margin-top: 2.2em; padding-top: 1.4em; border-top: 1px solid var(--line); scroll-margin-top: 76px; }
 .prose > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .prose h3 { color: var(--fg); font-size: 16px; margin-top: 1.8em; scroll-margin-top: 76px; }
-.prose h2 + *, .prose h3 + * { margin-top: 0.5em; }
+.prose h4 { color: var(--fg); font-size: 15px; font-weight: 600; margin-top: 1.8em; }
+.prose h2 + *, .prose h3 + *, .prose h4 + * { margin-top: 0.5em; }
 .prose ul, .prose ol { padding-left: 1.25em; }
 .prose li + li { margin-top: 0.35em; }
 .prose li::marker { color: var(--fg-4); }
@@ -177,7 +178,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 
 /* Images: put a caption in italics on the line right after the image */
 .prose img { border-radius: 12px; border: 1px solid var(--line); width: 100%; margin-top: 1.6em; }
-.prose p:has(> img) + p > em:only-child, .prose table + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: -0.3em; }
+.prose p:has(> img) + p > em:only-child, .prose table + p > em:only-child, .prose .gallery + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: -0.3em; }
 
 /* Tables look like Backoffice tables */
 .prose table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
@@ -196,5 +197,19 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .prose .tabbar { display: flex; gap: 4px; max-width: 440px; margin-top: 0; padding: 6px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--card-shadow); }
 .prose .tabbar span { flex: 1; min-width: 0; padding: 10px 4px; border-radius: 9px; background: var(--zebra); font-size: 12px; font-weight: 500; line-height: 1.25; text-align: center; color: var(--fg-2); }
 .prose .tabbar + p > em:only-child { display: block; font-style: normal; font-size: 13px; color: var(--fg-3); margin-top: 0.6em; }
+
+/* Screen gallery: a sideways-scrolling row of phone screens, each with a short caption.
+   <div class="gallery" tabindex="0" role="group" aria-label="…"><figure><img …><figcaption>…</figcaption></figure>…</div>
+   Images open full size in a viewer (script on the case study page). */
+.prose .gallery { display: flex; gap: 16px; margin-top: 1.4em; padding: 4px 4px 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 4px; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+.prose .gallery:focus-visible { outline: 2px solid var(--accent-fg); outline-offset: 2px; border-radius: 12px; }
+.prose .gallery figure { flex: 0 0 196px; margin: 0; scroll-snap-align: start; }
+.prose .gallery img { width: 100%; height: auto; margin: 0; border: 0; border-radius: 22px; background: #0b1216; box-shadow: 0 8px 22px rgba(17, 24, 39, 0.14); cursor: zoom-in; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s; }
+.prose .gallery img:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18); }
+.prose .gallery figcaption { margin-top: 10px; font-size: 13px; line-height: 1.4; color: var(--fg-2); }
+.prose .gallery figcaption b { display: block; color: var(--fg); font-weight: 600; }
+.prose .gallery.wide figure { flex-basis: 160px; }
+@media (max-width: 600px) { .prose .gallery figure { flex-basis: 64%; } }
+.prose img[data-zoom] { cursor: zoom-in; }
 
 .prose code { font-size: 0.9em; background: var(--soft); padding: 0.1em 0.35em; border-radius: 4px; }
