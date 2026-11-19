@@ -106,7 +106,14 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
             <span class="label">Where it comes from</span>
             <span class="where">{h.where}</span>
             <span class="org">{h.org}</span>
-            <span class="story">{h.story}</span>
+            {(h as { short?: string }).short ? (
+              <>
+                <span class="story story-long">{h.story}</span>
+                <span class="story story-short">{(h as { short?: string }).short}</span>
+              </>
+            ) : (
+              <span class="story">{h.story}</span>
+            )}
             {h.tag && <span class="badge pop">{h.tag}</span>}
           </span>
         </span>
@@ -493,6 +500,9 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
     font-size: 12px;
     color: var(--fg-3);
   }
+  .story-short {
+    display: none;
+  }
   .story {
     font-size: 13px;
     line-height: 1.45;
@@ -540,6 +550,13 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
       margin-top: 4px;
       font-size: 12px;
       line-height: 1.4;
+    }
+    /* A highlight can carry a shorter phone version of its story (short in site.ts) */
+    .story-long {
+      display: none;
+    }
+    .story-short {
+      display: block;
     }
     .side {
       padding: 12px;
