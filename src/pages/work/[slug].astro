@@ -21,11 +21,24 @@ const sections = [
 ];
 
 const meta = [
-  { label: 'Role', value: data.role },
-  { label: 'Timeline', value: data.timeline },
-  { label: 'Team', value: data.team },
-  { label: 'Year', value: data.year },
+  { label: 'Role', value: data.role, icon: 'idcard' as const },
+  { label: 'Timeline', value: data.timeline, icon: 'clock' as const },
+  { label: 'Team', value: data.team, icon: 'users' as const },
+  { label: 'Year', value: data.year, icon: 'calendar' as const },
 ].filter((m) => m.value);
+
+// Header visual: the study's preview screens, at full size (the home page uses small thumbs)
+const screens = (data.preview ?? []).slice(0, 3).map((src) => src.replace('/thumbs/', '/screens/'));
+
+// TL;DR as a three-step story when it has exactly three points
+const steps =
+  data.tldr.length === 3
+    ? [
+        { label: 'The problem', icon: 'alert' as const },
+        { label: 'What I did', icon: 'pen' as const },
+        { label: 'What changed', icon: 'trend' as const },
+      ]
+    : data.tldr.map((_, i) => ({ label: `Point ${i + 1}`, icon: 'right' as const }));
 ---
 
 <Base title={data.title} description={data.summary} image={data.cover} sections={sections} back={{ href: '/#work', label: 'All case studies' }}>
@@ -37,25 +50,47 @@ const meta = [
     )
   }
 
-  <header id="overview" class="card head">
-    <span class="ctx">{data.context}</span>
-    <h1>{data.title}</h1>
-    <p class="lead">{data.summary}</p>
+  <header id="overview" class:list={['card', 'head', { 'has-visual': screens.length > 0 }]} data-spot>
+    <span class="spot" aria-hidden="true"></span>
+    <div class="head-main">
+      <div class="ctx">
+        {data.context.split(' · ').map((c, i) => <span class:list={['ctx-chip', { first: i === 0 }]}>{c}</span>)}
+      </div>
+      <h1>{data.title}</h1>
+      <p class="lead">{data.summary}</p>
 
-    <dl class="meta">
-      {
-        meta.map((m) => (
-          <div>
-            <dt class="label">{m.label}</dt>
-            <dd>{m.value}</dd>
-          </div>
-        ))
-      }
-    </dl>
+      <dl class="facts">
+        {
+          meta.map((m) => (
+            <div class="fact">
+              <span class="fact-ico" aria-hidden="true">
+                <Icon name={m.icon} size={16} />
+              </span>
+              <span>
+                <dt>{m.label}</dt>
+                <dd>{m.value}</dd>
+              </span>
+            </div>
+          ))
+        }
+      </dl>
 
-    <div class="badges">
-      {data.methods.map((m) => <span class="badge">{m}</span>)}
+      <div class="badges">
+        {data.methods.map((m) => <span class="badge">{m}</span>)}
+      </div>
     </div>
+
+    {
+      screens.length > 0 && (
+        <div class="head-visual" aria-hidden="true">
+          <div class="fan">
+            {screens.map((src) => (
+              <img src={src} alt="" width="540" height="1200" />
+            ))}
+          </div>
+        </div>
+      )
+    }
   </header>
 
   {
@@ -67,28 +102,41 @@ const meta = [
   }
 
   {
-    (data.outcomes.length > 0 || data.tldr.length > 0) && (
-      <section class="card summary" aria-label="Summary">
-        {data.outcomes.length > 0 && (
-          <div class="kpis">
-            {data.outcomes.map((o) => (
-              <div class="kpi">
-                <b>{o.value}</b>
-                <span>{o.label}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {data.tldr.length > 0 && (
-          <div class="tldr">
-            <h2>TL;DR</h2>
-            <ul>
-              {data.tldr.map((t) => (
-                <li>{t}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+    data.outcomes.length > 0 && (
+      <section class="card results" aria-label="Results">
+        <ul class="tiles-r">
+          {data.outcomes.map((o, i) => (
+            <li class="r-tile" style={`--i:${i}`}>
+              <b data-count>{o.value}</b>
+              <span>{o.label}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    data.tldr.length > 0 && (
+      <section class="card story" aria-labelledby="tldr-title">
+        <div class="story-head">
+          <h2 id="tldr-title">TL;DR</h2>
+          <span class="muted">The study in {data.tldr.length === 3 ? 'three steps' : `${data.tldr.length} points`}</span>
+        </div>
+        <ol class="steps">
+          {data.tldr.map((t, i) => (
+            <li class="step" style={`--i:${i}`}>
+              <span class="step-top">
+                <span class="step-ico" aria-hidden="true">
+                  <Icon name={steps[i].icon} size={18} />
+                </span>
+                <span class="step-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              </span>
+              <b class="step-label">{steps[i].label}</b>
+              <p>{t}</p>
+            </li>
+          ))}
+        </ol>
       </section>
     )
   }
@@ -398,37 +446,156 @@ const meta = [
     flex-wrap: wrap;
   }
 
+  /* ---------- Header: text on the left, the study's screens fanned on the right ---------- */
   .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: clamp(24px, 4vw, 40px);
+  }
+  .head.has-visual {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: center;
+  }
+  .head-main {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    padding: clamp(24px, 4vw, 40px);
+    min-width: 0;
   }
   .ctx {
-    font-size: 13px;
-    color: var(--fg-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ctx-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--zebra);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-2);
+  }
+  .ctx-chip.first {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+    font-weight: 600;
   }
   .head h1 {
-    max-width: 26ch;
+    max-width: 24ch;
+    font-size: clamp(26px, 3.4vw, 38px);
   }
   .lead {
     max-width: 62ch;
     font-size: 16px;
     color: var(--fg-2);
   }
-  .meta {
+  .facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-    margin: 8px 0 0;
-    padding: 16px 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 6px 0 0;
   }
-  .meta dd {
-    margin: 4px 0 0;
-    font-size: 14px;
+  .fact {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+  }
+  .fact-ico {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+  }
+  .fact dt {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .fact dd {
+    margin: 2px 0 0;
+    font-size: 13px;
     font-weight: 500;
+    line-height: 1.35;
+    color: var(--fg);
+  }
+
+  .head-visual {
+    position: relative;
+    align-self: stretch;
+    min-height: 300px;
+    border-radius: 16px;
+    background:
+      radial-gradient(circle, rgba(35, 122, 44, 0.16) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      linear-gradient(160deg, var(--accent-bg), #e3f9e3);
+    overflow: hidden;
+  }
+  /* Fan centred in the panel; screens rotate around their bottom edge */
+  .fan {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+  }
+  .fan img {
+    position: absolute;
+    top: -156px;
+    left: -70px;
+    width: 140px;
+    max-width: none;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(17, 24, 39, 0.28);
+    transform-origin: 50% 100%;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .fan img:nth-child(1) {
+    transform: translateX(-84px) rotate(-10deg);
+  }
+  .fan img:nth-child(2) {
+    z-index: 1;
+    transform: translateY(-14px);
+  }
+  .fan img:nth-child(3) {
+    transform: translateX(84px) rotate(10deg);
+  }
+  .head:hover .fan img:nth-child(1) {
+    transform: translateX(-96px) rotate(-13deg);
+  }
+  .head:hover .fan img:nth-child(2) {
+    transform: translateY(-24px) scale(1.04);
+  }
+  .head:hover .fan img:nth-child(3) {
+    transform: translateX(96px) rotate(13deg);
+  }
+  /* The fan opens up once when the page loads */
+  .fan img {
+    animation: fan-in 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  .fan img:nth-child(2) {
+    animation-delay: 0.05s;
+  }
+  @keyframes fan-in {
+    from {
+      transform: translateY(60px) rotate(0deg);
+      opacity: 0;
+    }
   }
 
   .cover-card {
@@ -439,26 +606,217 @@ const meta = [
     width: 100%;
   }
 
-  .summary {
+  /* ---------- Results: green tiles that pop in and count up ---------- */
+  .results {
+    padding: clamp(14px, 2.4vw, 20px);
+  }
+  .tiles-r {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+  .r-tile {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 6px;
+    padding: 16px 18px;
+    border: 1px solid #c9f3c9;
+    border-radius: 14px;
+    background:
+      radial-gradient(circle, rgba(35, 122, 44, 0.12) 1px, transparent 1.4px) 0 0 / 14px 14px,
+      linear-gradient(150deg, var(--accent-bg), #e9fbe9);
+    animation: tile-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    animation-delay: calc(0.2s + var(--i) * 0.09s);
+    transition:
+      transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s;
   }
-  .tldr {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 16px 20px;
+  .r-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(41, 140, 51, 0.14);
   }
-  .tldr h2 {
-    font-size: 15px;
+  .r-tile b {
+    font-size: clamp(28px, 3.2vw, 38px);
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent-fg);
+    font-variant-numeric: tabular-nums;
   }
-  .tldr ul {
-    margin: 8px 0 0;
-    padding-left: 1.2em;
+  .r-tile span {
+    font-size: 13px;
+    line-height: 1.4;
     color: var(--fg-2);
   }
-  .tldr li + li {
-    margin-top: 6px;
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.94);
+    }
+  }
+
+  /* ---------- TL;DR: a three-step story ---------- */
+  .story-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .story-head h2 {
+    font-size: 18px;
+  }
+  .story-head .muted {
+    font-size: 13px;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+    counter-reset: none;
+  }
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 18px 20px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: 14px;
+    background: var(--card);
+    animation: step-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(0.45s + var(--i) * 0.12s);
+  }
+  .step:nth-child(1) {
+    border-top-color: #f59e0b;
+  }
+  .step:nth-child(3) {
+    border-top-color: var(--accent-fg);
+  }
+  /* Arrow joining the steps (desktop) */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -21px;
+    width: 14px;
+    height: 14px;
+    border-top: 2px solid var(--line-2);
+    border-right: 2px solid var(--line-2);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .step-ico {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+  }
+  .step:nth-child(1) .step-ico {
+    background: #fffbeb;
+    color: #b45309;
+  }
+  .step-n {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--line-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .step-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  .step p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-2);
+  }
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .head.has-visual {
+      grid-template-columns: minmax(0, 1fr) 240px;
+    }
+    .fan img {
+      width: 116px;
+      left: -58px;
+      top: -130px;
+    }
+    .tiles-r {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 760px) {
+    .head.has-visual {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .head-visual {
+      min-height: 240px;
+      order: 2;
+    }
+    /* On phones the screens rise from the bottom edge of a shorter panel */
+    .fan {
+      top: auto;
+      bottom: -36px;
+    }
+    .fan img {
+      top: auto;
+      bottom: 0;
+      width: 104px;
+      left: -52px;
+    }
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+    .step:not(:last-child)::after {
+      top: auto;
+      bottom: -12px;
+      right: 50%;
+      width: 10px;
+      height: 10px;
+      transform: translateX(50%) rotate(135deg);
+    }
+  }
+  @media (max-width: 520px) {
+    /* Facts two by two on phones so they don't run four cards deep */
+    .facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .fact {
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px;
+    }
+  }
+  @media (max-width: 420px) {
+    .tiles-r {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .next {
