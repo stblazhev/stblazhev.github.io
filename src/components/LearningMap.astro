@@ -612,12 +612,18 @@ const start = 0;
       grid-template-columns: minmax(0, 1fr);
       padding: 16px;
     }
+    /* The switcher gets its own bar under the details, so it never covers the dates */
     .lm-nav {
-      grid-row: 1;
-      justify-self: end;
-      margin-bottom: -44px;
-      position: relative;
-      z-index: 1;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .lm-panel[data-kind='edu'] .lm-nav {
+      border-top-color: var(--accent-line);
+    }
+    .lm-nav .btn {
+      width: 40px;
+      height: 40px;
     }
   }
   @media (max-width: 420px) {

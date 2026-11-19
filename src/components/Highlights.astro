@@ -503,22 +503,28 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
     margin-top: auto;
     align-self: flex-start;
   }
-  /* Phones: two by two. The card is as tall as its front; the story on the back only takes
-     space once the card is flipped, and then the card widens to the full row to show it. */
+  /* Phones: two by two. Front and back share one grid cell, so each card is sized for its
+     longer side up front and flips in place without moving or resizing anything. */
   @media (max-width: 560px) {
     .hls {
       gap: 8px;
     }
-    .hl-in {
-      position: relative;
+    .front {
+      justify-content: space-between;
     }
-    .hl[aria-expanded='false'] .back {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
+    .where {
+      font-size: 14px;
     }
-    .hl[aria-expanded='true'] {
-      grid-column: 1 / -1;
+    .story {
+      font-size: 12px;
+    }
+    /* The badge may not fit a half-width card on one line */
+    .back .badge {
+      max-width: 100%;
+      height: auto;
+      padding: 2px 8px;
+      white-space: normal;
+      line-height: 1.35;
     }
     .side {
       padding: 12px;

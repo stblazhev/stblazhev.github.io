@@ -329,6 +329,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
+    line-height: 1;
     color: var(--fg-2);
     white-space: nowrap;
     cursor: pointer;
@@ -522,14 +523,20 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   }
 
   /* The Quick look icon turns into an X while the panel is open */
+  /* The global icon rule draws icons at 16px, so the box is 16px too (a 14px box let the
+     icon spill down and right) */
   .q-ico {
     position: relative;
     display: inline-grid;
-    width: 14px;
-    height: 14px;
+    place-items: center;
+    flex: none;
+    width: 16px;
+    height: 16px;
   }
   .q-ico :global(svg) {
     grid-area: 1 / 1;
+    width: 14px;
+    height: 14px;
     transition:
       opacity 0.2s,
       transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
