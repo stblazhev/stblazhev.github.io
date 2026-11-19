@@ -36,6 +36,22 @@ const nav = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Set the theme before the page paints, so there is no white flash in dark mode.
+      // A saved choice wins; otherwise follow the device, and keep following it if it changes.
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        var saved = null;
+        try { saved = localStorage.getItem('theme'); } catch (e) {}
+        var apply = function (t) { document.documentElement.dataset.theme = t; };
+        apply(saved === 'dark' || saved === 'light' ? saved : mq.matches ? 'dark' : 'light');
+        mq.addEventListener('change', function (e) {
+          var s = null;
+          try { s = localStorage.getItem('theme'); } catch (x) {}
+          if (!s) apply(e.matches ? 'dark' : 'light');
+        });
+      })();
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -79,15 +95,19 @@ const nav = [
           }
         </nav>
 
+        <div class="side-foot">
+          <button type="button" class="nav-item theme" data-theme-toggle data-goatcounter-click="theme-toggle" data-goatcounter-title="Light or dark theme">
+            <i class="t-ico" aria-hidden="true"><Icon name="moon" /><Icon name="sun" /></i>
+            <span class="t-label"><span class="t-dark">Dark mode</span><span class="t-light">Light mode</span></span>
+          </button>
         {
           hasContact && (
-            <div class="side-foot">
               <a class="btn pop talk" href={site.email ? `mailto:${site.email}` : site.linkedin} data-contact data-goatcounter-click="contact-open-side-nav" data-goatcounter-title="Get in touch (side navigation)">
                 <Icon name="chat" /> <span>Get in touch</span>
               </a>
-            </div>
           )
         }
+        </div>
       </aside>
       </div>
 
@@ -212,6 +232,18 @@ const nav = [
 
 <script>
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Light / dark switch: remembers the choice on this device. Its label names the theme it
+  // switches to ("Dark mode" / "Light mode"), so it is a plain button, not a pressed toggle.
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {}
+    });
+  });
 
   /* ---------- Contact dialog ---------- */
   const dialog = document.querySelector<HTMLDialogElement>('dialog.contact');
@@ -371,7 +403,7 @@ const nav = [
     left: 16px;
     top: 16px;
     background: var(--fg);
-    color: #fff;
+    color: var(--bg);
     padding: 8px 12px;
     border-radius: 8px;
     z-index: 30;
@@ -474,6 +506,50 @@ const nav = [
   }
   .talk {
     height: 40px;
+  }
+
+  /* Theme switch: looks like a nav item; shows the theme it switches to */
+  .side-foot {
+    gap: 8px;
+  }
+  .theme {
+    width: 100%;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  /* An <i>, not a <span>: the rail hides nav-item spans (the labels) while collapsed */
+  .t-ico {
+    font-style: normal;
+    display: inline-grid;
+    flex: none;
+  }
+  .t-ico :global(svg) {
+    grid-area: 1 / 1;
+    transition:
+      opacity 0.2s,
+      transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .t-ico :global(svg:last-child),
+  :global(:root[data-theme='dark']) .t-ico :global(svg:first-child) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+  :global(:root[data-theme='dark']) .t-ico :global(svg:last-child) {
+    opacity: 1;
+    transform: none;
+  }
+  .t-label {
+    color: var(--fg-2);
+    font-weight: 500;
+  }
+  .t-light,
+  :global(:root[data-theme='dark']) .t-dark {
+    display: none;
+  }
+  :global(:root[data-theme='dark']) .t-light {
+    display: inline;
   }
 
   .main {
@@ -785,7 +861,7 @@ const nav = [
   .wn-tile b {
     font-size: 17px;
     font-weight: 600;
-    color: #000;
+    color: var(--fg-strong);
   }
   .wn-text {
     font-size: 13px;
@@ -818,7 +894,7 @@ const nav = [
     transform: translateX(4px);
     background: var(--accent);
     border-color: var(--accent);
-    color: #000;
+    color: var(--on-accent);
   }
   .wn-tile.pop {
     background: var(--pop-bg);
@@ -871,6 +947,15 @@ const nav = [
     .side-foot {
       margin: 0;
       padding: 12px;
+      flex-direction: row;
+    }
+    .theme {
+      width: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+    .t-label {
+      display: none;
     }
     .talk {
       height: 40px;
@@ -881,11 +966,53 @@ const nav = [
     }
   }
   @media (max-width: 560px) {
-    .who-text span,
-    .nav-item:not(.on) span,
-    .talk span {
+    .who-text span {
       display: none;
     }
+    /* Icon-only buttons: the labels are hidden visually but kept as the accessible name */
+    .nav-item:not(.on) span,
+    .talk span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    /* Tighter spacing so logo, pages, theme switch and contact fit on one row */
+    .who {
+      gap: 8px;
+    }
+    .nav,
+    .side-foot {
+      gap: 6px;
+    }
+    .side-foot {
+      padding: 12px 10px 12px 6px;
+    }
+    .nav-item:not(.on) {
+      width: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+  }
+  /* Small phones: the current page shows as an icon too */
+  @media (max-width: 420px) {
+    .nav-item.on {
+      width: 40px;
+      padding: 0;
+      justify-content: center;
+    }
+    .nav-item.on span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 560px) {
     .talk {
       width: 40px;
       padding: 0;
@@ -930,6 +1057,9 @@ const nav = [
     .talk {
       justify-content: flex-start;
       padding: 0 15px;
+    }
+    .theme {
+      padding: 0 13px;
     }
     .who-text,
     .nav-item span,

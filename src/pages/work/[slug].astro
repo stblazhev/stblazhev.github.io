@@ -550,8 +550,8 @@ const steps =
     min-height: 300px;
     border-radius: 16px;
     background:
-      radial-gradient(circle, rgba(35, 122, 44, 0.16) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
-      linear-gradient(160deg, var(--accent-bg), #e3f9e3);
+      radial-gradient(circle, var(--accent-dot) 1.2px, transparent 1.6px) 0 0 / 16px 16px,
+      linear-gradient(160deg, var(--accent-bg), var(--accent-bg-2));
     overflow: hidden;
   }
   /* Fan centred in the panel; screens rotate around their bottom edge */
@@ -641,11 +641,11 @@ const steps =
     flex-direction: column;
     gap: 6px;
     padding: 16px 18px;
-    border: 1px solid #c9f3c9;
+    border: 1px solid var(--accent-line);
     border-radius: 14px;
     background:
-      radial-gradient(circle, rgba(35, 122, 44, 0.12) 1px, transparent 1.4px) 0 0 / 14px 14px,
-      linear-gradient(150deg, var(--accent-bg), #e9fbe9);
+      radial-gradient(circle, var(--accent-dot) 1px, transparent 1.4px) 0 0 / 14px 14px,
+      linear-gradient(150deg, var(--accent-bg), var(--accent-bg-2));
     animation: tile-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
     animation-delay: calc(0.2s + var(--i) * 0.09s);
     transition:
@@ -702,7 +702,7 @@ const steps =
   .step {
     --tone: var(--accent-fg);
     --tone-bg: var(--accent-bg);
-    --tone-line: #bfeec0;
+    --tone-line: var(--accent-line);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -712,9 +712,9 @@ const steps =
     animation-delay: calc(0.35s + var(--i) * 0.14s);
   }
   .step:first-child {
-    --tone: #b45309;
-    --tone-bg: #fff7e8;
-    --tone-line: #fcdcaa;
+    --tone: var(--warn-fg);
+    --tone-bg: var(--warn-bg);
+    --tone-line: var(--warn-line);
   }
   .step-node {
     position: relative;
@@ -747,7 +747,7 @@ const steps =
     width: calc(100% + 32px - 64px);
     height: 2px;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--tone-line), #bfeec0);
+    background: linear-gradient(90deg, var(--tone-line), var(--accent-line));
     transform-origin: left center;
     animation: track-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
     animation-delay: calc(0.55s + var(--i) * 0.14s);
@@ -848,7 +848,7 @@ const steps =
       left: 19px;
       width: 2px;
       height: calc(100% - 60px + 22px);
-      background: linear-gradient(180deg, var(--tone-line), #bfeec0);
+      background: linear-gradient(180deg, var(--tone-line), var(--accent-line));
       transform-origin: center top;
       animation-name: track-down;
     }

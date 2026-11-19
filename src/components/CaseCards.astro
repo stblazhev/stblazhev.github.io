@@ -249,8 +249,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     padding: 14px 16px;
     border-radius: 10px;
     background:
-      radial-gradient(circle, rgba(35, 122, 44, 0.14) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
-      linear-gradient(135deg, var(--accent-bg), #e9fbe9);
+      radial-gradient(circle, var(--accent-dot) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
+      linear-gradient(135deg, var(--accent-bg), var(--accent-bg-2));
     transition: background-position 0.8s ease;
   }
   .cs-item .cs:hover .cs-kpi {
@@ -287,7 +287,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs-title {
     font-size: 16px;
     line-height: 1.35;
-    color: #000;
+    color: var(--fg-strong);
   }
   .cs-sum {
     font-size: 14px;
@@ -409,7 +409,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs-item .cs:focus-within .cs-go {
     background: var(--accent);
     border-color: var(--accent);
-    color: #000;
+    color: var(--on-accent);
   }
   .cs-item .cs:hover .cs-go :global(svg) {
     transform: translateX(3px);
@@ -623,8 +623,8 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     justify-content: flex-end;
     overflow: hidden;
     background:
-      radial-gradient(circle, rgba(169, 31, 189, 0.14) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
-      linear-gradient(135deg, #fbeffd, #f4ddf8);
+      radial-gradient(circle, var(--pop-dot) 1.1px, transparent 1.5px) 0 0 / 14px 14px,
+      linear-gradient(135deg, var(--pop-bg), var(--pop-bg-2));
   }
   @media (max-width: 640px) {
     .brew-art {

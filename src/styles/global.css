@@ -1,24 +1,30 @@
 /* Design language borrowed from the Backoffice V3 redesign:
    cool grey ground, white rounded cards, Poppins, green active states, grey badges, quiet tables. */
 :root {
-  --bg: #f5f8fa;
-  --card: #ffffff;
+  /* Light theme, toned down from pure white so it is easier on the eyes */
+  --bg: #edf1f4;
+  --card: #fcfdfd;
   --line: #e5e7eb;
   --line-2: #d1d5db;
   --navline: #e5ebf0;
-  --zebra: #f9fafb;
-  --soft: #f3f4f6;
+  --zebra: #f6f8fa;
+  --soft: #f1f3f5;
 
   --fg: #141515;
+  --fg-strong: #000;
   --fg-2: #4b5563;
   /* Text greys pass WCAG AA (4.5:1) on every background used; icons pass 3:1 */
   --fg-3: #5f6673;
-  --fg-4: #68707c;
+  --fg-4: #646c78;
   --icon: #7a879c;
 
   --accent: #6bed6a;
   --accent-bg: #f0fff0;
   --accent-press: #e3fbe3;
+  --accent-bg-2: #e6f9e6;
+  --accent-line: #c4efc5;
+  --accent-dot: rgba(35, 122, 44, 0.14);
+  --on-accent: #000; /* text on the bright green, the same in both themes */
   --accent-fg: #237a2c; /* green text: 4.9:1 or better on all backgrounds */
 
   /* Logo purple: an attention colour, used sparingly (contact CTA, headline mark, highlight stories) */
@@ -26,6 +32,15 @@
   --pop-deep: #7e1aa8;
   --pop-bg: #fcf3fe;
   --pop-line: #ecc8f3;
+  --pop-bg-2: #f4ddf8;
+  --pop-hover: #f7e6fb;
+  --pop-dot: rgba(169, 31, 189, 0.14);
+
+  --warn-bg: #fff7e8;
+  --warn-line: #fcd34d;
+  --warn-fg: #b45309;
+
+  --dot: #c9d3dc;
 
   --font: 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
@@ -34,6 +49,89 @@
   --card-shadow: 0 4px 12px rgba(17, 24, 39, 0.05);
   --gap: 12px;
   color-scheme: light;
+}
+
+/* Dark theme. The script in Base.astro sets data-theme on <html> from the saved choice or the
+   device setting; the media query covers visitors without JavaScript. Keep both blocks equal. */
+:root[data-theme='dark'] {
+  --bg: #0f1417;
+  --card: #161c21;
+  --line: #262f37;
+  --line-2: #34404a;
+  --navline: #232c34;
+  --zebra: #1b2228;
+  --soft: #1e262d;
+
+  --fg: #e3e8ec;
+  --fg-strong: #f5f7f9;
+  --fg-2: #b3bdc6;
+  --fg-3: #9aa5af;
+  --fg-4: #8c98a3;
+  --icon: #8d9aa8;
+
+  --accent-bg: #142519;
+  --accent-bg-2: #183020;
+  --accent-press: #1a3321;
+  --accent-line: #2a5233;
+  --accent-dot: rgba(107, 237, 106, 0.13);
+  --accent-fg: #7fe57e;
+
+  --pop: #cf5ae2;
+  --pop-deep: #e595f1;
+  --pop-bg: #261529;
+  --pop-bg-2: #321a37;
+  --pop-hover: #331b39;
+  --pop-line: #5b2c66;
+  --pop-dot: rgba(229, 149, 241, 0.16);
+
+  --warn-bg: #2a2113;
+  --warn-line: #6a4a1a;
+  --warn-fg: #f2b45a;
+
+  --dot: #2d3841;
+  --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f1417;
+    --card: #161c21;
+    --line: #262f37;
+    --line-2: #34404a;
+    --navline: #232c34;
+    --zebra: #1b2228;
+    --soft: #1e262d;
+
+    --fg: #e3e8ec;
+    --fg-strong: #f5f7f9;
+    --fg-2: #b3bdc6;
+    --fg-3: #9aa5af;
+    --fg-4: #8c98a3;
+    --icon: #8d9aa8;
+
+    --accent-bg: #142519;
+    --accent-bg-2: #183020;
+    --accent-press: #1a3321;
+    --accent-line: #2a5233;
+    --accent-dot: rgba(107, 237, 106, 0.13);
+    --accent-fg: #7fe57e;
+
+    --pop: #cf5ae2;
+    --pop-deep: #e595f1;
+    --pop-bg: #261529;
+    --pop-bg-2: #321a37;
+    --pop-hover: #331b39;
+    --pop-line: #5b2c66;
+    --pop-dot: rgba(229, 149, 241, 0.16);
+
+    --warn-bg: #2a2113;
+    --warn-line: #6a4a1a;
+    --warn-fg: #f2b45a;
+
+    --dot: #2d3841;
+    --card-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -62,7 +160,7 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 2px solid var(--accent-fg); outline-offset: 2px; border-radius: 4px; }
 
-h1, h2, h3 { margin: 0; line-height: 1.25; color: #000; }
+h1, h2, h3 { margin: 0; line-height: 1.25; color: var(--fg-strong); }
 h1 { font-size: clamp(24px, 3vw, 32px); font-weight: 600; letter-spacing: -0.01em; }
 h2 { font-size: 18px; font-weight: 600; }
 h3 { font-size: 15px; font-weight: 600; }
@@ -96,7 +194,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 .btn.primary:hover { background: var(--accent-press); }
 /* Quiet purple: tinted, not filled. The colour is a hint, not a shout. */
 .btn.pop { background: var(--pop-bg); border-color: var(--pop-line); color: var(--pop-deep); font-weight: 600; }
-.btn.pop:hover { background: #f7e6fb; border-color: var(--pop); }
+.btn.pop:hover { background: var(--pop-hover); border-color: var(--pop); }
 .btn.ghost { border-color: transparent; background: transparent; color: var(--fg-2); padding: 0 8px; }
 .btn.ghost:hover { background: var(--soft); }
 
@@ -108,7 +206,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 }
 .badge.success { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-fg); }
 .badge.pop { background: var(--pop-bg); border-color: var(--pop-line); color: var(--pop-deep); }
-.badge.warn { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+.badge.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-fg); }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
@@ -140,7 +238,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
   position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s;
   background:
     radial-gradient(circle 260px at var(--mx, 70%) var(--my, 30%), rgba(107, 237, 106, 0.16), transparent 70%),
-    radial-gradient(circle, #c9d3dc 1px, transparent 1.4px) 0 0 / 18px 18px;
+    radial-gradient(circle, var(--dot) 1px, transparent 1.4px) 0 0 / 18px 18px;
   -webkit-mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
   mask: radial-gradient(circle 220px at var(--mx, 70%) var(--my, 30%), #000 0%, transparent 75%);
 }
@@ -149,7 +247,7 @@ svg.i { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none;
 /* ---------- Long-form case study text ---------- */
 .prose { max-width: 720px; min-width: 0; color: var(--fg-2); }
 .prose > * + * { margin-top: 1em; }
-.prose h2 { color: #000; font-size: 20px; margin-top: 2.2em; padding-top: 1.4em; border-top: 1px solid var(--line); scroll-margin-top: 76px; }
+.prose h2 { color: var(--fg-strong); font-size: 20px; margin-top: 2.2em; padding-top: 1.4em; border-top: 1px solid var(--line); scroll-margin-top: 76px; }
 .prose > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .prose h3 { color: var(--fg); font-size: 16px; margin-top: 1.8em; scroll-margin-top: 76px; }
 .prose h4 { color: var(--fg); font-size: 15px; font-weight: 600; margin-top: 1.8em; }
