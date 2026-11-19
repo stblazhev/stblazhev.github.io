@@ -60,19 +60,6 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
                     <span class="badge">{m}</span>
                   ))}
                 </span>
-                {(p.data.tldr.length > 0 || p.data.outcomes.length > 1) && (
-                  <button
-                    class="cs-quick-btn"
-                    type="button"
-                    aria-expanded="false"
-                    aria-controls={qid}
-                    data-quick
-                    data-goatcounter-click={`quick-look-${p.id}`}
-                    data-goatcounter-title={`Quick look: ${p.data.title}`}
-                  >
-                    <Icon name="list" size={14} /> Quick look
-                  </button>
-                )}
               </span>
             </span>
             {preview.length > 0 && (
@@ -82,8 +69,23 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
                 ))}
               </span>
             )}
-            <span class="cs-go" aria-hidden="true">
-              <Icon name="right" />
+            <span class="cs-actions">
+            {(p.data.tldr.length > 0 || p.data.outcomes.length > 1) && (
+                <button
+                  class="cs-quick-btn"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls={qid}
+                  data-quick
+                  data-goatcounter-click={`quick-look-${p.id}`}
+                  data-goatcounter-title={`Quick look: ${p.data.title}`}
+                >
+                  <Icon name="list" size={14} /> Quick look
+                </button>
+              )}
+              <span class="cs-go" aria-hidden="true">
+                <Icon name="right" />
+              </span>
             </span>
           </div>
 
@@ -176,7 +178,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   .cs {
     position: relative;
     display: grid;
-    grid-template-columns: 196px minmax(0, 1fr) 150px 40px;
+    grid-template-columns: 196px minmax(0, 1fr) 150px auto;
     align-items: center;
     gap: 20px;
     padding: 12px 16px 12px 12px;
@@ -286,12 +288,13 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     overflow: hidden;
   }
   .cs-foot {
+    margin-top: 2px;
+  }
+  /* Quick look and the open arrow sit together on the right */
+  .cs-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 2px;
+    gap: 8px;
   }
   /* Sits above the stretched link so it can be clicked on its own */
   .cs-quick-btn {
@@ -309,6 +312,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     font-size: 12px;
     font-weight: 600;
     color: var(--fg-2);
+    white-space: nowrap;
     cursor: pointer;
     transition:
       border-color 0.2s,
@@ -474,7 +478,7 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
   /* ---------- Narrower screens: no fan; phones: tile on top as a slim strip ---------- */
   @media (max-width: 1100px) {
     .cs {
-      grid-template-columns: 196px minmax(0, 1fr) 40px;
+      grid-template-columns: 196px minmax(0, 1fr) auto;
     }
     .cs-peek {
       display: none;
@@ -511,19 +515,17 @@ const bubbles = Array.from({ length: 8 }, (_, i) => i);
     .cs-body {
       padding: 0 4px;
     }
+    .cs-actions {
+      justify-content: flex-end;
+      margin-top: -4px;
+    }
     .cs-go {
-      position: absolute;
-      right: 14px;
-      bottom: 12px;
       width: 36px;
       height: 36px;
     }
     /* Methods are secondary: hidden on phones to keep the rows short */
     .cs-methods {
       display: none;
-    }
-    .cs-item .cs-sum {
-      padding-right: 44px;
     }
     .cs-quick-in {
       grid-template-columns: minmax(0, 1fr);
