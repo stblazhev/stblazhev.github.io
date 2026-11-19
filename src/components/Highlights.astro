@@ -503,28 +503,43 @@ const ticks = Array.from({ length: 100 }, (_, i) => ({ x: 2 + (i % 20) * 6, y: 4
     margin-top: auto;
     align-self: flex-start;
   }
-  /* Phones: two by two. Front and back share one grid cell, so each card is sized for its
-     longer side up front and flips in place without moving or resizing anything. */
+  /* Phones: two by two and compact. The front sets the card's size; the back is laid over it
+     and trimmed to fit (title, organisation, story), so a flip never moves or resizes a card. */
   @media (max-width: 560px) {
     .hls {
       gap: 8px;
     }
-    .front {
-      justify-content: space-between;
+    .hl {
+      min-height: 220px;
+    }
+    .hl-in {
+      position: relative;
+    }
+    .back {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      scrollbar-width: none;
+      gap: 2px;
+    }
+    .back::-webkit-scrollbar {
+      display: none;
+    }
+    .back .label,
+    .back .badge {
+      display: none;
     }
     .where {
-      font-size: 14px;
+      margin-top: 0;
+      font-size: 13px;
+    }
+    .org {
+      font-size: 11px;
     }
     .story {
+      margin-top: 4px;
       font-size: 12px;
-    }
-    /* The badge may not fit a half-width card on one line */
-    .back .badge {
-      max-width: 100%;
-      height: auto;
-      padding: 2px 8px;
-      white-space: normal;
-      line-height: 1.35;
+      line-height: 1.4;
     }
     .side {
       padding: 12px;

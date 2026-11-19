@@ -612,14 +612,16 @@ const start = 0;
       grid-template-columns: minmax(0, 1fr);
       padding: 16px;
     }
-    /* The switcher gets its own bar under the details, so it never covers the dates */
+    /* The switcher is a bar at the top of the details card: the card's top edge never moves,
+       so the arrows stay under the finger while the text below changes length */
     .lm-nav {
+      grid-row: 1;
       justify-content: space-between;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
     }
     .lm-panel[data-kind='edu'] .lm-nav {
-      border-top-color: var(--accent-line);
+      border-bottom-color: var(--accent-line);
     }
     .lm-nav .btn {
       width: 40px;

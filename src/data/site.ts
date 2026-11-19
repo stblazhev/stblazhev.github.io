@@ -43,7 +43,7 @@ export const site = {
       viz: 'nav',
       where: 'Bottom navigation bar',
       org: 'ALL IN Platform',
-      story: 'Stakeholder interviews and card sorts with players shaped separate Casino and Sports bars. Key pages moved from the top of the screen to one tap, within thumb reach.',
+      story: 'Stakeholder interviews and card sorts shaped separate Casino and Sports bars, with key pages one tap away.',
       tag: 'Case study published',
     },
     {

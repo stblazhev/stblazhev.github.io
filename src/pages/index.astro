@@ -171,6 +171,24 @@ const focus = site.domain.map((d) => d.toLowerCase());
     let w = 0;
     let i = words[0]?.length ?? 0;
     let deleting = true;
+    // Reserve the height of the longest topic, so a topic that wraps onto a second line
+    // never pushes the page down (or pulls it back up) while it types
+    const line = el.closest<HTMLElement>('.by > span');
+    const reserve = () => {
+      if (!line) return;
+      const now = el.textContent;
+      line.style.minHeight = '';
+      let h = 0;
+      for (const word of words) {
+        el.textContent = word;
+        h = Math.max(h, line.offsetHeight);
+      }
+      el.textContent = now;
+      line.style.minHeight = `${h}px`;
+    };
+    reserve();
+    addEventListener('resize', reserve);
+    document.fonts?.ready.then(reserve);
     const tick = () => {
       const word = words[w];
       if (deleting) {
