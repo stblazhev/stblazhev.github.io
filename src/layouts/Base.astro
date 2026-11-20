@@ -113,11 +113,21 @@ const nav = [
 
       <div class="theme-tip" id="theme-tip" role="status" hidden>
         <span class="tt-arrow" aria-hidden="true"></span>
-        <b class="tt-title"><Icon name="moon" /> Easier on the eyes?</b>
-        <p>Switch to dark mode with this button. You can switch back any time.</p>
-        <div class="tt-actions">
-          <button type="button" class="btn primary tt-dark" data-goatcounter-click="theme-tip-dark" data-goatcounter-title="Theme tip: switch to dark">Switch to dark</button>
-          <button type="button" class="btn ghost tt-ok" data-goatcounter-click="theme-tip-ok" data-goatcounter-title="Theme tip: got it">Got it</button>
+        <div class="tt-for" data-for="light">
+          <b class="tt-title"><Icon name="moon" /> Easier on the eyes?</b>
+          <p>Switch to dark mode with this button. You can switch back any time.</p>
+          <div class="tt-actions">
+            <button type="button" class="btn primary tt-act" data-goatcounter-click="theme-tip-dark" data-goatcounter-title="Theme tip: switch to dark">Switch to dark</button>
+            <button type="button" class="btn ghost tt-ok" data-goatcounter-click="theme-tip-ok" data-goatcounter-title="Theme tip: got it">Got it</button>
+          </div>
+        </div>
+        <div class="tt-for" data-for="dark">
+          <b class="tt-title"><Icon name="sun" /> Prefer a lighter screen?</b>
+          <p>Switch to light mode with this button. You can switch back any time.</p>
+          <div class="tt-actions">
+            <button type="button" class="btn primary tt-act" data-goatcounter-click="theme-tip-light" data-goatcounter-title="Theme tip: switch to light">Switch to light</button>
+            <button type="button" class="btn ghost tt-ok" data-goatcounter-click="theme-tip-ok-dark" data-goatcounter-title="Theme tip (dark): got it">Got it</button>
+          </div>
         </div>
       </div>
 
@@ -256,10 +266,12 @@ const nav = [
     });
   });
 
-  /* ---------- Theme tip ----------
-     A small card pointing at the theme button, shown once ever on this device: the first time
-     the page is in light mode, either on landing or after a switch to light. Desktop: beside the rail button; phones: under the
-     button in the top bar. It closes by itself after a while, or when the button scrolls away. */
+  /* ---------- Theme tips ----------
+     A small card pointing at the theme button, so visitors learn where it is. Two versions, each
+     shown once ever on this device: in light mode ("Easier on the eyes?", on landing or the first
+     switch to light) and in dark mode ("Prefer a lighter screen?", on landing). Using either
+     card's buttons ends both. Desktop: beside the rail button; phones: under the button in the
+     top bar. It closes by itself after a while, or when the button scrolls away. */
   const tip = document.getElementById('theme-tip');
   const themeBtn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
   if (tip && themeBtn) {
@@ -270,7 +282,10 @@ const nav = [
         return null;
       }
     };
-    const isDone = () => store('local')?.getItem('themeTip') === 'done';
+    const KEYS = { light: 'themeTip', dark: 'themeTipLight' } as const;
+    type Mode = keyof typeof KEYS;
+    const isDone = (m: Mode) => store('local')?.getItem(KEYS[m]) === 'done';
+    const endAll = () => Object.values(KEYS).forEach((k) => store('local')?.setItem(k, 'done'));
     const arrow = tip.querySelector<HTMLElement>('.tt-arrow')!;
     let raf = 0;
     let timer = 0;
@@ -298,9 +313,10 @@ const nav = [
       raf = requestAnimationFrame(place); // follows the rail as it widens and the page scrolls
     };
 
-    const show = (ms: number) => {
-      if (isDone() || document.documentElement.dataset.theme !== 'light' || !tip.hidden) return;
-      store('local')?.setItem('themeTip', 'done'); // shown once, never again
+    const show = (mode: Mode, ms: number) => {
+      if (isDone(mode) || document.documentElement.dataset.theme !== mode || !tip.hidden) return;
+      store('local')?.setItem(KEYS[mode], 'done'); // each version shows once, never again
+      tip.dataset.mode = mode;
       tip.hidden = false;
       themeBtn.classList.add('hinting');
       cancelAnimationFrame(raf);
@@ -309,7 +325,7 @@ const nav = [
       timer = window.setTimeout(() => hide(), ms);
     };
     function hide(forGood = false) {
-      if (forGood) store('local')?.setItem('themeTip', 'done');
+      if (forGood) endAll(); // they have found the button: no more tips in either mode
       tip!.hidden = true;
       themeBtn!.classList.remove('hinting');
       cancelAnimationFrame(raf);
@@ -320,19 +336,21 @@ const nav = [
     tip.addEventListener('pointerenter', () => clearTimeout(timer));
     tip.addEventListener('focusin', () => clearTimeout(timer));
     tip.addEventListener('pointerleave', () => (timer = window.setTimeout(() => hide(), 4000)));
-    tip.querySelector('.tt-ok')!.addEventListener('click', () => hide(true));
-    tip.querySelector('.tt-dark')!.addEventListener('click', () => {
-      hide(true);
-      themeBtn.click();
-    });
+    tip.querySelectorAll('.tt-ok').forEach((b) => b.addEventListener('click', () => hide(true)));
+    tip.querySelectorAll('.tt-act').forEach((b) =>
+      b.addEventListener('click', () => {
+        hide(true);
+        themeBtn.click();
+      }),
+    );
     document.addEventListener('keydown', (e) => e.key === 'Escape' && !tip.hidden && hide());
     document.addEventListener('themechange', (e) => {
       const t = (e as CustomEvent<string>).detail;
-      if (t === 'light') setTimeout(() => show(9000), 350);
+      if (t === 'light') setTimeout(() => show('light', 9000), 350);
       else hide();
     });
-    // Landing in light mode, after the page has settled
-    setTimeout(() => show(12000), 1800);
+    // Landing: the tip for the mode the page opened in, after the page has settled
+    setTimeout(() => show(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light', 12000), 1800);
   }
 
   /* ---------- Contact dialog ---------- */
@@ -621,6 +639,16 @@ const nav = [
   }
   .theme-tip[hidden] {
     display: none;
+  }
+  .theme-tip:not([data-mode='dark']) .tt-for[data-for='dark'],
+  .theme-tip[data-mode='dark'] .tt-for[data-for='light'] {
+    display: none;
+  }
+  .tt-for[data-for='dark'] .tt-title :global(svg) {
+    color: var(--warn-fg);
+  }
+  .theme-tip[data-mode='dark'] {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
   }
   .theme-tip[data-side='right'] {
     animation-name: tt-in-side;
