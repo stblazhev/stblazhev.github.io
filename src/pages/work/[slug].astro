@@ -6,13 +6,14 @@ import { getProjects } from '../../lib';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
+  // Neighbours in the case study order: the first study has no previous, the last no next
   return projects.map((project, i) => ({
     params: { slug: project.id },
-    props: { project, next: projects[(i + 1) % projects.length] },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
   }));
 }
 
-const { project, next } = Astro.props;
+const { project, prev, next } = Astro.props;
 const { data } = project;
 const { Content, headings } = await render(project);
 const sections = [
@@ -148,16 +149,31 @@ const steps =
   </article>
 
   {
-    next && next.id !== project.id && (
-      <a class="card next" href={`/work/${next.id}/`}>
-        <span>
-          <span class="label">Next case study</span>
-          <b>{next.data.title}</b>
-        </span>
-        <span class="btn primary">
-          Open <Icon name="right" />
-        </span>
-      </a>
+    (prev || next) && (
+      <nav class="pn" aria-label="More case studies">
+        {prev && (
+          <a class="card pn-item pn-prev" href={`/work/${prev.id}/`} data-goatcounter-click="case-study-previous" data-goatcounter-title={`Previous case study: ${prev.data.title}`}>
+            <span class="btn">
+              <Icon name="left" /> Previous study
+            </span>
+            <span class="pn-text">
+              <span class="label">Previous case study</span>
+              <b>{prev.data.title}</b>
+            </span>
+          </a>
+        )}
+        {next && (
+          <a class="card pn-item pn-next" href={`/work/${next.id}/`} data-goatcounter-click="case-study-next" data-goatcounter-title={`Next case study: ${next.data.title}`}>
+            <span class="pn-text">
+              <span class="label">Next case study</span>
+              <b>{next.data.title}</b>
+            </span>
+            <span class="btn primary">
+              Open <Icon name="right" />
+            </span>
+          </a>
+        )}
+      </nav>
     )
   }
 
@@ -997,30 +1013,52 @@ const steps =
     }
   }
 
-  .next {
+  /* ---------- Previous / next case study ----------
+     One card when the study is first or last, two side by side in between (stacked on phones).
+     Previous: button on the left; next: button on the right. */
+  .pn {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--gap);
+  }
+  .pn-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
-  .next > span:first-child {
+  .pn-prev {
+    justify-content: flex-start;
+  }
+  .pn-text {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
   }
-  .next b {
+  .pn-item b {
     font-size: 17px;
     font-weight: 600;
+    color: var(--fg-strong);
   }
-  .next:hover {
+  .pn-item .btn {
+    flex: none;
+  }
+  .pn-item:hover {
     border-color: var(--accent);
   }
   @media (max-width: 560px) {
-    .next {
+    .pn {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pn-item {
       flex-direction: column;
       align-items: stretch;
     }
-    .next .btn {
+    .pn-prev .btn {
+      order: 2;
+    }
+    .pn-item .btn {
       justify-content: center;
       height: 44px;
     }
